@@ -372,7 +372,7 @@ def cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, 
                                     extconnectionpoint2=(connectionpoint2[0],int(connectionpoint2[1]+(pixelstoextendby)))
 
 
-                                cv2.line(updatingimg,extconnectionpoint1,extconnectionpoint2,(0,0,0),thickness=3)
+                                cv2.line(updatingimg,extconnectionpoint1,extconnectionpoint2,(0,0,0),thickness=2)
                                 cv2.line(breakupimg,connectionpoint1,connectionpoint2,(0,255,0),thickness=1)
 
                                 if visualizemasking==True:
