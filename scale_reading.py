@@ -1,5 +1,7 @@
 from PIL import Image
 from pytesseract import image_to_string
+from pytesseract import image_to_boxes
+
 import cv2
 import numpy as np
 from contour_detections import *
@@ -28,7 +30,9 @@ def read_image(thresholdedimg, unit):
     #Read image using English alphabet.
     greekengtextfromimage= image_to_string(imagetoread,lang="eng",config=cfg)
 
-    return greekengtextfromimage
+    text_boxes = image_to_boxes(imagetoread, lang = "eng", config = cfg)
+
+    return greekengtextfromimage, text_boxes
 
 
 def threshold_for_text_reading(img,imgmean,imgstdev,threshold_to,thresholdvalue = None):
@@ -45,7 +49,7 @@ def threshold_for_text_reading(img,imgmean,imgstdev,threshold_to,thresholdvalue 
     #Looking for white text.
     if threshold_to == 0:
 
-    	if thresholdvalue == None:
+        if thresholdvalue == None:
             thresholdvalue = imgmean+(3.5*imgstdev)
         
         thresholdmax = 235
@@ -59,8 +63,8 @@ def threshold_for_text_reading(img,imgmean,imgstdev,threshold_to,thresholdvalue 
     #Look for black text.
     elif threshold_to == 1:
 
-    	if thresholdvalue == None:
-        	thresholdvalue = imgmean-(4*imgstdev)
+        if thresholdvalue == None:
+            thresholdvalue = imgmean-(4*imgstdev)
 
         thresholdmin = 20
         if thresholdvalue < thresholdmin:
@@ -184,6 +188,7 @@ def find_text_and_bar(thresholdedimg,gimg,rows,cols,show=False,printer=False,bla
         scalebar = None
         conversion = None
         scalevalue = None
+        boxes = None
         inlaycoords = []
         inlay = None
         
@@ -245,6 +250,7 @@ def find_text_and_bar(thresholdedimg,gimg,rows,cols,show=False,printer=False,bla
 
                 #These get set to None each loop unless both can be identified simultaneously further down.
                 conversion = None
+                boxes = None
                 scalevalue = None
 
                 #Cannot determine what exact binarization threshold works for each region, so we scan through 35,0 as thresholds in increments of 5 until
@@ -266,8 +272,8 @@ def find_text_and_bar(thresholdedimg,gimg,rows,cols,show=False,printer=False,bla
 
                         region_surrounding_text_reading = cv2.medianBlur(region_surrounding_text_reading,1)
 
-                        greekengtextfromimage_edited_nm = read_image(region_surrounding_text_reading, unit = "nm")
-                        greekengtextfromimage_edited_um = read_image(region_surrounding_text_reading, unit = "um")
+                        greekengtextfromimage_edited_nm, edited_nm_boxes = read_image(region_surrounding_text_reading, unit = "nm")
+                        greekengtextfromimage_edited_um, edited_um_boxes = read_image(region_surrounding_text_reading, unit = "um")
 
                         if printer == True:
 
@@ -285,8 +291,8 @@ def find_text_and_bar(thresholdedimg,gimg,rows,cols,show=False,printer=False,bla
                             if show == True:
                                 show_image(inverted,0,'raw')
 
-                            greekengtextfromimage_raw_nm = read_image(inverted, unit = "nm")
-                            greekengtextfromimage_raw_um = read_image(inverted, unit = "um")
+                            greekengtextfromimage_raw_nm, raw_nm_boxes = read_image(inverted, unit = "nm")
+                            greekengtextfromimage_raw_um, raw_um_boxes = read_image(inverted, unit = "um")
 
                             if printer == True:
                                 print "greek&eng_raw_nm"
@@ -299,8 +305,8 @@ def find_text_and_bar(thresholdedimg,gimg,rows,cols,show=False,printer=False,bla
                                 show_image((255-inverted),0,'255-inverted')
 
 
-                            greekengtextfromimage_raw_inverted_nm = read_image((255-inverted), unit = "nm")
-                            greekengtextfromimage_raw_inverted_um = read_image((255-inverted), unit = "um")
+                            greekengtextfromimage_raw_inverted_nm , inverted_nm_boxes = read_image((255-inverted), unit = "nm")
+                            greekengtextfromimage_raw_inverted_um , inverted_um_boxes = read_image((255-inverted), unit = "um")
 
                             if printer == True:
                                 print "greek&eng_raw_inverted_nm"
@@ -325,6 +331,7 @@ def find_text_and_bar(thresholdedimg,gimg,rows,cols,show=False,printer=False,bla
                                     conversion=10**-6
                                     if all(char in digits for char in greekengtextfromimage_edited_um.split("um")[0]):
                                         scalevalue=greekengtextfromimage_edited_um.split("um")[0]
+                                        boxes = edited_um_boxes
 
 
                         if scalevalue == None and "nm" in greekengtextfromimage_edited_nm and any(char in digits for char in greekengtextfromimage_edited_nm):
@@ -335,6 +342,7 @@ def find_text_and_bar(thresholdedimg,gimg,rows,cols,show=False,printer=False,bla
                                     conversion=10**-9
                                     if all(char in digits for char in greekengtextfromimage_edited_nm.split("nm")[0]):
                                         scalevalue=greekengtextfromimage_edited_nm.split("nm")[0]
+                                        boxes = edited_nm_boxes
 
                         #Also check raw region only on the first pass just in case its legible.
                         elif pixel_value == 35:
@@ -348,6 +356,7 @@ def find_text_and_bar(thresholdedimg,gimg,rows,cols,show=False,printer=False,bla
 
                                         if all(char in digits for char in greekengtextfromimage_raw_um.split("um")[0]):
                                             scalevalue=greekengtextfromimage_raw_um.split("um")[0]
+                                            boxes = raw_um_boxes
 
                             if scalevalue == None and "nm" in greekengtextfromimage_raw_nm and any(char in digits for char in greekengtextfromimage_raw_nm): 
                                 if len(greekengtextfromimage_raw_nm.split("nm")[0]) > 0:
@@ -358,6 +367,7 @@ def find_text_and_bar(thresholdedimg,gimg,rows,cols,show=False,printer=False,bla
 
                                         if all(char in digits for char in greekengtextfromimage_raw_nm.split("nm")[0]):
                                             scalevalue=greekengtextfromimage_raw_nm.split("nm")[0]
+                                            boxes = raw_nm_boxes
 
                             if scalevalue == None and 'um' in greekengtextfromimage_raw_inverted_um and any(char in digits for char in greekengtextfromimage_raw_inverted_um):  
                                 if len(greekengtextfromimage_raw_inverted_um.split("um")[0]) > 0:
@@ -368,6 +378,7 @@ def find_text_and_bar(thresholdedimg,gimg,rows,cols,show=False,printer=False,bla
 
                                         if all(char in digits for char in greekengtextfromimage_raw_inverted_um.split("um")[0]):
                                             scalevalue=greekengtextfromimage_raw_inverted_um.split("um")[0]
+                                            boxes = inverted_um_boxes
 
                             if scalevalue == None and "nm" in greekengtextfromimage_raw_inverted_nm and any(char in digits for char in greekengtextfromimage_raw_inverted_nm): 
                                 if len(greekengtextfromimage_raw_inverted_nm.split("nm")[0]) > 0:
@@ -378,6 +389,7 @@ def find_text_and_bar(thresholdedimg,gimg,rows,cols,show=False,printer=False,bla
 
                                         if all(char in digits for char in greekengtextfromimage_raw_inverted_nm.split("nm")[0]):
                                             scalevalue=greekengtextfromimage_raw_inverted_nm.split("nm")[0]
+                                            boxes = inverted_nm_boxes
 
                         #Filter out unrealistic scalevalues.
                         if scalevalue != None:
@@ -395,7 +407,7 @@ def find_text_and_bar(thresholdedimg,gimg,rows,cols,show=False,printer=False,bla
 
                 if conversion!=None and scalevalue!=None:
                     scalevalue = float(''.join(i for i in scalevalue if i.isdigit()))
-                    potential_scale_bar_regions.append([i,conversion,scalevalue,is_box_in_box])
+                    potential_scale_bar_regions.append([i,conversion,scalevalue,is_box_in_box,boxes])
                     if printer == True:
 
                         print "worked at pixel_value ", str(pixel_value+5) #since loop is stopped one loop too late
@@ -410,7 +422,9 @@ def find_text_and_bar(thresholdedimg,gimg,rows,cols,show=False,printer=False,bla
 
         potential_scale_bars=[]
         for potential_region in potential_scale_bar_regions:
-            region=potential_region[0]
+            region = potential_region[0]
+
+
 
             #If the region is a "box_in_box" we don't have to expand the search area as the bar will be within the same box.
             if potential_region[3] == True:
@@ -420,6 +434,8 @@ def find_text_and_bar(thresholdedimg,gimg,rows,cols,show=False,printer=False,bla
                 region[0]:region[0]+region[2]+region_border_buffer]
                 surrounding_region_y1 = region[0]
                 surrounding_region_x1 = region[1]
+
+
 
             #If not box_in_box we expand our search region.
             else:
@@ -483,18 +499,53 @@ def find_text_and_bar(thresholdedimg,gimg,rows,cols,show=False,printer=False,bla
                 scalebarwidth=max(potential_scale_bar_widths)
                 scalebarboundingrectangle=potential_scale_bar_rectangles[potential_scale_bar_widths.index(scalebarwidth)]
 
+                boxes_relative = potential_region[-1]
+                boxes = []
+                
+                for b in boxes_relative.splitlines():
+                    b = b.split(' ')
+
+                    #print b
+
+                    b = [int(i) for i in b[1:5]]
+
+                    boxes.append([(b[0]+region[0],region[3]-b[1]+region[1]),(b[2]+region[0],region[3]-b[3]+region[1])])
+
+
+
                 potential_scale_bars.append([(int(scalebarboundingrectangle[0]+surrounding_region_y1),int(scalebarboundingrectangle[1]+surrounding_region_x1)\
-                ,int(scalebarboundingrectangle[2]),int(scalebarboundingrectangle[3])),potential_region[1],potential_region[2],region])
+                ,int(scalebarboundingrectangle[2]),int(scalebarboundingrectangle[3])),potential_region[1],potential_region[2],boxes])
 
         #If we have multiple candidates, in multiple regions of interest, we go with the widest one globally.
         widths=[a[0][2] for a in potential_scale_bars]
 
         if len(widths) > 0:
             scalebarwidth=max(widths)
-            scalebar,conversion,scalevalue,inlay = potential_scale_bars[widths.index(max(widths))]
+            scalebar,conversion,scalevalue,boxes = potential_scale_bars[widths.index(max(widths))]
 
-        if inlay is not None:
-            inlaycoords.append(inlay)
+        if boxes is not None:
+
+            ##more sophisticated inlay construction, going to pass image_to_boxes during reading and use it here.
+            # using bounding boxes of detected characters + scalebar to determine accurate inlay location.
+
+            box_xs = []
+            box_ys = []
+
+            for box in boxes:
+                box_xs.append(box[0][0])
+                box_xs.append(box[1][0])
+
+                box_ys.append(box[0][1])
+                box_ys.append(box[1][1])
+
+
+            box_xs.append(scalebar[0])
+            box_xs.append(scalebar[0]+scalebar[2])
+
+            box_ys.append(scalebar[1])
+            box_ys.append(scalebar[1]+scalebar[3])
+
+            inlaycoords.append((min(box_xs),min(box_ys),max(box_xs)-min(box_xs),max(box_ys)-min(box_ys)))
 
         #Inlaycoords only has scalebar region now, other detected ones will be appended from here.
 

@@ -4,18 +4,25 @@ import itertools
 import math
 from contour_detections import *
 
-def edge_correction(filteredvertices,rows,cols,inlaycoords):
+def edge_correction(filteredvertices,rows,cols,inlaycoords, testing = False, gimg = None):
     '''Filters out particles that are deformed by image borders or inlays. (must intersect either at min 2 points)
 
     :param list filteredvertices: list of vertices of deteced particles.
     :param int rows: number of rows in image.
     :param int cols: number of columns in image.
     :param list inlaycoords: list of coordinates (as tuples) of inlays in image, including text info.
+    :param bool testing: show what's removed or not.
+    :param numpy.ndarray gimg: input image, mandatory if testing is True.
 
     :return list edgecorrectedvertices: list of vertices of filtered particles. 
     '''
 
     edgecorrectedvertices=[]
+
+    removedvertices = []
+
+    if testing ==True:
+        test_img = cv2.cvtColor(gimg,cv2.COLOR_GRAY2RGB)
 
     for vertices in filteredvertices:
         borderintersections=0
@@ -44,8 +51,26 @@ def edge_correction(filteredvertices,rows,cols,inlaycoords):
                         and point[1]<=inlaycorners[3][1]):
                         inlayintersections+=1
 
+
         if (borderintersections<2) and (inlayintersections<2):
             edgecorrectedvertices.append(vertices)
+        else:
+            removedvertices.append(vertices)
+
+    if testing == True:
+        print str(len(removedvertices)) + " particles removed."
+
+        for inlay in inlaycoords:
+            growby = 2 #pixels
+            inlaycorners=((inlay[0]-growby,inlay[1]-growby),(inlay[0]+inlay[2]+growby,inlay[1]-growby)\
+                         ,(inlay[0]+inlay[2]+growby,inlay[1]+inlay[3]+growby),(inlay[0]-growby,inlay[1]+inlay[3]+growby))
+
+            cv2.rectangle(test_img,inlaycorners[0], inlaycorners[2],(255,0,0),thickness = 1)
+
+
+        draw_contours(test_img,removedvertices,imgname = "edge removed particles")
+
+
 
 
     return edgecorrectedvertices
@@ -137,7 +162,7 @@ def particle_metrics_from_vertices(img,gimg,rows,cols,filteredvertices):
     return colorlist,arealist,avgcolormean,avgcolorstdev,avgarea
 
 
-def false_positive_correction(filteredvertices,arealist,colorlist,avgcolormean,avgcolorstdev,testing=False,gimg=None):
+def false_positive_correction(filteredvertices,arealist,colorlist,avgcolormean,avgcolorstdev,testing = False,gimg=None):
     '''Determines false positives in a list of contour by comparing individual
     color mean and stdev to global color mean and stdev.
 
@@ -159,12 +184,13 @@ def false_positive_correction(filteredvertices,arealist,colorlist,avgcolormean,a
 
     for i in range(len(colorlist)):
         if (colorlist[i][0]<avgcolormean*0.6 or colorlist[i][1]<avgcolorstdev*0.25 \
-        or colorlist[i][0]>1.6*avgcolormean or colorlist[i][0]<2) == True:
+        or colorlist[i][0]>1.6*avgcolormean or colorlist[i][0]<2 or colorlist[i][0] > 240) == True:
+
             indextoremove.append(i)
 
     indextoremove=list(set(indextoremove))
 
-    if testing==True:
+    if testing == True:
         print str(len(indextoremove)) + " false positives removed."
 
         if len(indextoremove)>0:
@@ -183,7 +209,7 @@ def false_positive_correction(filteredvertices,arealist,colorlist,avgcolormean,a
     return filteredvertices,arealist
 
 
-def cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, blocksize, testing = False):
+def cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, blocksize, testing = False, detailed_testing = False):
     '''Attempt to break apart clusters of particles mistakenly detected as one large particle by identifiying 
     bottle necks (the thinnest part where two particles are "sintered") and joining those bottle necks. 
 
@@ -194,6 +220,8 @@ def cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, 
     :param float avgarea: average particle size. 
     :param int blocksize: parameter associated with adaptive filtering, passed down from previous detections.
     :param bool testing: display what's happening step by step.
+    :param bool detailed_testing: display what's happening step by step, shows more substeps.
+
 
     :return list clusterbreakupvertices: corrected list of vertices of detected particles. 
     
@@ -204,7 +232,7 @@ def cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, 
     # "sintered") and joining those bottle necks. 
 
 
-    breakuptesting=testing
+    breakuptesting = testing
     
     #Create blank images to work off of. 
 
@@ -240,6 +268,7 @@ def cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, 
 
                 for j in range(defects.shape[0]):
                     s,e,f,d = defects[j,0]
+
                     if len(vert[s])>1:
                         start = tuple(vert[s])
                         end = tuple(vert[e])
@@ -250,10 +279,10 @@ def cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, 
                         far = tuple(vert[f][0])
 
 
-                    if (d/256.0) >(arealist[i]**0.5)/10.0:
+                    if (d/256.0) > (arealist[i]**0.5)/10.0:
 
-                            #print d/256.0
-                            #print (arealist[i]**0.5)/10
+                            # print "d ", d/256.0
+                            # print "arearoot/10 ", (arealist[i]**0.5)/10
 
 
 
@@ -293,20 +322,17 @@ def cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, 
                                 angle=angle-90
                             elif midpoint[0]<far[0] and midpoint[1]<far[1]:
                                 angle=angle-90
-
-
-
-                            
                             
                             maskimg[:] = (0, 0, 0)
-                            l=int((avgarea**0.5)/3)
-                            cv2.ellipse(maskimg, far, (l,2*l), angle, 0, 180, (255,255,255), -1)
+                            l=int((avgarea**0.5)/4)
+                            cv2.ellipse(maskimg, far, (l,2*l), angle, 10, 170, (255,255,255), -1)
 
                             oppositeface=[]
 
                             maskedresult = np.bitwise_and(breakupimg,maskimg)
 
-                            visualizemasking=testing
+                            visualizemasking = detailed_testing
+                            
                             if visualizemasking==True:
 
                                 maskingvisualization=breakupimg.copy()
@@ -321,7 +347,7 @@ def cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, 
                                 cv2.circle(maskingvisualization,far,2,(0,0,255),-1)
                                 
 
-                                #cv2.ellipse(maskingvisualization, far, (l,2*l), angle, 0, 180, (255,255,255), 1)
+                                cv2.ellipse(maskingvisualization, far, (l,2*l), angle, 10, 170, (255,255,255), 1)
 
                                 #cv2.putText(maskingvisualization,str(gradient),midpoint,cv2.FONT_HERSHEY_COMPLEX,0.4,(255,255,255),thickness=1) 
                                 #cv2.putText(maskingvisualization,str(angle),far,cv2.FONT_HERSHEY_COMPLEX,0.4,(255,255,255),thickness=1)
@@ -353,11 +379,13 @@ def cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, 
 
                                 #extend connection lines slightly, unless line is vertical.
 
-                                connectionpoint1=tuple(pointpairs[distances.index(min(distances))][0])
-                                connectionpoint2=tuple(pointpairs[distances.index(min(distances))][1])
-                                connectionlength=distance_formula(connectionpoint1,connectionpoint2)
+                                connectionpoint1 = tuple(pointpairs[distances.index(min(distances))][0])
+                                connectionpoint2 = tuple(pointpairs[distances.index(min(distances))][1])
+                                connectionlength = distance_formula(connectionpoint1,connectionpoint2)
+                                
                                 if connectionlength<10:
                                     pixelstoextendby=-5
+                                
                                 else:
                                     pixelstoextendby=connectionlength/-2
 
@@ -379,18 +407,19 @@ def cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, 
                                     cv2.circle(maskingvisualization,tuple(pointpairs[distances.index(min(distances))][0]),2,(255,0,255),-1)
                                     cv2.circle(maskingvisualization,tuple(pointpairs[distances.index(min(distances))][1]),2,(255,0,255),-1)
                                     show_image(maskingvisualization,imgname="maskingvisualization")
+                                    show_image(maskedresult, imgname="maskedresult")
+
 
 
 
                             if breakuptesting==True:
-                                show_image(maskedresult, imgname="maskedresult")
                                 show_image(breakupimg,imgname="breakupimg")
                                 show_image(updatingimg,imgname="updatingimg")
 
 
 
 
-    brokenupvertices=find_draw_contours(updatingimg,blocksize,maxarea=3*avgarea,annotate=True,displayimg=testing,nofilter=True)
+    brokenupvertices=find_draw_contours(updatingimg,blocksize, minarea = avgarea/10, annotate=True,testing=testing,nofilter=True, contours_color = (255,255,255))
 
 
     indextoremove=list(set(indextoremove))
@@ -575,6 +604,8 @@ def discreteness_index_and_ellipse_fitting(edgecorrectedvertices,img,rows,cols,i
 
     for i in sorted(index_to_remove,reverse=True):
         del ellipsefittedvertices[i]
+
+    show_image(ellimg)
 
 
     return particlediscreteness, ellipsefittedvertices

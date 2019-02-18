@@ -30,7 +30,7 @@ def particle_identification(img, inlaycoords, testing = None, blocksize = 151, b
     rows, cols, imgarea, imgmean, imgstdev, crossstdev = image_metrics(gimg)
 
     #Initial contour detection.
-    filteredvertices = find_draw_contours_main(img,blocksize,rows,cols,blursize)
+    filteredvertices = find_draw_contours_main(img,blocksize,rows,cols,blursize, testing = True)
 
     if len(filteredvertices) == 0:
         return []
@@ -41,25 +41,27 @@ def particle_identification(img, inlaycoords, testing = None, blocksize = 151, b
 
     #Eliminate false positives.
     filteredvertices, arealist = false_positive_correction(filteredvertices, arealist, colorlist, avgcolormean,
-    	avgcolorstdev)
+    	avgcolorstdev, testing = True, gimg = gimg)
 
     #Break up large clusters.
-    filteredvertices = cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, blocksize)
-    
+    filteredvertices = cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, blocksize, testing = True, detailed_testing = True)
+
     #Eliminate particles that touch edges or inlays.
-    filteredvertices = edge_correction(filteredvertices, rows, cols, inlaycoords)
-    
+    filteredvertices = edge_correction(filteredvertices, rows, cols, inlaycoords, testing = True, gimg = gimg)
+
     #Ellipse fitting.
     particlediscreteness, filteredvertices = discreteness_index_and_ellipse_fitting(filteredvertices, img, rows,
     	cols, imgstdev)
 
     #Eliminate particles that touch edges or inlays.
-    filteredvertices = edge_correction(filteredvertices, rows, cols, inlaycoords)
+    filteredvertices = edge_correction(filteredvertices, rows, cols, inlaycoords, testing = True, gimg = gimg)
 
     if testing != None:
         for i in range(len(filteredvertices)):
             cv2.polylines(img,[filteredvertices[i]],True,(0,255,0),thickness=1)
+
+        show_image(img)
         
-        cv2.imwrite("det_"+str(testing).split("/")[-1],img)
+        #cv2.imwrite("det_"+str(testing).split("/")[-1],img)
 
     return filteredvertices

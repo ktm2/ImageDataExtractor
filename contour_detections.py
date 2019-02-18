@@ -27,20 +27,22 @@ def draw_contours(gimg,filteredvertices,imgname="img"):
 
 
 def find_draw_contours(img, blocksize = 151, blursize = 0, minarea = None, 
-    maxarea=None, displayimg=False, annotate=False, bounding_rect=False,
-    nofilter=False, restrict_rectangles=False, restrict_rectangles_color=None):
+    maxarea=None, testing = False, annotate=False, bounding_rect=False,
+    nofilter=False, restrict_rectangles=False, restrict_rectangles_color=None, contours_color = (0,0,255)):
     '''Find and draw contours on a given image.
     :param numpy.ndarray img: input image
     :param int blocksize: associated with adaptive thresholding.
     :param int blursize: associated with blurring step for noise reduction.
     :param int minarea: Minimum contour size in square pixels.
     :param int maxarea: Maximum contour size in sqaure pixels.
-    :param bool displayimg: Display image.
+    :param bool testing: Display image.
     :param bool annotate: Annotate the found particles in the output image.
     :param bool bounding_rect: Calculate the bounding rectangles of the found particles.
     :param bool nofilter: If true skip filtering and search raw image for contours.
     :param restrict_rectangles: Apply dimensional restrictions before outputting bounding rectangles.
     :param restrict_rectangles_color: Apply color restrictions before outputting bounding rectangles.
+    :param tuple contours_color: (b,g,r) of what color to draw detected contours if testing = True.
+
 
     :return list filteredvertices:
 
@@ -122,7 +124,7 @@ def find_draw_contours(img, blocksize = 151, blursize = 0, minarea = None,
 
 
             #Draw filtered contours on img.
-            cv2.polylines(drawingimg,[vertices],True,(0,0,255),thickness=1)
+            cv2.polylines(drawingimg,[vertices],True,contours_color,thickness=1)
 
 
             if bounding_rect==True:
@@ -185,7 +187,7 @@ def find_draw_contours(img, blocksize = 151, blursize = 0, minarea = None,
         contindex+=1
         
     #Displays output image.
-    if displayimg==True:
+    if testing == True:
         show_image(drawingimg,0,imgname="find_draw_contours")
 
     if bounding_rect==True:
@@ -194,7 +196,7 @@ def find_draw_contours(img, blocksize = 151, blursize = 0, minarea = None,
         return filteredvertices
 
 
-def find_draw_contours_main(img, blocksize, rows, cols, blursize = 0, displayimg = False,
+def find_draw_contours_main(img, blocksize, rows, cols, blursize = 0, testing = False,
     annotate = False, unbounded = False):
     '''Find and draw contours on a given image, this functions is similar to find_draw_contours, but has less options
     and is used for the initial contour detection.
@@ -204,7 +206,7 @@ def find_draw_contours_main(img, blocksize, rows, cols, blursize = 0, displayimg
     :param int rows: number of rows in image.
     :param int cols: number of cols in image.
     :param int blursize: associated with blurring step for noise reduction.
-    :param bool displayimg: Display image.
+    :param bool testing: Display image.
     :param bool annotate: Annotate the found particles in the output image.
     :param bool unbounded: Apply size restrictions to contours or not.
 
@@ -297,7 +299,7 @@ def find_draw_contours_main(img, blocksize, rows, cols, blursize = 0, displayimg
         contindex+=1
         
     #Displays output image.
-    if displayimg==True:
+    if testing == True:
         show_image(outputimg,0,imgname="all contours")
 
 
