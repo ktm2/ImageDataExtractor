@@ -46,6 +46,9 @@ def particle_identification(img, inlaycoords, testing = None, blocksize = 151, b
     #Break up large clusters.
     filteredvertices = cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, blocksize)
     
+    #Eliminate particles that touch edges or inlays.
+    filteredvertices = edge_correction(filteredvertices, rows, cols, inlaycoords)
+    
     #Ellipse fitting.
     particlediscreteness, filteredvertices = discreteness_index_and_ellipse_fitting(filteredvertices, img, rows,
     	cols, imgstdev)
