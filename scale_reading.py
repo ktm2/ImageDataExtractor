@@ -199,7 +199,7 @@ def find_text_and_bar(thresholdedimg,gimg,rows,cols,show=False,printer=False,bla
 
 
         filteredvertices,boundingrectanglewidths,boundingrectanglecoords=find_draw_contours \
-        (dilatedimg,151,minarea=10,displayimg=show,annotate=False,bounding_rect=True,restrict_rectangles=False)
+        (dilatedimg,151,minarea=10,testing=show,annotate=False,bounding_rect=True,restrict_rectangles=False)
 
 
         potential_scale_bar_regions=[]
@@ -218,7 +218,7 @@ def find_text_and_bar(thresholdedimg,gimg,rows,cols,show=False,printer=False,bla
                 #First checking if the region we've identified is a box containing information. As opposed to text put directly on the image.
 
                 box_filteredvertices,box_boundingrectanglewidths,box_boundingrectanglecoords=find_draw_contours\
-                (thresholdedimg[i[1]:i[1]+i[3],i[0]:i[0]+i[2]],151,minarea=10,displayimg=show,annotate=show,bounding_rect=True,restrict_rectangles=True)
+                (thresholdedimg[i[1]:i[1]+i[3],i[0]:i[0]+i[2]],151,minarea=10,testing=show,annotate=show,bounding_rect=True,restrict_rectangles=True)
                 
                 box_boundingrectanglecoords.sort(key=itemgetter(2))
                 box_boundingrectanglecoords.reverse()
@@ -228,7 +228,7 @@ def find_text_and_bar(thresholdedimg,gimg,rows,cols,show=False,printer=False,bla
                     box_in_box=gimg[i[1]+potential_box[1]:i[1]+potential_box[1]+potential_box[3],i[0]+potential_box[0]:i[0]+potential_box[0]+potential_box[2]]
 
                     box_in_box_filteredvertices=find_draw_contours\
-                (box_in_box,151,minarea=10,displayimg=show,annotate=show)
+                (box_in_box,151,minarea=10,testing=show,annotate=show)
 
 
                     #Check that we've found box and not just the scale bar by mistake. By making sure shapes exist within this region.
@@ -327,7 +327,7 @@ def find_text_and_bar(thresholdedimg,gimg,rows,cols,show=False,printer=False,bla
                                         scalevalue=greekengtextfromimage_edited_um.split("um")[0]
 
 
-                        if conversion == None and scalevalue == None and "nm" in greekengtextfromimage_edited_nm and any(char in digits for char in greekengtextfromimage_edited_nm):
+                        if scalevalue == None and "nm" in greekengtextfromimage_edited_nm and any(char in digits for char in greekengtextfromimage_edited_nm):
                             if len(greekengtextfromimage_edited_nm.split("nm")[0]) > 0:
                                 if (greekengtextfromimage_edited_nm.split("nm")[0][-1] == " " or \
                                 greekengtextfromimage_edited_nm.split("nm")[0][-1].isdigit() == True):
@@ -349,7 +349,7 @@ def find_text_and_bar(thresholdedimg,gimg,rows,cols,show=False,printer=False,bla
                                         if all(char in digits for char in greekengtextfromimage_raw_um.split("um")[0]):
                                             scalevalue=greekengtextfromimage_raw_um.split("um")[0]
 
-                            if conversion == None and scalevalue == None and "nm" in greekengtextfromimage_raw_nm and any(char in digits for char in greekengtextfromimage_raw_nm): 
+                            if scalevalue == None and "nm" in greekengtextfromimage_raw_nm and any(char in digits for char in greekengtextfromimage_raw_nm): 
                                 if len(greekengtextfromimage_raw_nm.split("nm")[0]) > 0:
                                     if (greekengtextfromimage_raw_nm.split("nm")[0][-1] == " " or \
                                     greekengtextfromimage_raw_nm.split("nm")[0][-1].isdigit() == True):
@@ -359,7 +359,7 @@ def find_text_and_bar(thresholdedimg,gimg,rows,cols,show=False,printer=False,bla
                                         if all(char in digits for char in greekengtextfromimage_raw_nm.split("nm")[0]):
                                             scalevalue=greekengtextfromimage_raw_nm.split("nm")[0]
 
-                            if conversion == None and scalevalue == None and 'um' in greekengtextfromimage_raw_inverted_um and any(char in digits for char in greekengtextfromimage_raw_inverted_um):  
+                            if scalevalue == None and 'um' in greekengtextfromimage_raw_inverted_um and any(char in digits for char in greekengtextfromimage_raw_inverted_um):  
                                 if len(greekengtextfromimage_raw_inverted_um.split("um")[0]) > 0:
                                     if (greekengtextfromimage_raw_inverted_um.split("um")[0][-1] == " " or \
                                     greekengtextfromimage_raw_inverted_um.split("um")[0][-1].isdigit() == True):
@@ -369,7 +369,7 @@ def find_text_and_bar(thresholdedimg,gimg,rows,cols,show=False,printer=False,bla
                                         if all(char in digits for char in greekengtextfromimage_raw_inverted_um.split("um")[0]):
                                             scalevalue=greekengtextfromimage_raw_inverted_um.split("um")[0]
 
-                            if conversion == None and scalevalue == None and "nm" in greekengtextfromimage_raw_inverted_nm and any(char in digits for char in greekengtextfromimage_raw_inverted_nm): 
+                            if scalevalue == None and "nm" in greekengtextfromimage_raw_inverted_nm and any(char in digits for char in greekengtextfromimage_raw_inverted_nm): 
                                 if len(greekengtextfromimage_raw_inverted_nm.split("nm")[0]) > 0:
                                     if (greekengtextfromimage_raw_inverted_nm.split("nm")[0][-1] == " " or \
                                     greekengtextfromimage_raw_inverted_nm.split("nm")[0][-1].isdigit() == True):
@@ -451,7 +451,7 @@ def find_text_and_bar(thresholdedimg,gimg,rows,cols,show=False,printer=False,bla
 
             #Search the area for rectangles.
             filteredvertices,boundingrectanglewidths,boundingrectanglecoords=find_draw_contours\
-        (regionsurroundingscalebar,151,minarea=10,nofilter=True,displayimg=show,annotate=show,bounding_rect=True,restrict_rectangles=True,restrict_rectangles_color=restrict_rectangles_color)
+        (regionsurroundingscalebar,151,minarea=10,nofilter=True,testing=show,annotate=show,bounding_rect=True,restrict_rectangles=True,restrict_rectangles_color=restrict_rectangles_color)
 
             #Quick filter on detected rectangle, w > h by at least 1.3 and width smaller than img width/1.5
             first_scale_bar_rectangles = [a for a in boundingrectanglecoords if float(a[2])/a[3] >= 1.3 and a[2] < cols/1.5]
