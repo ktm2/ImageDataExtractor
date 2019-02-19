@@ -505,11 +505,11 @@ def find_text_and_bar(thresholdedimg,gimg,rows,cols,show=False,printer=False,bla
                 for b in boxes_relative.splitlines():
                     b = b.split(' ')
 
-                    #print b
+                    if str(b[0]) in "0123456789num":
 
-                    b = [int(i) for i in b[1:5]]
+                        b = [int(i) for i in b[1:5]]
 
-                    boxes.append([(b[0]+region[0],region[3]-b[1]+region[1]),(b[2]+region[0],region[3]-b[3]+region[1])])
+                        boxes.append([(b[0]+region[0],region[3]-b[1]+region[1]),(b[2]+region[0],region[3]-b[3]+region[1])])
 
 
 
@@ -538,12 +538,20 @@ def find_text_and_bar(thresholdedimg,gimg,rows,cols,show=False,printer=False,bla
                 box_ys.append(box[0][1])
                 box_ys.append(box[1][1])
 
+            #     cv2.rectangle(gimg,(box[0][0],box[0][1]),(box[1][0],box[1][1]),
+            # (255,255,255),thickness=1)
+
+            # cv2.rectangle(gimg,(scalebar[0],scalebar[1]),(scalebar[0]+scalebar[2],scalebar[1]+scalebar[3]),
+            # (255,255,255),thickness=1)
+
+
 
             box_xs.append(scalebar[0])
             box_xs.append(scalebar[0]+scalebar[2])
 
             box_ys.append(scalebar[1])
             box_ys.append(scalebar[1]+scalebar[3])
+
 
             inlaycoords.append((min(box_xs),min(box_ys),max(box_xs)-min(box_xs),max(box_ys)-min(box_ys)))
 
