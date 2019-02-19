@@ -413,6 +413,8 @@ def find_text_and_bar(thresholdedimg,gimg,rows,cols,show=False,printer=False,bla
                         print "worked at pixel_value ", str(pixel_value+5) #since loop is stopped one loop too late
                         print "found eligible text, appended info"
                         print [i,conversion,scalevalue]
+                else:
+                    boxes = None
 
 
             area_index+=1
@@ -469,6 +471,7 @@ def find_text_and_bar(thresholdedimg,gimg,rows,cols,show=False,printer=False,bla
             filteredvertices,boundingrectanglewidths,boundingrectanglecoords=find_draw_contours\
         (regionsurroundingscalebar,151,minarea=10,nofilter=True,testing=show,annotate=show,bounding_rect=True,restrict_rectangles=True,restrict_rectangles_color=restrict_rectangles_color)
 
+
             #Quick filter on detected rectangle, w > h by at least 1.3 and width smaller than img width/1.5
             first_scale_bar_rectangles = [a for a in boundingrectanglecoords if float(a[2])/a[3] >= 1.3 and a[2] < cols/1.5]
 
@@ -523,7 +526,8 @@ def find_text_and_bar(thresholdedimg,gimg,rows,cols,show=False,printer=False,bla
             scalebarwidth=max(widths)
             scalebar,conversion,scalevalue,boxes = potential_scale_bars[widths.index(max(widths))]
 
-        if boxes is not None:
+        if all(i is not None for i in [scalebar, conversion, scalevalue, boxes]):
+
 
             ##more sophisticated inlay construction, going to pass image_to_boxes during reading and use it here.
             # using bounding boxes of detected characters + scalebar to determine accurate inlay location.
@@ -543,8 +547,6 @@ def find_text_and_bar(thresholdedimg,gimg,rows,cols,show=False,printer=False,bla
 
             # cv2.rectangle(gimg,(scalebar[0],scalebar[1]),(scalebar[0]+scalebar[2],scalebar[1]+scalebar[3]),
             # (255,255,255),thickness=1)
-
-
 
             box_xs.append(scalebar[0])
             box_xs.append(scalebar[0]+scalebar[2])
