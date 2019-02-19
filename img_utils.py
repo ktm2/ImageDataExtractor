@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 
+#some changes
 
 def ask_to_save_image(img, imgname):
     '''Asks user if current image should be saved. Useful for evaluation
