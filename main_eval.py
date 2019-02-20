@@ -138,7 +138,7 @@ def run(path_to_images, path_to_secondary = None):
     return
 
 
-path_to_images = "/Users/karim/Desktop/evaluation_images/1_sem_tio2_nano/2_karim_split/0_C6CE01551D_fig1_1.png"
+path_to_images = "/Users/karim/Desktop/evaluation_images/1_sem_tio2_nano/2_karim_split/0_B916167H_fig12_1.png"
 
 #0_C6CE01551D_fig1_1
 

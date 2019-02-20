@@ -220,7 +220,13 @@ def cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, 
     :param bool detailed_testing: display what's happening step by step, shows more substeps.
 
 
-    :return list clusterbreakupvertices: corrected list of vertices of detected particles. 
+    :return list clusterbreakupvertices: corrected list of vertices of detected particles.
+
+    TODO:
+    - Which particles should get cluster broken up, maybe all? being larger than global avg isnt useful
+    if most of the particles are detected as clusters.
+    - Implement restriction so that only coast-to-coast connection links can be formed?
+    Currently the closest two points within the ellipse area are being taken, does this make sense? 
     
     '''
 
