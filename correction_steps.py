@@ -178,8 +178,10 @@ def false_positive_correction(filteredvertices,arealist,colorlist,avgcolormean,a
     indextoremove=[]
 
     for i in range(len(colorlist)):
-        if (colorlist[i][0]<avgcolormean*0.6 or colorlist[i][1]<avgcolorstdev*0.25 \
-        or colorlist[i][0]>1.6*avgcolormean or colorlist[i][0]<2 or colorlist[i][0] > 240) == True:
+        if ((colorlist[i][0]<avgcolormean*0.6 and colorlist[i][1]<avgcolorstdev*0.25) \
+         or colorlist[i][0]<2 or colorlist[i][0] > 240) == True:
+
+        #or colorlist[i][0]>1.6*avgcolormean
 
             indextoremove.append(i)
 
@@ -394,8 +396,8 @@ def cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, 
                                     extconnectionpoint1=(connectionpoint1[0],int(connectionpoint1[1]-(pixelstoextendby)))
                                     extconnectionpoint2=(connectionpoint2[0],int(connectionpoint2[1]+(pixelstoextendby)))
 
-
-                                cv2.line(updatingimg,extconnectionpoint1,extconnectionpoint2,(0,0,0),thickness=2)
+                                #200219, using connectionpoint instead of extconnectionpoints
+                                cv2.line(updatingimg,connectionpoint1,connectionpoint2,(0,0,0),thickness=2)
                                 cv2.line(breakupimg,connectionpoint1,connectionpoint2,(0,255,0),thickness=1)
 
                                 if visualizemasking==True:

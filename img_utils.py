@@ -1,7 +1,44 @@
 import cv2
 import numpy as np
 
-#some changes
+
+def crop_image(img, crop_constant = 2):
+    '''Crop image in slightly, helps with splitting artifacts. 
+
+    :param numpy.ndarray img: the image to be framed.
+    :param int crop_constant: number of pixels to eat in.
+
+    :return numpy.ndarray img: cropped img.
+    '''
+
+    rows = len(img)
+    cols = len(img[0])
+
+    img = img[crop_constant:rows-crop_constant, crop_constant:cols-crop_constant]
+
+    return img
+
+
+def frame_image(img, frame_constant = 3):
+    '''Place a frame around the edges of the image, does not grow
+    instead replaces outermost pixels.
+
+    :param numpy.ndarray img: the image to be framed.
+    :param int frame_constant: number of pixels to eat in.
+
+    :return numpy.ndarray img: cropped img.
+    '''
+
+    rows = len(img)
+    cols = len(img[0])
+
+    cv2.rectangle(img,(0,0),(frame_constant,rows),(0,0,0),-1)
+    cv2.rectangle(img,(0,rows-frame_constant),(cols,rows),(0,0,0),-1)
+    cv2.rectangle(img,(0,0),(cols,frame_constant),(0,0,0),-1)
+    cv2.rectangle(img,(cols-frame_constant,0),(cols,rows),(0,0,0),-1)
+
+    return img
+
 
 def ask_to_save_image(img, imgname):
     '''Asks user if current image should be saved. Useful for evaluation
@@ -51,7 +88,7 @@ def image_metrics(gimg,displaymetrics=False):
     return rows, cols, imgarea, imgmean, imgstdev, crossstdev
 
 
-def show_image(imgfilename,waitkey = 0,imgname = None,mag = None):
+def show_image(imgfilename,waitkey = 0,imgname = None,mag = 2):
     '''Used to display images in cv2 format
     :param numpy.ndarray imgfilename: input image.
     :param int waitkey: miliseconds to display image, if 0 user must close manually
@@ -67,6 +104,7 @@ def show_image(imgfilename,waitkey = 0,imgname = None,mag = None):
         imgfilename = cv2.resize(imgfilename,None,fx = mag, fy = mag)
 
     cv2.imshow(imgname,imgfilename)
+    cv2.moveWindow(imgname,0,0)
     cv2.waitKey(waitkey)
     cv2.destroyAllWindows()
     

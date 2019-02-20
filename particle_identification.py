@@ -26,6 +26,11 @@ def particle_identification(img, inlaycoords, testing = None, blocksize = 151, b
     else:
         gimg = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 
+
+    #Crop around edges of image.
+    img = crop_image(img)
+    gimg = crop_image(gimg)
+
     #Calculate image metrics.
     rows, cols, imgarea, imgmean, imgstdev, crossstdev = image_metrics(gimg)
 
@@ -44,7 +49,7 @@ def particle_identification(img, inlaycoords, testing = None, blocksize = 151, b
     	avgcolorstdev, testing = True, gimg = gimg)
 
     #Break up large clusters.
-    filteredvertices = cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, blocksize, testing = True, detailed_testing = False)
+    filteredvertices = cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, blocksize, testing = True, detailed_testing = True)
 
     #Eliminate particles that touch edges or inlays.
     filteredvertices = edge_correction(filteredvertices, rows, cols, inlaycoords, testing = True, gimg = gimg)
@@ -62,6 +67,6 @@ def particle_identification(img, inlaycoords, testing = None, blocksize = 151, b
 
         show_image(img)
         
-        #cv2.imwrite("det_"+str(testing).split("/")[-1],img)
+        cv2.imwrite("det_"+str(testing).split("/")[-1],img)
 
     return filteredvertices
