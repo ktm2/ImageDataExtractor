@@ -44,7 +44,7 @@ def particle_identification(img, inlaycoords, testing = None, blocksize = 151, b
     	avgcolorstdev, testing = True, gimg = gimg)
 
     #Break up large clusters.
-    filteredvertices = cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, blocksize, testing = True, detailed_testing = True)
+    filteredvertices = cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, blocksize, testing = True, detailed_testing = False)
 
     #Eliminate particles that touch edges or inlays.
     filteredvertices = edge_correction(filteredvertices, rows, cols, inlaycoords, testing = True, gimg = gimg)

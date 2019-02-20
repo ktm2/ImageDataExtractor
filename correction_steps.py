@@ -117,11 +117,6 @@ def particle_metrics_from_vertices(img,gimg,rows,cols,filteredvertices):
         ycom=int(ycom)
        	contradius=int(contradius)
 
-
-
-
-
-
         #y and x's are inverted due to the way you scan a np. array..
         ystart=int(xcom-2*contradius) 
         yend=int(xcom+2*contradius)   
@@ -456,7 +451,9 @@ def discreteness_index_and_ellipse_fitting(edgecorrectedvertices,img,rows,cols,i
     
     '''
 
-    ellimg=img.copy()
+    ellimg = img.copy()
+    gimg = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+
 
     particlediscreteness=[]
     ellipsefittedvertices=[]
@@ -481,7 +478,7 @@ def discreteness_index_and_ellipse_fitting(edgecorrectedvertices,img,rows,cols,i
         bufferfromborder=3
         hull=cv2.convexHull(i)
 
-        if len(hull)>4:
+        if len(hull) > 4:
 
             ellipse=cv2.fitEllipse(np.array(hull))
             ellipsepoly=cv2.ellipse2Poly((int(ellipse[0][0]), 
@@ -543,14 +540,65 @@ def discreteness_index_and_ellipse_fitting(edgecorrectedvertices,img,rows,cols,i
             particleDI=float((sum(reds)-sum(blues))/len(i))
             ellipseDI=float((sum(ellipsereds)-sum(ellipseblues))/len(ellipsepoly))
 
-            if particleDI>ellipseDI:
-                particlediscreteness.append(particleDI)
-                ellipsefittedvertices.append(i)
+
+            #Crude way of comparing colors of particle/ellipse.
+
+            color_means = []
+            color_stdevs = []
+
+            #ellipsepoly and i 
+            for particle in [ellipsepoly,i]:
+
+                indivcolorimg=img.copy()
+
+                cv2.fillPoly(indivcolorimg,[particle],(0,0,255))
+
+                shapearea=[]
+
+                (xcom,ycom),contradius = cv2.minEnclosingCircle(particle)
+                xcom=int(xcom)
+                ycom=int(ycom)
+                contradius=int(contradius)
+
+                #y and x's are inverted due to the way you scan a np. array..
+                ystart=int(xcom-2*contradius) 
+                yend=int(xcom+2*contradius)   
+                xstart=int(ycom-2*contradius)
+                xend=int(ycom+2*contradius)
+
+                if ystart<0:
+                    ystart=0
+                if yend>cols:
+                    yend=cols
+                if xstart<0:
+                    xstart=0
+                if xend>rows:
+                    xend=rows
+
+                for x in range(xstart,xend):
+                    for y in range(ystart,yend):
+                        if indivcolorimg[x][y][2]==255 and indivcolorimg[x][y][0]==0:
+                            shapearea.append(gimg[x][y])
 
 
-            else:
+                colormean=sum(shapearea)/len(shapearea)
+                colorstdev=np.std(shapearea)
+
+                color_means.append(colormean)
+                color_stdevs.append(colorstdev)
+
+
+            ellipse_color_mean, particle_color_mean = color_means
+            ellipse_color_stdev, particle_color_stdev = color_stdevs
+
+            if ellipseDI > particleDI and (ellipse_color_stdev < particle_color_stdev * 1.25):
                 particlediscreteness.append(ellipseDI)
                 ellipsefittedvertices.append(ellipsepoly)
+
+            else:
+                particlediscreteness.append(particleDI)
+                ellipsefittedvertices.append(i)
+                
 
             cv2.polylines(ellimg,[i],True,(0,255,0),thickness=1)
             cv2.polylines(ellimg,[ellipsepoly],True,(0,0,255),thickness=1)
@@ -558,8 +606,10 @@ def discreteness_index_and_ellipse_fitting(edgecorrectedvertices,img,rows,cols,i
             particleindex+=1
 
 
-    #Hierarchy filtering.
 
+
+
+    #Hierarchy filtering.
     index_to_remove = []
     particles_to_remove = []
     particle_pairs = itertools.combinations(ellipsefittedvertices, 2)
@@ -588,7 +638,6 @@ def discreteness_index_and_ellipse_fitting(edgecorrectedvertices,img,rows,cols,i
 
             if cv2.pointPolygonTest(pair[0],point1,False) == 1:
                 second_in_first +=1
-
 
 
         #if more than half the vertices of the first cont are inside the second.
