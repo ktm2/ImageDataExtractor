@@ -322,7 +322,7 @@ def cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, 
                             
                             maskimg[:] = (0, 0, 0)
                             l=int((avgarea**0.5)/4)
-                            cv2.ellipse(maskimg, far, (l,2*l), angle, 10, 170, (255,255,255), -1)
+                            cv2.ellipse(maskimg, far, (int(0.9*l),2*l), angle, 0, 180, (255,255,255), -1)
 
                             oppositeface=[]
 
@@ -344,7 +344,7 @@ def cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, 
                                 cv2.circle(maskingvisualization,far,2,(0,0,255),-1)
                                 
 
-                                cv2.ellipse(maskingvisualization, far, (l,2*l), angle, 10, 170, (255,255,255), 1)
+                                cv2.ellipse(maskingvisualization, far, (int(0.9*l),2*l), angle, 0, 180, (255,255,255), 1)
 
                                 #cv2.putText(maskingvisualization,str(gradient),midpoint,cv2.FONT_HERSHEY_COMPLEX,0.4,(255,255,255),thickness=1) 
                                 #cv2.putText(maskingvisualization,str(angle),far,cv2.FONT_HERSHEY_COMPLEX,0.4,(255,255,255),thickness=1)
@@ -353,8 +353,13 @@ def cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, 
 
 
 
-                            dilationkernel = np.ones((2,2),np.uint8)
-                            dilatedimg = cv2.dilate(maskedresult, dilationkernel, iterations=1)
+                            #dilationkernel = np.ones((2,2),np.uint8)
+                            #dilatedimg = cv2.dilate(maskedresult, dilationkernel, iterations=1)
+
+                            #show_image(maskedresult)
+                            #show_image(dilatedimg)
+
+                            dilatedimg = maskedresult
 
                             unknownvar,contours,h = cv2.findContours(cv2.cvtColor(dilatedimg,cv2.COLOR_BGR2GRAY),cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
 
@@ -380,25 +385,33 @@ def cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, 
                                 connectionpoint2 = tuple(pointpairs[distances.index(min(distances))][1])
                                 connectionlength = distance_formula(connectionpoint1,connectionpoint2)
                                 
-                                if connectionlength<10:
-                                    pixelstoextendby=-5
-                                
-                                else:
-                                    pixelstoextendby=connectionlength/-2
 
-                                if float(connectionpoint2[0]-connectionpoint1[0])!=0:
+                                pixelstoextendby = 3
 
-                                    slopebetweenconnection=(connectionpoint2[1]-connectionpoint1[1])/float(connectionpoint2[0]-connectionpoint1[0])
-                                    extconnectionpoint1=(int(connectionpoint1[0]-pixelstoextendby),int(connectionpoint1[1]-(pixelstoextendby*slopebetweenconnection)))
-                                    extconnectionpoint2=(int(connectionpoint2[0]+pixelstoextendby),int(connectionpoint2[1]+(pixelstoextendby*slopebetweenconnection)))
+                                extconnectionpoint1 = list(connectionpoint1)
+                                extconnectionpoint2 = list(connectionpoint2)
 
-                                else:
-                                    extconnectionpoint1=(connectionpoint1[0],int(connectionpoint1[1]-(pixelstoextendby)))
-                                    extconnectionpoint2=(connectionpoint2[0],int(connectionpoint2[1]+(pixelstoextendby)))
+                                if connectionpoint1[0] > connectionpoint2[0]:
+                                    extconnectionpoint1[0] = connectionpoint1[0] + pixelstoextendby
+                                    extconnectionpoint2[0] = connectionpoint2[0] - pixelstoextendby
 
-                                #200219, using connectionpoint instead of extconnectionpoints
-                                cv2.line(updatingimg,connectionpoint1,connectionpoint2,(0,0,0),thickness=2)
-                                cv2.line(breakupimg,connectionpoint1,connectionpoint2,(0,255,0),thickness=1)
+                                elif connectionpoint1[0] < connectionpoint2[0]:
+                                    extconnectionpoint1[0] = connectionpoint1[0] - pixelstoextendby
+                                    extconnectionpoint2[0] = connectionpoint2[0] + pixelstoextendby
+
+                                if connectionpoint1[1] > connectionpoint2[1]:
+                                    extconnectionpoint1[1] = connectionpoint1[1] + pixelstoextendby
+                                    extconnectionpoint2[1] = connectionpoint2[1] - pixelstoextendby
+
+                                elif connectionpoint1[1] < connectionpoint2[1]:
+                                    extconnectionpoint1[1] = connectionpoint1[1] - pixelstoextendby
+                                    extconnectionpoint2[1] = connectionpoint2[1] + pixelstoextendby
+
+                                extconnectionpoint1 = tuple(extconnectionpoint1)
+                                extconnectionpoint2 = tuple(extconnectionpoint2)
+
+                                cv2.line(updatingimg,extconnectionpoint1,extconnectionpoint2,(0,0,0),thickness=2)
+                                cv2.line(breakupimg,extconnectionpoint1,extconnectionpoint2,(0,255,0),thickness=1)
 
                                 if visualizemasking==True:
                                     cv2.circle(maskingvisualization,tuple(pointpairs[distances.index(min(distances))][0]),2,(255,0,255),-1)
