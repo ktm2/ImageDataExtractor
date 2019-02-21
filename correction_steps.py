@@ -223,10 +223,22 @@ def cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, 
     :return list clusterbreakupvertices: corrected list of vertices of detected particles.
 
     TODO:
+
+    should pixels_to_extend_by depend on the length of the connection line?
+
+    increased this greatly, all particles get broken up unless they are exceptionally small.
     - Which particles should get cluster broken up, maybe all? being larger than global avg isnt useful
     if most of the particles are detected as clusters.
-    - Implement restriction so that only coast-to-coast connection links can be formed?
-    Currently the closest two points within the ellipse area are being taken, does this make sense? 
+
+    no need for this anymore?
+    Ellipse range should be narrower and pointier, getting too many sideways connections than coast-to-coast
+    
+    made this /15
+    More convex hull defects should be analyzed, not just d/256 > sqrt (area) /10
+    
+    done
+    Should be only coast to coast connections, question is should defect point be connectionpoint1 by default?
+    ****Contour in which defect point lies has to be part of any pair.
     
     '''
 
@@ -255,7 +267,7 @@ def cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, 
         maskimg=breakupimg.copy()
 
 
-        if arealist[i]> 2*avgarea or arealist[i]>(rows*cols)/2:
+        if arealist[i]> 0.5*avgarea or arealist[i]>(rows*cols)/2:
 
 
             cv2.polylines(breakupimg,[filteredvertices[i]],True,(0,255,0),thickness=1)
@@ -281,10 +293,8 @@ def cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, 
                         end = tuple(vert[e][0])
                         far = tuple(vert[f][0])
 
+                    if (d/256.0) > (arealist[i]**0.5)/15.0:
 
-                    if (d/256.0) > (arealist[i]**0.5)/10.0:
-
-                            # print "d ", d/256.0
                             # print "arearoot/10 ", (arealist[i]**0.5)/10
 
 
@@ -356,6 +366,7 @@ def cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, 
                                 #cv2.putText(maskingvisualization,str(angle),far,cv2.FONT_HERSHEY_COMPLEX,0.4,(255,255,255),thickness=1)
 
                                 show_image(maskingvisualization)
+                                show_image(maskedresult)
 
 
 
@@ -369,9 +380,23 @@ def cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, 
 
                             unknownvar,contours,h = cv2.findContours(cv2.cvtColor(dilatedimg,cv2.COLOR_BGR2GRAY),cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
 
+
+
+
                             if len(contours)>1:
 
-                                contourpairs=itertools.combinations(contours, 2)
+                                #One of the contour pairs searched must include the point "far"
+                                for cont in contours:
+                                    if far in cont:
+                                        far_cont = cont
+
+                                contourpairs = []
+
+                                for cont in contours:
+                                    if not np.array_equal(cont,far_cont):
+                                        contourpairs.append((far_cont,cont))
+
+                                #contourpairs=itertools.combinations(contours, 2)
                                 distances=[]
                                 pointpairs=[]
 
@@ -392,10 +417,12 @@ def cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, 
                                 connectionlength = distance_formula(connectionpoint1,connectionpoint2)
                                 
 
-                                pixelstoextendby = 3
+                                pixelstoextendby = 2
 
                                 extconnectionpoint1 = list(connectionpoint1)
                                 extconnectionpoint2 = list(connectionpoint2)
+
+
 
                                 if connectionpoint1[0] > connectionpoint2[0]:
                                     extconnectionpoint1[0] = connectionpoint1[0] + pixelstoextendby
@@ -405,13 +432,22 @@ def cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, 
                                     extconnectionpoint1[0] = connectionpoint1[0] - pixelstoextendby
                                     extconnectionpoint2[0] = connectionpoint2[0] + pixelstoextendby
 
+                                #need to incorporate slope here, rather than just add same value to both x,y. Is this right?
+
+                                if connectionpoint2[0] != connectionpoint1[0]:
+                                    slope_between_conn_points = (connectionpoint2[1]-connectionpoint1[1])/float(connectionpoint2[0]-connectionpoint1[0])
+                                    pixelstoextendby = pixelstoextendby * slope_between_conn_points
+
+
+
                                 if connectionpoint1[1] > connectionpoint2[1]:
-                                    extconnectionpoint1[1] = connectionpoint1[1] + pixelstoextendby
-                                    extconnectionpoint2[1] = connectionpoint2[1] - pixelstoextendby
+                                    extconnectionpoint1[1] = int(connectionpoint1[1] + pixelstoextendby)
+                                    extconnectionpoint2[1] = int(connectionpoint2[1] - pixelstoextendby)
 
                                 elif connectionpoint1[1] < connectionpoint2[1]:
-                                    extconnectionpoint1[1] = connectionpoint1[1] - pixelstoextendby
-                                    extconnectionpoint2[1] = connectionpoint2[1] + pixelstoextendby
+                                    extconnectionpoint1[1] = int(connectionpoint1[1] - pixelstoextendby)
+                                    extconnectionpoint2[1] = int(connectionpoint2[1] + pixelstoextendby)
+
 
                                 extconnectionpoint1 = tuple(extconnectionpoint1)
                                 extconnectionpoint2 = tuple(extconnectionpoint2)

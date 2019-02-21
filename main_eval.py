@@ -94,7 +94,7 @@ def run(path_to_images, path_to_secondary = None):
         secondary.extend([a.split('/')[-1][9:] for a in glob.glob(path_to_secondary)])
 
     for imgname in images:
-        if imgname.split('/')[-1] not in secondary:
+        if imgname.split('/')[-1] in secondary:
             print "Scale and particle detection begun on: " + str(imgname)
 
             filteredvertices, scale = main_detection(imgname)
@@ -140,9 +140,7 @@ def run(path_to_images, path_to_secondary = None):
 
 path_to_images = "/Users/karim/Desktop/evaluation_images/1_sem_tio2_nano/2_karim_split/0_B916167H_fig12_1.png"
 
-#0_C6CE01551D_fig1_1
-
-path_to_secondary = None
+path_to_secondary = "/Users/karim/Desktop/evaluation_images/1_sem_tio2_nano/3_scalebar/true_positives/*.png"
 
 run(path_to_images, path_to_secondary)
 
