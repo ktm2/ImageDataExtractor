@@ -172,9 +172,15 @@ def false_positive_correction(filteredvertices,arealist,colorlist,avgcolormean,a
     :return list filteredvertices: corrected list of vertices of particles.
     :return list arealist: updated list of particle sizes.
 
+    TODO:
+
+    - Absolute floor for colorstdev necessary?? check for img det_0_C4CE00151F_fig1_1
+
     '''
 
     #Create new list of false-positive-filtered vertices.
+
+
     indextoremove=[]
 
     for i in range(len(colorlist)):
@@ -224,22 +230,7 @@ def cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, 
 
     TODO:
 
-    should pixels_to_extend_by depend on the length of the connection line?
-
-    increased this greatly, all particles get broken up unless they are exceptionally small.
-    - Which particles should get cluster broken up, maybe all? being larger than global avg isnt useful
-    if most of the particles are detected as clusters.
-
-    no need for this anymore?
-    Ellipse range should be narrower and pointier, getting too many sideways connections than coast-to-coast
-    
-    made this /15
-    More convex hull defects should be analyzed, not just d/256 > sqrt (area) /10
-    
-    done
-    Should be only coast to coast connections, question is should defect point be connectionpoint1 by default?
-    ****Contour in which defect point lies has to be part of any pair.
-    
+    should pixels_to_extend_by depend on the length of the connection line?    
     '''
 
     # Cluster breakup: attempt to break apart clusters of particles detected as one large particle by identifiying 
@@ -711,7 +702,7 @@ def discreteness_index_and_ellipse_fitting(edgecorrectedvertices,img,rows,cols,i
     for i in sorted(index_to_remove,reverse=True):
         del ellipsefittedvertices[i]
 
-    show_image(ellimg)
+    #show_image(ellimg)
 
 
     return particlediscreteness, ellipsefittedvertices

@@ -35,7 +35,7 @@ def particle_identification(img, inlaycoords, testing = None, blocksize = 151, b
     rows, cols, imgarea, imgmean, imgstdev, crossstdev = image_metrics(gimg)
 
     #Initial contour detection.
-    filteredvertices = find_draw_contours_main(img,blocksize,rows,cols,blursize, testing = True)
+    filteredvertices = find_draw_contours_main(img,blocksize,rows,cols,blursize, testing = False)
 
     if len(filteredvertices) == 0:
         return []
@@ -46,26 +46,26 @@ def particle_identification(img, inlaycoords, testing = None, blocksize = 151, b
 
     #Eliminate false positives.
     filteredvertices, arealist = false_positive_correction(filteredvertices, arealist, colorlist, avgcolormean,
-    	avgcolorstdev, testing = True, gimg = gimg)
+    	avgcolorstdev, testing = False, gimg = gimg)
 
     #Break up large clusters.
-    filteredvertices = cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, blocksize, testing = True, detailed_testing = True)
+    filteredvertices = cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, blocksize, testing = False, detailed_testing = False)
 
     #Eliminate particles that touch edges or inlays.
-    filteredvertices = edge_correction(filteredvertices, rows, cols, inlaycoords, testing = True, gimg = gimg)
+    filteredvertices = edge_correction(filteredvertices, rows, cols, inlaycoords, testing = False, gimg = gimg)
 
     #Ellipse fitting.
     particlediscreteness, filteredvertices = discreteness_index_and_ellipse_fitting(filteredvertices, img, rows,
     	cols, imgstdev)
 
     #Eliminate particles that touch edges or inlays.
-    filteredvertices = edge_correction(filteredvertices, rows, cols, inlaycoords, testing = True, gimg = gimg)
+    filteredvertices = edge_correction(filteredvertices, rows, cols, inlaycoords, testing = False, gimg = gimg)
 
     if testing != None:
         for i in range(len(filteredvertices)):
             cv2.polylines(img,[filteredvertices[i]],True,(0,255,0),thickness=1)
 
-        show_image(img)
+        #show_image(img)
         
         cv2.imwrite("det_"+str(testing).split("/")[-1],img)
 
