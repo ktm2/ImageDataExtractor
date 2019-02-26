@@ -34,6 +34,8 @@ def main_detection(imgname):
 
     scale, inlaycoords = scalebar_identification(img, testing = imgname)
 
+    return None, None
+
     filteredvertices = particle_identification(img, inlaycoords, testing = imgname)
 
 
@@ -155,18 +157,18 @@ def run(path_to_images, path_to_secondary = None):
                     particle_index+=1
 
                 outfile.close()
-                cv2.imwrite("ann_"+str(imgname.split('/')[-1]),img)
-
-
-          
-
+                cv2.imwrite("ann_"+str(imgname.split('/')[-1]), img)
 
     return
 
 
-path_to_images = "/Users/karim/Desktop/evaluation_images/1_sem_tio2_nano/2_karim_split/*.png"
+# path_to_images = "/Users/karim/Desktop/evaluation_images/1_sem_tio2_nano/2_karim_split/*.png"
+#
+# path_to_secondary = "/Users/karim/Desktop/evaluation_images/1_sem_tio2_nano/3_scalebar/true_positives/*.png"
 
-path_to_secondary = "/Users/karim/Desktop/evaluation_images/1_sem_tio2_nano/3_scalebar/true_positives/*.png"
+path_to_images = "/home/batuhan/Documents/PhD Physics/Projects/imagedataextractor130219_2/2_karim_split/*.png"
+
+path_to_secondary = "/home/batuhan/Documents/PhD Physics/Projects/imagedataextractor130219_2/3_scalebar/false_negative/*.png"
 
 run(path_to_images, path_to_secondary)
 

@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import keras.backend as K
 
 
 def crop_image(img, crop_constant = 2):
@@ -124,4 +125,11 @@ def distance_formula(a,b):
 
     return d
 
+
+def psnr(y_true, y_pred):
+    diff = y_pred - y_true
+    diff = K.flatten(diff)
+    rmse = K.sqrt(K.mean(diff ** 2.))
+    log10 = K.log(255.0/rmse) / K.log(10.0)
+    return 20.0 * log10
 
