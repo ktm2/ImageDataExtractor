@@ -76,13 +76,14 @@ def edge_correction(filteredvertices,rows,cols,inlaycoords, testing = False, gim
     return edgecorrectedvertices
 
 
-def particle_metrics_from_vertices(img,gimg,rows,cols,filteredvertices):
+def particle_metrics_from_vertices(img,gimg,rows,cols,filteredvertices, invert = False):
     '''Returns particle metrics using vertices and img
     :param numpy.ndarray img: original RGB image
     :param numpy.ndarray gimg: original img in grayscale
     :param int rows: number of rows in image.
     :param int cols: number of columns in image.
     :param list filteredvertices: list of vertices of detected particles.
+    :param bool invert: If an inverted image is being used, makes sure the original is used for metrics.
 
     :return list colorlist: list of average color (mean pixel intensity) of each particle.
     :return list arealist: list of average size (how many pixels) of each particle.
@@ -93,6 +94,8 @@ def particle_metrics_from_vertices(img,gimg,rows,cols,filteredvertices):
 
     '''
 
+    if invert == True:
+        gimg = (255-gimg)
 
     arealist = []
     colorlist = []
@@ -229,14 +232,10 @@ def cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, 
     :return list clusterbreakupvertices: corrected list of vertices of detected particles.
 
     TODO:
+    - Ellipse sizes should not depend on avg_area, maybe on overall img size?
 
     should pixels_to_extend_by depend on the length of the connection line?    
     '''
-
-    # Cluster breakup: attempt to break apart clusters of particles detected as one large particle by identifiying 
-    # bottle necks (the thinnest part where two particles are
-    # "sintered") and joining those bottle necks. 
-
 
     breakuptesting = testing
     

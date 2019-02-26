@@ -196,12 +196,14 @@ def find_draw_contours(img, blocksize = 151, blursize = 0, minarea = None,
         return filteredvertices
 
 
-def find_draw_contours_main(img, blocksize, rows, cols, blursize = 0, testing = False,
+def find_draw_contours_main(img, gimg,blocksize, rows, cols, blursize = 0, testing = False,
     annotate = False, unbounded = False):
     '''Find and draw contours on a given image, this functions is similar to find_draw_contours, but has less options
     and is used for the initial contour detection.
 
     :param numpy.ndarray img: input image
+    :param numpy.ndarray gimg: input image in grayscale.
+
     :param int blocksize: associated with adaptive thresholding.
     :param int rows: number of rows in image.
     :param int cols: number of cols in image.
@@ -220,20 +222,6 @@ def find_draw_contours_main(img, blocksize, rows, cols, blursize = 0, testing = 
 
     outputimg = img.copy()
     imgarea = rows*cols
-
-
-    #Apply filters to image.
-
-    #img already grayscale.
-    if len(img.shape)==2:
-        gimg=img
-    #img is in color, convert to grayscale.
-    else:
-        gimg=cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-
-
-
-
 
 
 

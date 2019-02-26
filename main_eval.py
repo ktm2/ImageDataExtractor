@@ -36,6 +36,33 @@ def main_detection(imgname):
 
     filteredvertices = particle_identification(img, inlaycoords, testing = imgname)
 
+
+    #If less than 3 particles are found, redo analysis with inverted colors.
+    if len(filteredvertices) < 3:
+        filteredvertices_inverted = particle_identification(img, inlaycoords, testing = imgname, invert = True)
+
+        if len(filteredvertices_inverted) > 0:
+            if len(img.shape) == 2:
+                gimg = img
+            else:
+                gimg = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+
+            rows = len(img)
+            cols = len(img[0])
+
+            if len(filteredvertices) > 0: 
+                arealist = particle_metrics_from_vertices(img, gimg, rows, cols, filteredvertices)[1]
+            else:
+                arealist = []
+
+            arealist_inv = particle_metrics_from_vertices(img, gimg, rows, cols, filteredvertices_inverted)[1]
+
+            #If more overall area is attributed to particles in the inverted form, that version is passed to 
+            #the calculation steps, both images get written out.
+            if sum(arealist_inv) > sum(arealist):
+                filteredvertices = filteredvertices_inverted
+
+
     return filteredvertices, scale
 
 def after_detection(imgname, filteredvertices, scale):
@@ -137,9 +164,9 @@ def run(path_to_images, path_to_secondary = None):
     return
 
 
-path_to_images = "/Users/karim/Desktop/evaluation_images/2_sem_tio2_nano/2_karim_split/*.png"
+path_to_images = "/Users/karim/Desktop/evaluation_images/1_sem_tio2_nano/2_karim_split/*.png"
 
-path_to_secondary = "/Users/karim/Desktop/evaluation_images/2_sem_tio2_nano/3_scalebar/true_positives/*.png"
+path_to_secondary = "/Users/karim/Desktop/evaluation_images/1_sem_tio2_nano/3_scalebar/true_positives/*.png"
 
 run(path_to_images, path_to_secondary)
 
