@@ -29,7 +29,7 @@ def main_detection(imgname):
     img = cv2.imread(imgname)
 
     if len(img) * len(img[0]) < 50000:
-        print "img smaller than 50k"
+        print("img smaller than 50k")
         return None,None
 
     scale, inlaycoords = scalebar_identification(img, testing = imgname)
@@ -121,7 +121,7 @@ def run(path_to_images, path_to_secondary = None):
 
     for imgname in images:
         if imgname.split('/')[-1] in secondary:
-            print "Scale and particle detection begun on: " + str(imgname)
+            print("Scale and particle detection begun on: " + str(imgname))
 
             filteredvertices, scale = main_detection(imgname)
 

@@ -79,11 +79,12 @@ def image_metrics(gimg,displaymetrics=False):
     crossstdev = np.std(np.diagonal(gimg))
 
     if displaymetrics == True:
-        print "mean: " + str(imgmean)
-        print "stdev: " + str(imgstdev)
-        print "area: " + str(imgarea)
-        print "crossstdev: " + str(crossstdev)
-        plt.hist(gimg.ravel(),256,[0,256]); plt.show()
+        print("mean: " + str(imgmean))
+        print("stdev: " + str(imgstdev))
+        print("area: " + str(imgarea))
+        print("crossstdev: " + str(crossstdev))
+        plt.hist(gimg.ravel(),256,[0,256])
+        plt.show()
 
     return rows, cols, imgarea, imgmean, imgstdev, crossstdev
 

@@ -42,15 +42,14 @@ def scalebar_identification(img, testing = None):
     if testing != None:
         output_img = img.copy()
         if scalebar != None:
-    	   cv2.rectangle(output_img,(scalebar[0],scalebar[1]),(scalebar[0]+scalebar[2],scalebar[1]+scalebar[3]),
+            cv2.rectangle(output_img,(scalebar[0],scalebar[1]),(scalebar[0]+scalebar[2],scalebar[1]+scalebar[3]),
             (0,0,255),thickness=1)
         if len(inlaycoords) > 0:
             for box in inlaycoords:
                 cv2.rectangle(output_img,(box[0],box[1]),(box[0]+box[2],box[1]+box[3]),
             (255,0,0),thickness=1)
 
-    	cv2.putText(output_img, str(scalevalue)+"*"+str(conversion), (cols/2,rows/2),cv2.FONT_HERSHEY_PLAIN,1,
-            (0,0,255),thickness=1)
+        cv2.putText(output_img, str(scalevalue)+"*"+str(conversion), (cols//2,rows//2),cv2.FONT_HERSHEY_PLAIN,1, (0,0,255),thickness=1)
         cv2.imwrite("scalebar_"+str(testing).split("/")[-1],output_img)
 
     if scalebar != None:

@@ -58,7 +58,7 @@ def edge_correction(filteredvertices,rows,cols,inlaycoords, testing = False, gim
             removedvertices.append(vertices)
 
     if testing == True:
-        print str(len(removedvertices)) + " particles removed."
+        print(str(len(removedvertices)) + " particles removed.")
 
         for inlay in inlaycoords:
             growby = 2 #pixels
@@ -197,7 +197,7 @@ def false_positive_correction(filteredvertices,arealist,colorlist,avgcolormean,a
     indextoremove=list(set(indextoremove))
 
     if testing == True:
-        print str(len(indextoremove)) + " false positives removed."
+        print(str(len(indextoremove)) + " false positives removed.")
 
         if len(indextoremove)>0:
             removedvertices=[]

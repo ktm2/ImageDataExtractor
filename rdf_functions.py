@@ -24,7 +24,7 @@ def calculate_rdf(filteredvertices,rows,cols,scale,increment=2,progress=True):
 
 
     if progress == True:
-        print "RDF calculation: "
+        print("RDF calculation: ")
 
 
     #Create blank canvases to draw particle pairs on.
@@ -55,7 +55,7 @@ def calculate_rdf(filteredvertices,rows,cols,scale,increment=2,progress=True):
     for particleA in filteredvertices:
 
         if progress == True:
-            print 'RDF calculation on ' + str(particle_index) + '/' + str(numberofparticles)
+            print('RDF calculation on ' + str(particle_index) + '/' + str(numberofparticles))
             particle_index += 1
 
         ###### numpy.array_equal?

@@ -213,7 +213,7 @@ def find_text_and_bar(thresholdedimg,gimg,rows,cols,show=False,printer=False,bla
         for i in boundingrectanglecoords:
 
             if printer == True:
-                print area_index, " out of ", len(boundingrectanglecoords)
+                print(area_index, " out of ", len(boundingrectanglecoords))
 
             is_box_in_box=False
             region_size = int(i[2])*int(i[3])
@@ -246,7 +246,7 @@ def find_text_and_bar(thresholdedimg,gimg,rows,cols,show=False,printer=False,bla
                     break
 
                 if printer == True:
-                    print "is_box_in_box" , is_box_in_box
+                    print("is_box_in_box" , is_box_in_box)
 
                 #These get set to None each loop unless both can be identified simultaneously further down.
                 conversion = None
@@ -276,11 +276,11 @@ def find_text_and_bar(thresholdedimg,gimg,rows,cols,show=False,printer=False,bla
 
                         if printer == True:
 
-                            print "greek&eng_edited_nm"
-                            print greekengtextfromimage_edited_nm
+                            print("greek&eng_edited_nm")
+                            print(greekengtextfromimage_edited_nm)
 
-                            print "greek&eng_edited_um"
-                            print greekengtextfromimage_edited_um
+                            print("greek&eng_edited_um")
+                            print(greekengtextfromimage_edited_um)
 
                         if show == True:
                             show_image(region_surrounding_text_reading,0,"blurred")
@@ -294,11 +294,11 @@ def find_text_and_bar(thresholdedimg,gimg,rows,cols,show=False,printer=False,bla
                             greekengtextfromimage_raw_um, raw_um_boxes = read_image(inverted, unit = "um")
 
                             if printer == True:
-                                print "greek&eng_raw_nm"
-                                print greekengtextfromimage_raw_nm
+                                print("greek&eng_raw_nm")
+                                print(greekengtextfromimage_raw_nm)
 
-                                print "greek&eng_raw_um"
-                                print greekengtextfromimage_raw_um
+                                print("greek&eng_raw_um")
+                                print(greekengtextfromimage_raw_um)
 
                             if show == True:
                                 show_image((255-inverted),0,'255-inverted')
@@ -308,11 +308,11 @@ def find_text_and_bar(thresholdedimg,gimg,rows,cols,show=False,printer=False,bla
                             greekengtextfromimage_raw_inverted_um , inverted_um_boxes = read_image((255-inverted), unit = "um")
 
                             if printer == True:
-                                print "greek&eng_raw_inverted_nm"
-                                print greekengtextfromimage_raw_inverted_nm
+                                print("greek&eng_raw_inverted_nm")
+                                print(greekengtextfromimage_raw_inverted_nm)
 
-                                print "greek&eng_raw_inverted_um"
-                                print greekengtextfromimage_raw_inverted_um
+                                print("greek&eng_raw_inverted_um")
+                                print(greekengtextfromimage_raw_inverted_um)
 
 
                         #ORDER OF PRIORITY IS, THRESHOLDED/BLURRED, CORRECT INVERSION(ATTEMPTED), OTHER INVERSION.
@@ -409,9 +409,9 @@ def find_text_and_bar(thresholdedimg,gimg,rows,cols,show=False,printer=False,bla
                     potential_scale_bar_regions.append([i,conversion,scalevalue,is_box_in_box,boxes])
                     if printer == True:
 
-                        print "worked at pixel_value ", str(pixel_value+5) #since loop is stopped one loop too late
-                        print "found eligible text, appended info"
-                        print [i,conversion,scalevalue]
+                        print("worked at pixel_value ", str(pixel_value+5)) #since loop is stopped one loop too late
+                        print("found eligible text, appended info")
+                        print([i,conversion,scalevalue])
                 else:
                     boxes = None
 
