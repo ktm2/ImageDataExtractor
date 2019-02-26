@@ -263,13 +263,12 @@ def find_text_and_bar(thresholdedimg,gimg,rows,cols,show=False,printer=False,bla
                         if black_text==False:
 
                             inverted=(255-gimg[i[1]:i[1]+i[3],i[0]:i[0]+i[2]])
-                            uv,region_surrounding_text_reading = cv2.threshold(inverted,pixel_value,255,0)
-
                         else:
                             inverted=gimg[i[1]:i[1]+i[3],i[0]:i[0]+i[2]]
-                            uv,region_surrounding_text_reading = cv2.threshold(inverted,pixel_value,255,0)
-                    
-
+                        
+                        h, w = inverted.shape[:2]
+                        inverted = cv2.resize(inverted, (w*3, h*3), interpolation=cv2.INTER_CUBIC)
+                        uv,region_surrounding_text_reading = cv2.threshold(inverted,pixel_value,255,0)
                         region_surrounding_text_reading = cv2.medianBlur(region_surrounding_text_reading,1)
 
                         greekengtextfromimage_edited_nm, edited_nm_boxes = read_image(region_surrounding_text_reading, unit = "nm")
