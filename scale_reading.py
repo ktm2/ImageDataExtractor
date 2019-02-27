@@ -96,7 +96,8 @@ def detect_scale_bar_and_inlays(gimg, imgmean, imgstdev, rows, cols, show = Fals
     :return list inlaycoords: list of tuples in same format of obstructive inlays in image.
 
     TODO:
-    - Inlay coords currently hashed out, will this be in?
+    - Remainign Inlay (a,b,c in corners etc.) coords currently hashed out, will this be in?
+    - Confidence level in OCR to determine um vs nm
 
     '''
 

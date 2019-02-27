@@ -34,8 +34,6 @@ def main_detection(imgname):
 
     scale, inlaycoords = scalebar_identification(img, testing = imgname)
 
-    return None, None
-
     filteredvertices = particle_identification(img, inlaycoords, testing = imgname)
 
 
@@ -91,6 +89,8 @@ def after_detection(imgname, filteredvertices, scale):
     else:
         gimg = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 
+    match_to_shapes(filteredvertices)
+
     #Calculate particle metrics.
     colorlist, arealist, avgcolormean, avgcolorstdev, avgarea = particle_metrics_from_vertices(img, gimg, rows,
         cols, filteredvertices)
@@ -99,7 +99,10 @@ def after_detection(imgname, filteredvertices, scale):
     avgarea = avgarea * (scale ** 2) 
 
     #Calculate rdf.
-    xRDF, yRDF = calculate_rdf(filteredvertices, rows, cols, scale, increment = 100, progress = True)
+    xRDF = []
+    yRDF = []
+    #if len(filteredvertices) > 9:
+        #xRDF, yRDF = calculate_rdf(filteredvertices, rows, cols, scale, increment = 100, progress = True)
 
     return avgarea, avgcolormean, [xRDF,yRDF]
 
@@ -122,13 +125,13 @@ def run(path_to_images, path_to_secondary = None):
         secondary.extend([a.split('/')[-1][9:] for a in glob.glob(path_to_secondary)])
 
     for imgname in images:
-        if imgname.split('/')[-1] in secondary:
+        if imgname.split('/')[-1] not in secondary:
             print("Scale and particle detection begun on: " + str(imgname))
 
             filteredvertices, scale = main_detection(imgname)
 
             ####FOR EVAL
-            #avgarea, avgcolormean, [xRDF, yRDF] = after_detection(imgname, filteredvertices, scale)
+            avgarea, avgcolormean, [xRDF, yRDF] = after_detection(imgname, filteredvertices, scale)
             #Output rdf.
             #plot_rdf(xRDF, yRDF, imgname)
 
@@ -162,9 +165,14 @@ def run(path_to_images, path_to_secondary = None):
     return
 
 
-path_to_images = "/Users/karim/Desktop/evaluation_images/1_sem_tio2_nano/2_karim_split/*.png"
+path_to_images = "/Users/karim/Desktop/evaluation_images/merged/2_karim_split/0_C6CE00824K_fig2_1.png"
 
-path_to_secondary = "/Users/karim/Desktop/evaluation_images/1_sem_tio2_nano/3_scalebar/true_positives/*.png"
+#circles
+#0_C3RA40414E_fig2_1
+#0_C3RA40414E_fig2_2
+
+
+path_to_secondary = None
 
 # path_to_images = "/home/batuhan/Documents/PhD Physics/Projects/imagedataextractor130219_2/2_karim_split/*.png"
 

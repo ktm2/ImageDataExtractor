@@ -41,29 +41,27 @@ def particle_identification(img, inlaycoords, testing = None, blocksize = 151, b
     #Initial contour detection.
     filteredvertices = find_draw_contours_main(img,gimg,blocksize,rows,cols,blursize, testing = False)
 
-    if len(filteredvertices) == 0:
-        return []
+    if len(filteredvertices) > 0:
+        #Calculate particle metrics.
+        colorlist, arealist, avgcolormean, avgcolorstdev, avgarea = particle_metrics_from_vertices(img, gimg, rows,
+        	cols, filteredvertices, invert)
 
-    #Calculate particle metrics.
-    colorlist, arealist, avgcolormean, avgcolorstdev, avgarea = particle_metrics_from_vertices(img, gimg, rows,
-    	cols, filteredvertices, invert)
+        #Eliminate false positives.
+        filteredvertices, arealist = false_positive_correction(filteredvertices, arealist, colorlist, avgcolormean,
+        	avgcolorstdev, testing = False, gimg = gimg)
 
-    #Eliminate false positives.
-    filteredvertices, arealist = false_positive_correction(filteredvertices, arealist, colorlist, avgcolormean,
-    	avgcolorstdev, testing = False, gimg = gimg)
+        #Break up large clusters.
+        filteredvertices = cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, blocksize, testing = False, detailed_testing = False)
 
-    #Break up large clusters.
-    filteredvertices = cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, blocksize, testing = False, detailed_testing = False)
+        #Eliminate particles that touch edges or inlays.
+        filteredvertices = edge_correction(filteredvertices, rows, cols, inlaycoords, testing = False, gimg = gimg)
 
-    #Eliminate particles that touch edges or inlays.
-    filteredvertices = edge_correction(filteredvertices, rows, cols, inlaycoords, testing = False, gimg = gimg)
+        #Ellipse fitting.
+        particlediscreteness, filteredvertices = discreteness_index_and_ellipse_fitting(filteredvertices, img, rows,
+        	cols, imgstdev)
 
-    #Ellipse fitting.
-    particlediscreteness, filteredvertices = discreteness_index_and_ellipse_fitting(filteredvertices, img, rows,
-    	cols, imgstdev)
-
-    #Eliminate particles that touch edges or inlays.
-    filteredvertices = edge_correction(filteredvertices, rows, cols, inlaycoords, testing = False, gimg = gimg)
+        #Eliminate particles that touch edges or inlays.
+        filteredvertices = edge_correction(filteredvertices, rows, cols, inlaycoords, testing = False, gimg = gimg)
 
     if testing != None:
         drawing_img = img.copy()

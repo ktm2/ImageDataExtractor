@@ -2,6 +2,43 @@ import cv2
 import numpy as np
 from img_utils import *
 
+
+def match_to_shapes(filteredvertices, image_with_shapes = "shapes_to_match.png"):
+    '''Determine closeness of shapes to shapes in a given example image, using Hu-moments.
+    Mostly orientation and scale invariant.
+    :param numpy.ndarray filteredvertices: the detected particles from earlier in detection.
+    :param string image_with_shapes: name of the input image with target shapes.
+
+    :return list 
+    :return string
+    '''
+
+    shapes_to_match = cv2.imread(image_with_shapes)
+    shape_vertices = find_draw_contours(shapes_to_match)
+
+    #Have to be provided by user if a custom image is being used
+    #suggest using testing and annotation mode in find_draw_contours to do this.
+    shape_labels = ["circle","ellipse","square","rectangle"]
+
+    #List of length of number of particles
+    #Each element is a list of length 4, with the corresponding matching coefficients
+    #to the regular shapes in shape_labels. Closer to 0 means closer match.
+    match = []
+    for particle in filteredvertices:
+        particle_matches = []
+        for shape in shape_vertices:
+            ret = cv2.matchShapes(np.array(particle),np.array(shape[0]),1,0.0)
+            particle_matches.append(ret)
+        match.append(particle_matches)
+
+    overall_matches = [round(sum(i) / float(len(filteredvertices)),2) for i in zip(*match)]
+
+    print (zip(shape_labels,overall_matches))
+    print ("The 2D projections of the particles in this image most closely match a: " 
+        + shape_labels[overall_matches.index(min(overall_matches))])
+
+
+
 def draw_contours(gimg,filteredvertices,imgname="img"):
     '''Draw detected particles on an image.
     :param numpy.ndarray gimg: original image in grayscale
@@ -178,7 +215,7 @@ def find_draw_contours(img, blocksize = 151, blursize = 0, minarea = None,
                 contradius=int(contradius)
                 shapecoords.append((xcom,ycom,contradius))
                 cv2.circle(drawingimg,(xcom,ycom),1,(0,0,255),1)
-                cv2.putText(drawingimg,str(shapeindex),(xcom+3,ycom+3),cv2.FONT_HERSHEY_COMPLEX,0.4,(255,255,255),thickness=1)           
+                cv2.putText(drawingimg,str(shapeindex),(xcom+3,ycom+3),cv2.FONT_HERSHEY_COMPLEX,0.4,(255,0,255),thickness=1)           
                 shapeindex+=1
 
 
