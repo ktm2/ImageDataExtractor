@@ -96,7 +96,11 @@ def after_detection(imgname, filteredvertices, scale):
         cols, filteredvertices)
 
     #Convert from pixel square to meter square.
-    avgarea = avgarea * (scale ** 2) 
+    avgarea = avgarea * (scale ** 2)
+    arealist = [a*(scale**2) for a in arealist]
+
+    particle_size_histogram(arealist,imgname)
+
 
     #Calculate rdf.
     xRDF = []
@@ -165,11 +169,12 @@ def run(path_to_images, path_to_secondary = None):
     return
 
 
-path_to_images = "/Users/karim/Desktop/evaluation_images/merged/2_karim_split/0_C6CE00824K_fig2_1.png"
+path_to_images = "/Users/karim/Desktop/evaluation_images/merged/2_karim_split/0_C3RA40414E_fig2_2.png"
 
 #circles
 #0_C3RA40414E_fig2_1
 #0_C3RA40414E_fig2_2
+#0_C6CE00824K_fig2_1
 
 
 path_to_secondary = None

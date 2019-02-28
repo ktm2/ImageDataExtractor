@@ -153,5 +153,17 @@ def plot_rdf(xRDF,yRDF,imgname):
 
     return
 
+def particle_size_histogram(arealist,imgname):
+
+    font={"fontname":"serif"}
+    plt.hist(arealist,edgecolor='black', linewidth=1.2)
+    plt.title("Particle Size " + str(imgname).split("/")[-1] ,**font)
+    plt.xlabel('Meters**2',**font)
+    plt.ylabel("Frequency",**font)
+    #plt.grid()
+    plt.show()
+
+    return
+
 
 

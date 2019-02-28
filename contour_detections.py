@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 from img_utils import *
+from scipy.stats import mode
 
 
 def match_to_shapes(filteredvertices, image_with_shapes = "shapes_to_match.png"):
@@ -28,14 +29,22 @@ def match_to_shapes(filteredvertices, image_with_shapes = "shapes_to_match.png")
         particle_matches = []
         for shape in shape_vertices:
             ret = cv2.matchShapes(np.array(particle),np.array(shape[0]),1,0.0)
-            particle_matches.append(ret)
+            particle_matches.append(round(ret,2))
         match.append(particle_matches)
 
-    overall_matches = [round(sum(i) / float(len(filteredvertices)),2) for i in zip(*match)]
 
-    print (zip(shape_labels,overall_matches))
-    print ("The 2D projections of the particles in this image most closely match a: " 
-        + shape_labels[overall_matches.index(min(overall_matches))])
+
+    modes = [mode(i)[0] for i in zip(*match)]
+    
+    #Mean like approach.
+    #overall_matches = [round(sum(i) / float(len(filteredvertices)),2) for i in zip(*match)]
+
+    if min(modes) < 0.5:
+        print ("The 2D projections of the particles in this image most closely match a: " 
+        + shape_labels[modes.index(min(modes))])
+    else:
+        print ("The geometry 2D projections of the particles in this image cannot be classified.")
+
 
 
 
