@@ -33,9 +33,7 @@ def main_detection(imgname):
         return None,None
 
     scale, inlaycoords = scalebar_identification(img, testing = imgname)
-
     filteredvertices = particle_identification(img, inlaycoords, testing = imgname)
-
 
     #If less than 3 particles are found, redo analysis with inverted colors.
     if len(filteredvertices) < 3:
@@ -89,28 +87,47 @@ def after_detection(imgname, filteredvertices, scale):
     else:
         gimg = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 
-    match_to_shapes(filteredvertices)
+    resemblances, conclusion = match_to_shapes(filteredvertices)
 
     #Calculate particle metrics.
     colorlist, arealist, avgcolormean, avgcolorstdev, avgarea = particle_metrics_from_vertices(img, gimg, rows,
         cols, filteredvertices)
     #Convert from pixel square to meter square.
     avgarea = avgarea * (scale ** 2)
-    arealist = [a*(scale**2) for a in arealist]
+    #arealist = [a*(scale**2) for a in arealist]
 
-    particle_size_histogram(arealist,imgname)
+    #particle_size_histogram(arealist,imgname)
 
     #number of particles.
     number_of_particles = len(filteredvertices)
 
+    #Log for file.
+    outfile = open(imgname.split('/')[-1].split(".")[0] + ".txt", "w")
+
+    outfile.write(imgname.split('/')[-1] + "\n")
+    #Need to add info about DOI, figure, material etc.
+    outfile.write("Particle Number, Size in Pixels" + "\n")
+    particle_index = 1
+    for area in arealist:
+        outfile.write(str(particle_index) + ", " + str(area) + "\n")
+        particle_index+=1
+    outfile.write("\n" + str(number_of_particles) + " particles detected." + "\n")
+    outfile.write("Particle resemblances to regular shapes: " + "\n")
+    outfile.write(str(resemblances) + "\n")
+    outfile.write(conclusion + "\n")
+    outfile.write("Average particle size: " + str(avgarea) + " sqm")
+
+    outfile.close()
 
     #Calculate rdf.
     xRDF = []
     yRDF = []
     #if len(filteredvertices) > 9:
         #xRDF, yRDF = calculate_rdf(filteredvertices, rows, cols, scale, increment = 100, progress = True)
+        #Output rdf.
+        #output_rdf(xRDF, yRDF, imgname)
 
-    return avgarea, avgcolormean, [xRDF,yRDF]
+    return
 
 def run(path_to_images, path_to_secondary = None):
     '''Runs scalebar and particle identification.
@@ -136,42 +153,14 @@ def run(path_to_images, path_to_secondary = None):
 
             filteredvertices, scale = main_detection(imgname)
 
-            ####FOR EVAL
-            avgarea, avgcolormean, [xRDF, yRDF] = after_detection(imgname, filteredvertices, scale)
-            #Output rdf.
-            #plot_rdf(xRDF, yRDF, imgname)
-
-            mark_areas = False
+            if len(filteredvertices) > 0:
+                after_detection(imgname, filteredvertices, scale)
             
-            if mark_areas == True:
-                outfile = open(imgname.split('/')[-1] + ".txt", "w")
-
-                outfile.write("Particle Number, Size" + "\n")
-
-                img = cv2.imread(imgname)
-
-                particle_index = 1
-
-                for i in range(len(filteredvertices)):
-                    cv2.polylines(img,[filteredvertices[i]],True,(0,255,0),thickness=1)
-                    (xcom,ycom),contradius = cv2.minEnclosingCircle(filteredvertices[i])
-                    xcom=int(xcom)
-                    ycom=int(ycom)
-                    contradius=int(contradius)
-                    cv2.circle(img,(xcom,ycom),1,(0,0,255),1)
-                    cv2.putText(img,str(particle_index),(xcom+3,ycom+3),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,0,255),thickness=1)           
-                    area=cv2.contourArea(filteredvertices[i])
-                    outfile.write(str(particle_index) + ", " + str(area) + "\n")
-
-                    particle_index+=1
-
-                outfile.close()
-                cv2.imwrite("ann_"+str(imgname.split('/')[-1]), img)
 
     return
 
 
-path_to_images = "/Users/karim/Desktop/evaluation_images/merged/2_karim_split/0_C3DT51712H_fig4_3.png"
+path_to_images = "/Users/karim/Desktop/evaluation_images/merged/2_karim_split/0_C3RA40414E_fig2_1.png"
 
 #circles
 #0_C3RA40414E_fig2_1

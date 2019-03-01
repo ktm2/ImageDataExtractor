@@ -133,7 +133,7 @@ def calculate_rdf(filteredvertices,rows,cols,scale,increment=2,progress=True):
 
 
 
-def plot_rdf(xRDF,yRDF,imgname):
+def output_rdf(xRDF,yRDF,imgname):
     '''Plots a given rdf.'''
 
     distanceunit='meters'

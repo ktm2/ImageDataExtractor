@@ -490,7 +490,6 @@ def find_text_and_bar(thresholdedimg, gimg, rows, cols, show=False, printer=Fals
 
 
         # Checks of whether  scale bars of solid color. (Not a chunk of the image by mistake)
-
         for i in first_scale_bar_rectangles:
 
             fsb = gimg_for_fsb[i[1] + interp_scale*surrounding_region_x1:i[1] + interp_scale*surrounding_region_x1 + i[3], i[0] + interp_scale*surrounding_region_y1:i[0] +interp_scale* surrounding_region_y1 + i[2]].flatten()
@@ -530,6 +529,7 @@ def find_text_and_bar(thresholdedimg, gimg, rows, cols, show=False, printer=Fals
 
             for b in boxes_relative.splitlines():
                 b = b.split(' ')
+
 
                 if str(b[0]) in "0123456789num":
                     b = [int(i) // interp_scale for i in b[1:5]]
