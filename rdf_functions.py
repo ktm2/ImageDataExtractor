@@ -160,8 +160,8 @@ def particle_size_histogram(arealist,imgname):
     plt.title("Particle Size " + str(imgname).split("/")[-1] ,**font)
     plt.xlabel('Meters**2',**font)
     plt.ylabel("Frequency",**font)
-    #plt.grid()
-    plt.show()
+    plt.savefig("hist_" + str(imgname).split("/")[-1], bbox_inches = 'tight')
+    #plt.show()
 
     return
 

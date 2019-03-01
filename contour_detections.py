@@ -39,13 +39,13 @@ def match_to_shapes(filteredvertices, image_with_shapes = "shapes_to_match.png")
     #Mean like approach.
     #overall_matches = [round(sum(i) / float(len(filteredvertices)),2) for i in zip(*match)]
 
-    if min(modes) < 0.5:
+    print zip(shape_labels,modes)
+
+    if min(modes) < 0.1:
         print ("The 2D projections of the particles in this image most closely match a: " 
         + shape_labels[modes.index(min(modes))])
     else:
         print ("The geometry 2D projections of the particles in this image cannot be classified.")
-
-
 
 
 def draw_contours(gimg,filteredvertices,imgname="img"):
@@ -69,7 +69,6 @@ def draw_contours(gimg,filteredvertices,imgname="img"):
     show_image(backtorgb,waitkey=0,imgname=imgname)
 
     return None
-
 
 
 def find_draw_contours(img, blocksize = 151, blursize = 0, minarea = None, 

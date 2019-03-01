@@ -3,6 +3,7 @@ import numpy as np
 import itertools
 import math
 from contour_detections import *
+from scipy.stats import mode
 
 def edge_correction(filteredvertices,rows,cols,inlaycoords, testing = False, gimg = None):
     '''Filters out particles that are deformed by image borders or inlays. (must intersect either at min 2 points)
@@ -143,9 +144,10 @@ def particle_metrics_from_vertices(img,gimg,rows,cols,filteredvertices, invert =
 
         colormean=sum(shapearea)/len(shapearea)
         colorstdev=np.std(shapearea)
+        color_mode = float(mode(shapearea)[0])
 
         #Append particle color mean and standard deviation.
-        colorlist.append((colormean,colorstdev))
+        colorlist.append((colormean,colorstdev,color_mode))
 
         colormeantotal+=colormean
         colorstdevtotal+=colorstdev
@@ -188,7 +190,8 @@ def false_positive_correction(filteredvertices,arealist,colorlist,avgcolormean,a
 
     for i in range(len(colorlist)):
         if ((colorlist[i][0]<avgcolormean*0.6 and colorlist[i][1]<avgcolorstdev*0.25) \
-         or colorlist[i][0]<2 or colorlist[i][0] > 240) == True:
+         or colorlist[i][0]<2 or colorlist[i][0] > 240 or colorlist[i][2] > 250) == True:
+
 
         #or colorlist[i][0]>1.6*avgcolormean
 

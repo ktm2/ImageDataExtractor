@@ -94,12 +94,14 @@ def after_detection(imgname, filteredvertices, scale):
     #Calculate particle metrics.
     colorlist, arealist, avgcolormean, avgcolorstdev, avgarea = particle_metrics_from_vertices(img, gimg, rows,
         cols, filteredvertices)
-
     #Convert from pixel square to meter square.
     avgarea = avgarea * (scale ** 2)
     arealist = [a*(scale**2) for a in arealist]
 
     particle_size_histogram(arealist,imgname)
+
+    #number of particles.
+    number_of_particles = len(filteredvertices)
 
 
     #Calculate rdf.
@@ -169,7 +171,7 @@ def run(path_to_images, path_to_secondary = None):
     return
 
 
-path_to_images = "/Users/karim/Desktop/evaluation_images/merged/2_karim_split/0_C3RA40414E_fig2_2.png"
+path_to_images = "/Users/karim/Desktop/evaluation_images/merged/2_karim_split/0_C3DT51712H_fig4_3.png"
 
 #circles
 #0_C3RA40414E_fig2_1
