@@ -631,8 +631,8 @@ def discreteness_index_and_ellipse_fitting(edgecorrectedvertices,img,rows,cols,i
                             shapearea.append(gimg[x][y])
 
 
-                colormean=sum(shapearea)/len(shapearea)
-                colorstdev=np.std(shapearea)
+                colormean = np.mean(shapearea)
+                colorstdev = np.std(shapearea)
 
                 color_means.append(colormean)
                 color_stdevs.append(colorstdev)

@@ -129,7 +129,7 @@ def after_detection(imgname, filteredvertices, scale):
 
     return
 
-def run(path_to_images, path_to_secondary = None):
+def run(path_to_images, path_to_secondary = None, path_to_already_done = None):
     '''Runs scalebar and particle identification.
 
     :param string path_to_images: path to images of interest.
@@ -147,8 +147,13 @@ def run(path_to_images, path_to_secondary = None):
         #9 is to ignore "scalebar_" prefix.
         secondary.extend([a.split('/')[-1][9:] for a in glob.glob(path_to_secondary)])
 
+    already_done = []
+    if path_to_already_done != None:
+        #4 is to ignore "det_" prefix.
+        already_done.extend([a.split('/')[-1][4:] for a in glob.glob(path_to_already_done)])
+
     for imgname in images:
-        if imgname.split('/')[-1] not in secondary:
+        if (imgname.split('/')[-1] in secondary) and (imgname.split('/')[-1] not in already_done) :
             print("Scale and particle detection begun on: " + str(imgname))
 
             filteredvertices, scale = main_detection(imgname)
@@ -160,7 +165,7 @@ def run(path_to_images, path_to_secondary = None):
     return
 
 
-path_to_images = "/Users/karim/Desktop/evaluation_images/merged/2_karim_split/0_C3RA40414E_fig2_1.png"
+path_to_images = "/Users/karim/Desktop/evaluation_images/merged/2_karim_split/*.png"
 
 #circles
 #0_C3RA40414E_fig2_1
@@ -168,13 +173,16 @@ path_to_images = "/Users/karim/Desktop/evaluation_images/merged/2_karim_split/0_
 #0_C6CE00824K_fig2_1
 
 
-path_to_secondary = None
+path_to_secondary = "/Users/karim/Desktop/evaluation_images/merged/3_scalebar/true_positives/*.png"
+
+path_to_already_done = "/Users/karim/Desktop/evaluation_images/merged/4_det/*.png"
+
 
 # path_to_images = "/home/batuhan/Documents/PhD Physics/Projects/imagedataextractor130219_2/2_karim_split/*.png"
 
 # path_to_secondary = "/home/batuhan/Documents/PhD Physics/Projects/imagedataextractor130219_2/3_scalebar/false_negative/*.png"
 
-run(path_to_images, path_to_secondary)
+run(path_to_images, path_to_secondary, path_to_already_done)
 
 
 
