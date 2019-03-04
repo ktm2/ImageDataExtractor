@@ -241,7 +241,7 @@ def find_text_and_bar(thresholdedimg, gimg, rows, cols, show=False, printer=Fals
                 box_in_box = gimg[i[1] + potential_box[1]:i[1] + potential_box[1] + potential_box[3], i[0] + potential_box[0]:i[0] + potential_box[0] + potential_box[2]]
 
                 box_in_box_filteredvertices = find_draw_contours \
-                    (box_in_box, 151, minarea=10, testing=show, annotate=show)
+                    (box_in_box, 151, minarea=10, testing = show, annotate = show)
 
                 # Check that we've found box and not just the scale bar by mistake. By making sure shapes exist within this region.
                 if len(box_in_box_filteredvertices) > 2:
@@ -276,8 +276,8 @@ def find_text_and_bar(thresholdedimg, gimg, rows, cols, show=False, printer=Fals
             h, w = inverted.shape[:2]
             inverted_cubic = cv2.resize(inverted, (w * interp_scale, h * interp_scale), interpolation=cv2.INTER_CUBIC)
             inverted_srcnn = srcnn_predict(inverted, srcnn)
-            closing_kernel = np.ones((5, 3), np.uint8)
-            inverted_srcnn = cv2.morphologyEx(inverted_srcnn, cv2.MORPH_OPEN, closing_kernel)
+            opening_kernel = np.ones((5, 3), np.uint8)
+            inverted_srcnn = cv2.morphologyEx(inverted_srcnn, cv2.MORPH_OPEN, opening_kernel)
 
             for inverted in [inverted_cubic, inverted_srcnn]:
                 if not conversion or not scalevalue:
@@ -328,7 +328,7 @@ def find_text_and_bar(thresholdedimg, gimg, rows, cols, show=False, printer=Fals
                                     print("greek&eng_raw_inverted_um")
                                     print(greekengtextfromimage_raw_inverted_um)
 
-                            # ORDER OF PRIORITY IS, THRESHOLDED/BLURRED, CORRECT INVERSION(ATTEMPTED), OTHER INVERSION.
+                            # ORDER OF PRIORITY IS, THRESHOLDED/BLURRED, CORRECT INVERSION(ATTEMPTED), OPPOSITE INVERSION.
 
                             # Criteria for determined text eligibility:
                             # First search for "um" (micron, since this gives less false positives) then "nm". Unit must be preceded by digit+space or digit to be considered.
@@ -357,6 +357,7 @@ def find_text_and_bar(thresholdedimg, gimg, rows, cols, show=False, printer=Fals
 
                             # Also check raw region only on the first pass just in case its legible.
                             elif pixel_value == 35:
+
                                 if 'um' in greekengtextfromimage_raw_um and any(char in digits for char in greekengtextfromimage_raw_um):
                                     if len(greekengtextfromimage_raw_um.split("um")[0]) > 0:
                                         if ((greekengtextfromimage_raw_um.split("um")[0][-1] == " " and \
@@ -422,6 +423,7 @@ def find_text_and_bar(thresholdedimg, gimg, rows, cols, show=False, printer=Fals
                     print("worked at pixel_value ", str(pixel_value + 5))  # since loop is stopped one loop too late
                     print("found eligible text, appended info")
                     print([i, conversion, scalevalue])
+                    print("appended boxes ", boxes)
             else:
                 boxes = None
 
@@ -535,6 +537,9 @@ def find_text_and_bar(thresholdedimg, gimg, rows, cols, show=False, printer=Fals
                     b = [int(i) // interp_scale for i in b[1:5]]
 
                     boxes.append([(b[0] + region[0], region[3] - b[1] + region[1]), (b[2] + region[0], region[3] - b[3] + region[1])])
+
+                if str(b[0]) == "m":
+                    break
 
             potential_scale_bars.append([(int(scalebarboundingrectangle[0] + surrounding_region_y1), int(scalebarboundingrectangle[1] + surrounding_region_x1) \
                                               , int(scalebarboundingrectangle[2]), int(scalebarboundingrectangle[3])), potential_region[1], potential_region[2], boxes])

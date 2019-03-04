@@ -33,6 +33,7 @@ def main_detection(imgname):
         return None,None
 
     scale, inlaycoords = scalebar_identification(img, testing = imgname)
+
     filteredvertices = particle_identification(img, inlaycoords, testing = imgname)
 
     #If less than 3 particles are found, redo analysis with inverted colors.
@@ -165,17 +166,11 @@ def run(path_to_images, path_to_secondary = None, path_to_already_done = None):
     return
 
 
-path_to_images = "/Users/karim/Desktop/evaluation_images/merged/2_karim_split/*.png"
-
-#circles
-#0_C3RA40414E_fig2_1
-#0_C3RA40414E_fig2_2
-#0_C6CE00824K_fig2_1
-
+path_to_images = "/Users/karim/Desktop/evaluation_images/merged/2_karim_split/0_C5RA27836H_fig2_1.png"
 
 path_to_secondary = "/Users/karim/Desktop/evaluation_images/merged/3_scalebar/true_positives/*.png"
 
-path_to_already_done = "/Users/karim/Desktop/evaluation_images/merged/4_det/*.png"
+path_to_already_done = None
 
 
 # path_to_images = "/home/batuhan/Documents/PhD Physics/Projects/imagedataextractor130219_2/2_karim_split/*.png"
