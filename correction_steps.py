@@ -478,7 +478,7 @@ def cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, 
     return clusterbreakupvertices
 
 
-def discreteness_index_and_ellipse_fitting(edgecorrectedvertices,img,rows,cols,imgstdev):
+def discreteness_index_and_ellipse_fitting(edgecorrectedvertices,img,rows,cols,imgstdev, testing = False):
     '''Calculate "discreteness index" for each particle, a measure of how dissimilar the inside of a detected border
     and the outside is. This is meant to be a measure of how succesful the detection was. High discreteness index 
     would mean the inside and outside are quite different which implies inside is particle while outside is background.
@@ -491,6 +491,8 @@ def discreteness_index_and_ellipse_fitting(edgecorrectedvertices,img,rows,cols,i
     :param int rows: number of rows in image.
     :param int cols: number of columns in image.
     :param float imgstdev: standard deviation of pixel intensities in image.
+    :param bool testing: display step by step.
+
 
     :return list particlediscreteness: list of DI's of each particle.
     :return list ellipsefittedvertices: Corrected list of vertices of particles.
@@ -524,6 +526,8 @@ def discreteness_index_and_ellipse_fitting(edgecorrectedvertices,img,rows,cols,i
         xcom=int(xcom)
         ycom=int(ycom)
 
+        cv2.circle(ellimg,(xcom,ycom),1,(0,0,255),1)
+        cv2.putText(ellimg,str(particleindex),(xcom+3,ycom+3),cv2.FONT_HERSHEY_COMPLEX,0.4,(255,0,255),thickness=1)           
 
         bufferfromborder=3
         hull=cv2.convexHull(i)
@@ -655,6 +659,9 @@ def discreteness_index_and_ellipse_fitting(edgecorrectedvertices,img,rows,cols,i
 
             particleindex+=1
 
+            if testing == True:
+                show_image(ellimg)
+
 
 
 
@@ -704,7 +711,8 @@ def discreteness_index_and_ellipse_fitting(edgecorrectedvertices,img,rows,cols,i
     for i in sorted(index_to_remove,reverse=True):
         del ellipsefittedvertices[i]
 
-    #show_image(ellimg)
+    if testing == True:
+        show_image(ellimg)
 
 
     return particlediscreteness, ellipsefittedvertices

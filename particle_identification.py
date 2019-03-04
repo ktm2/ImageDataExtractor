@@ -6,7 +6,7 @@ from img_utils import *
 from scale_reading import *
 
 
-def particle_identification(img, inlaycoords, testing = None, blocksize = 151, blursize = 3, invert = False):
+def particle_identification(img, inlaycoords, testing = False, writeout = None, blocksize = 151, blursize = 3, invert = False):
     '''Runs contour detection and particle filtering
     functions on SEM images.
     
@@ -16,6 +16,7 @@ def particle_identification(img, inlaycoords, testing = None, blocksize = 151, b
     :param int blocksize: parameter associated with image thresholding.
     :param int blursize: parameter associated with image thresholding.
     :param bool testing: Displays step by step progress for debugging.
+    :param str testing: Option to write out result image.
     :param bool invert: Invert colors of image, useful for dark particles on light background.
 
     :return list filteredvertices: List of vertices of particles in image.
@@ -39,7 +40,7 @@ def particle_identification(img, inlaycoords, testing = None, blocksize = 151, b
     rows, cols, imgarea, imgmean, imgstdev, crossstdev = image_metrics(gimg)
 
     #Initial contour detection.
-    filteredvertices = find_draw_contours_main(img,gimg,blocksize,rows,cols,blursize, testing = False)
+    filteredvertices = find_draw_contours_main(img,gimg,blocksize,rows,cols,blursize, testing = testing)
 
     if len(filteredvertices) > 0:
         #Calculate particle metrics.
@@ -48,22 +49,22 @@ def particle_identification(img, inlaycoords, testing = None, blocksize = 151, b
 
         #Eliminate false positives.
         filteredvertices, arealist = false_positive_correction(filteredvertices, arealist, colorlist, avgcolormean,
-        	avgcolorstdev, testing = False, gimg = gimg)
+        	avgcolorstdev, testing = testing, gimg = gimg)
 
         #Break up large clusters.
-        filteredvertices = cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, blocksize, testing = False, detailed_testing = False)
+        filteredvertices = cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, blocksize, testing = testing, detailed_testing = False)
 
         #Eliminate particles that touch edges or inlays.
-        filteredvertices = edge_correction(filteredvertices, rows, cols, inlaycoords, testing = False, gimg = gimg)
+        filteredvertices = edge_correction(filteredvertices, rows, cols, inlaycoords, testing = testing, gimg = gimg)
 
         #Ellipse fitting.
         particlediscreteness, filteredvertices = discreteness_index_and_ellipse_fitting(filteredvertices, img, rows,
-        	cols, imgstdev)
+        	cols, imgstdev, testing = testing)
 
         #Eliminate particles that touch edges or inlays.
-        filteredvertices = edge_correction(filteredvertices, rows, cols, inlaycoords, testing = False, gimg = gimg)
+        filteredvertices = edge_correction(filteredvertices, rows, cols, inlaycoords, testing = testing, gimg = gimg)
 
-    if testing != None:
+    if writeout != None:
         drawing_img = img.copy()
         for i in range(len(filteredvertices)):
             cv2.polylines(drawing_img,[filteredvertices[i]],True,(0,255,0),thickness=1)
@@ -81,8 +82,8 @@ def particle_identification(img, inlaycoords, testing = None, blocksize = 151, b
         #show_image(img)
 
         if invert == True:
-            cv2.imwrite("inv_det_"+str(testing).split("/")[-1],drawing_img)
+            cv2.imwrite("inv_det_"+str(writeout).split("/")[-1],drawing_img)
         else:
-            cv2.imwrite("det_"+str(testing).split("/")[-1],drawing_img)
+            cv2.imwrite("det_"+str(writeout).split("/")[-1],drawing_img)
 
     return filteredvertices
