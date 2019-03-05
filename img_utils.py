@@ -3,6 +3,30 @@ import numpy as np
 import keras.backend as K
 
 
+def writeout_image(img, filteredvertices, imgname, inverted = False):
+    '''Output an image displaying all the vertices detected.'''
+
+    drawing_img = img.copy()
+    for i in range(len(filteredvertices)):
+        cv2.polylines(drawing_img,[filteredvertices[i]],True,(0,255,0),thickness=1)
+        #Annotate particle #.
+        annotate = True
+        if annotate == True:
+            (xcom,ycom),contradius = cv2.minEnclosingCircle(filteredvertices[i])
+            xcom=int(xcom)
+            ycom=int(ycom)
+            contradius=int(contradius)
+            cv2.circle(drawing_img,(xcom,ycom),1,(0,0,255),1)
+            cv2.putText(drawing_img,str(i+1),(xcom+3,ycom+3),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,0,255),thickness=1)           
+
+    if inverted == True:
+        cv2.imwrite("inv_det_"+str(imgname).split("/")[-1],drawing_img)
+    else:
+        cv2.imwrite("det_"+str(imgname).split("/")[-1],drawing_img)
+
+
+    return
+
 def crop_image(img, crop_constant = 2):
     '''Crop image in slightly, helps with splitting artifacts. 
 

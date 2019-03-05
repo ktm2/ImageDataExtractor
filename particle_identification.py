@@ -6,7 +6,7 @@ from img_utils import *
 from scale_reading import *
 
 
-def particle_identification(img, inlaycoords, testing = False, writeout = None, blocksize = 151, blursize = 3, invert = False):
+def particle_identification(img, inlaycoords, testing = False, blocksize = 151, blursize = 3, invert = False):
     '''Runs contour detection and particle filtering
     functions on SEM images.
     
@@ -16,7 +16,6 @@ def particle_identification(img, inlaycoords, testing = False, writeout = None, 
     :param int blocksize: parameter associated with image thresholding.
     :param int blursize: parameter associated with image thresholding.
     :param bool testing: Displays step by step progress for debugging.
-    :param str testing: Option to write out result image.
     :param bool invert: Invert colors of image, useful for dark particles on light background.
 
     :return list filteredvertices: List of vertices of particles in image.
@@ -64,26 +63,6 @@ def particle_identification(img, inlaycoords, testing = False, writeout = None, 
         #Eliminate particles that touch edges or inlays.
         filteredvertices = edge_correction(filteredvertices, rows, cols, inlaycoords, testing = testing, gimg = gimg)
 
-    if writeout != None:
-        drawing_img = img.copy()
-        for i in range(len(filteredvertices)):
-            cv2.polylines(drawing_img,[filteredvertices[i]],True,(0,255,0),thickness=1)
-            #Annotate particle #.
-            annotate = True
-            if annotate == True:
-                (xcom,ycom),contradius = cv2.minEnclosingCircle(filteredvertices[i])
-                xcom=int(xcom)
-                ycom=int(ycom)
-                contradius=int(contradius)
-                cv2.circle(drawing_img,(xcom,ycom),1,(0,0,255),1)
-                cv2.putText(drawing_img,str(i+1),(xcom+3,ycom+3),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,0,255),thickness=1)           
 
-
-        #show_image(img)
-
-        if invert == True:
-            cv2.imwrite("inv_det_"+str(writeout).split("/")[-1],drawing_img)
-        else:
-            cv2.imwrite("det_"+str(writeout).split("/")[-1],drawing_img)
 
     return filteredvertices

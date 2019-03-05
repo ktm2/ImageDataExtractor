@@ -272,6 +272,9 @@ def cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, 
             hull = cv2.convexHull(vert,returnPoints = False)
             defects = cv2.convexityDefects(vert,hull)
 
+            indextoremove.append(i)
+
+
             if defects is not None:
 
                 for j in range(defects.shape[0]):
@@ -292,7 +295,6 @@ def cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, 
 
 
 
-                            indextoremove.append(i)
                             midpoint=((start[0]+end[0])/2,(start[1]+end[1])/2)
 
                             #Attempt to slice contour horizontally or vertically in order to find closest point to convexhull point on other side 
@@ -474,6 +476,7 @@ def cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, 
 
     for i in brokenupvertices:
         clusterbreakupvertices.append(i[0])
+
 
     return clusterbreakupvertices
 

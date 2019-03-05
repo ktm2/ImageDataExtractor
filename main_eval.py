@@ -34,11 +34,13 @@ def main_detection(imgname):
 
     scale, inlaycoords = scalebar_identification(img, testing = imgname)
 
-    filteredvertices = particle_identification(img, inlaycoords, writeout = imgname, testing = True)
+    filteredvertices = particle_identification(img, inlaycoords, testing = False)
+
+    inverted = False
 
     #If less than 3 particles are found, redo analysis with inverted colors.
     if len(filteredvertices) < 3:
-        filteredvertices_inverted = particle_identification(img, inlaycoords, testing = imgname, invert = True)
+        filteredvertices_inverted = particle_identification(img, inlaycoords, testing = False, invert = True)
 
         if len(filteredvertices_inverted) > 0:
             if len(img.shape) == 2:
@@ -60,11 +62,13 @@ def main_detection(imgname):
             #the calculation steps, both images get written out.
             if sum(arealist_inv) > sum(arealist):
                 filteredvertices = filteredvertices_inverted
+                inverted = True
 
+    writeout_image(img, filteredvertices, imgname, inverted)
 
-    return filteredvertices, scale
+    return filteredvertices, scale, inverted
 
-def after_detection(imgname, filteredvertices, scale):
+def after_detection(imgname, filteredvertices, scale, inverted):
     '''After detection has happened calculate particle metrics and RDF.
 
     :param sting imgname: name of image file.
@@ -116,7 +120,10 @@ def after_detection(imgname, filteredvertices, scale):
     outfile.write("Particle resemblances to regular shapes: " + "\n")
     outfile.write(str(resemblances) + "\n")
     outfile.write(conclusion + "\n")
-    outfile.write("Average particle size: " + str(avgarea) + " sqm")
+    outfile.write("Average particle size: " + str(avgarea) + " sqm" + "\n")
+
+    if inverted == True:
+        outfile.write("Image colors were inverted for a more accurate detection." + "\n")
 
     outfile.close()
 
@@ -146,7 +153,7 @@ def run(path_to_images, path_to_secondary = None, path_to_already_done = None):
     if path_to_secondary != None:
         #Index value 9 here depends on what precedes your filename.
         #9 is to ignore "scalebar_" prefix.
-        secondary.extend([a.split('/')[-1][9:] for a in glob.glob(path_to_secondary)])
+        secondary.extend([a.split('/')[-1][4:] for a in glob.glob(path_to_secondary)])
 
     already_done = []
     if path_to_already_done != None:
@@ -157,18 +164,24 @@ def run(path_to_images, path_to_secondary = None, path_to_already_done = None):
         if (imgname.split('/')[-1] in secondary) and (imgname.split('/')[-1] not in already_done) :
             print("Scale and particle detection begun on: " + str(imgname))
 
-            filteredvertices, scale = main_detection(imgname)
+            filteredvertices, scale, inverted = main_detection(imgname)
 
             if len(filteredvertices) > 0:
-                after_detection(imgname, filteredvertices, scale)
+                after_detection(imgname, filteredvertices, scale, inverted)
+
+            else:
+                outfile = open(imgname.split('/')[-1].split(".")[0] + ".txt", "w")
+                outfile.write(imgname.split('/')[-1] + "\n")
+                outfile.write("No particles found.")
+                outfile.close()
             
 
     return
 
 
-path_to_images = "/Users/karim/Desktop/evaluation_images/merged/2_karim_split/0_C0CS00106F_fig11_3.png"
+path_to_images = "/Users/karim/Desktop/evaluation_images/merged/2_karim_split/*.png"
 
-path_to_secondary = "/Users/karim/Desktop/evaluation_images/merged/3_scalebar/true_positives/*.png"
+path_to_secondary = "/Users/karim/Desktop/evaluation_images/merged/4.1_det/should_invert/*.png"
 
 path_to_already_done = None
 
