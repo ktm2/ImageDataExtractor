@@ -160,10 +160,13 @@ def particle_size_histogram(arealist, filtered, imgname):
 
     font={"fontname":"serif"}
     _, bins, _ = plt.hist(arealist, bins=len(arealist) + 1, edgecolor='black', linewidth=1.2, rwidth=0.9, label='Original')
-    plt.hist(filtered, bins=len(arealist) + 1, range=(bins.min(), bins.max()), edgecolor='black', linewidth=1.2, rwidth=0.9, label='Filtered')
+    plt.hist(filtered, bins=len(arealist) + 1, range=(bins.min(), bins.max()), edgecolor='black', linewidth=1.2, 
+        rwidth=0.9, label='Filtered', alpha = 0.6)
     plt.title("Particle Size " + str(imgname).split("/")[-1] ,**font)
     plt.xlabel('Meters**2',**font)
     plt.ylabel("Frequency",**font)
+    ##is this right?
+    plt.xlim([0,max(arealist)])
     plt.legend()
     plt.savefig("hist_" + str(imgname).split("/")[-1], bbox_inches = 'tight')
     plt.close()

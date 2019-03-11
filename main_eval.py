@@ -101,6 +101,8 @@ def after_detection(imgname, filteredvertices, scale, inverted):
     # avgarea = avgarea * (scale ** 2)
     #arealist = [a*(scale**2) for a in arealist]
     filtered_areas = remove_outliers(arealist)
+
+    #This is returning nan sometimes.
     avgarea = np.median(filtered_areas) * scale ** 2
 
     arealist = [a*(scale**2) for a in arealist]
@@ -129,7 +131,7 @@ def after_detection(imgname, filteredvertices, scale, inverted):
     outfile.write("Particle resemblances to regular shapes: " + "\n")
     outfile.write(str(resemblances) + "\n")
     outfile.write(conclusion + "\n")
-    outfile.write("Average particle size: " + str(avgarea) + " sqm" + "\n")
+    outfile.write("Representative particle size: " + str(avgarea) + " sqm" + "\n")
     outfile.write("Average aspect ratio: " + str(mean_aspect_ratio) + "\n")
 
 
@@ -193,16 +195,16 @@ def run(path_to_images, path_to_secondary = None, path_to_already_done = None):
     return
 
 
-# path_to_images = "/Users/karim/Desktop/evaluation_images/merged/2_karim_split/0_C3RA40414E_fig2_2.png"
+path_to_images = "/Users/karim/Desktop/evaluation_images/merged/2_karim_split/*.png"
 
-path_to_secondary = None
+path_to_secondary = "/Users/karim/Desktop/evaluation_images/merged/4.1_det/*.png"
 
 path_to_already_done = None
 
 
-path_to_images = "/home/batuhan/Documents/PhD Physics/Projects/imagedataextractor130219_2/merged/2_karim_split/*.png"
+# path_to_images = "/home/batuhan/Documents/PhD Physics/Projects/imagedataextractor130219_2/merged/2_karim_split/*.png"
 
-path_to_secondary = "/home/batuhan/Documents/PhD Physics/Projects/imagedataextractor130219_2/merged/4.1_det/*.png"
+# path_to_secondary = "/home/batuhan/Documents/PhD Physics/Projects/imagedataextractor130219_2/merged/4.1_det/*.png"
 
 run(path_to_images, path_to_secondary, path_to_already_done)
 
