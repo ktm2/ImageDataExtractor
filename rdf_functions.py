@@ -154,6 +154,9 @@ def output_rdf(xRDF,yRDF,imgname):
     return
 
 def particle_size_histogram(arealist,imgname):
+    '''Plots particle size histogram.
+    :param list arealist: list of the areas of particles.
+    :param string imgname: name of the img (needed for writing output)'''
 
     font={"fontname":"serif"}
     plt.hist(arealist,edgecolor='black', linewidth=1.2)
@@ -164,6 +167,22 @@ def particle_size_histogram(arealist,imgname):
     #plt.show()
 
     return
+
+
+def aspect_ratios(filteredvertices):
+    '''Calculates aspect ratios of particles.
+    :param list filteredvertices: list of detected particles.
+
+    :return list aspect_ratios: list of respective aspect ratios.'''
+
+    aspect_ratios = []
+
+    for cont in filteredvertices:
+        x,y,w,h = cv2.boundingRect(cont)
+        aspect_ratio = float(w)/h
+        aspect_ratios.append(aspect_ratio)
+
+    return aspect_ratios
 
 
 

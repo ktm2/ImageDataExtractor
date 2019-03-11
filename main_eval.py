@@ -103,6 +103,10 @@ def after_detection(imgname, filteredvertices, scale, inverted):
 
     #particle_size_histogram(arealist,imgname)
 
+    aspect_ratios = aspect_ratios(filteredvertices)
+
+    mean_aspect_ratio = round(sum(aspect_ratios)/float(len(aspect_ratios)),2)
+
     #number of particles.
     number_of_particles = len(filteredvertices)
 
@@ -121,6 +125,8 @@ def after_detection(imgname, filteredvertices, scale, inverted):
     outfile.write(str(resemblances) + "\n")
     outfile.write(conclusion + "\n")
     outfile.write("Average particle size: " + str(avgarea) + " sqm" + "\n")
+    outfile.write("Average aspect ratio: " + str(mean_aspect_ratio) + "\n")
+
 
     if inverted == True:
         outfile.write("Image colors were inverted for a more accurate detection." + "\n")
