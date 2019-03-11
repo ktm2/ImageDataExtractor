@@ -154,11 +154,14 @@ def run(path_to_images, path_to_secondary = None, path_to_already_done = None):
         #Index value 9 here depends on what precedes your filename.
         #9 is to ignore "scalebar_" prefix.
         secondary.extend([a.split('/')[-1][4:] for a in glob.glob(path_to_secondary)])
+    else:
+    	secondary = [a.split('/')[-1] for a in images]
 
     already_done = []
     if path_to_already_done != None:
         #4 is to ignore "det_" prefix.
         already_done.extend([a.split('/')[-1][4:] for a in glob.glob(path_to_already_done)])
+
 
     for imgname in images:
         if (imgname.split('/')[-1] in secondary) and (imgname.split('/')[-1] not in already_done) :
@@ -179,9 +182,9 @@ def run(path_to_images, path_to_secondary = None, path_to_already_done = None):
     return
 
 
-path_to_images = "/Users/karim/Desktop/evaluation_images/merged/2_karim_split/*.png"
+path_to_images = "/Users/karim/Desktop/evaluation_images/merged/2_karim_split/0_C3RA40414E_fig2_2.png"
 
-path_to_secondary = "/Users/karim/Desktop/evaluation_images/merged/4.1_det/should_invert/*.png"
+path_to_secondary = None
 
 path_to_already_done = None
 
