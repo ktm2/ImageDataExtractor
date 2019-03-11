@@ -153,17 +153,20 @@ def output_rdf(xRDF,yRDF,imgname):
 
     return
 
-def particle_size_histogram(arealist,imgname):
+def particle_size_histogram(arealist, filtered, imgname):
     '''Plots particle size histogram.
     :param list arealist: list of the areas of particles.
     :param string imgname: name of the img (needed for writing output)'''
 
     font={"fontname":"serif"}
-    plt.hist(arealist,edgecolor='black', linewidth=1.2)
+    _, bins, _ = plt.hist(arealist, bins=len(arealist) + 1, edgecolor='black', linewidth=1.2, rwidth=0.9, label='Original')
+    plt.hist(filtered, bins=len(arealist) + 1, range=(bins.min(), bins.max()), edgecolor='black', linewidth=1.2, rwidth=0.9, label='Filtered')
     plt.title("Particle Size " + str(imgname).split("/")[-1] ,**font)
     plt.xlabel('Meters**2',**font)
     plt.ylabel("Frequency",**font)
+    plt.legend()
     plt.savefig("hist_" + str(imgname).split("/")[-1], bbox_inches = 'tight')
+    plt.close()
     #plt.show()
 
     return
@@ -184,5 +187,9 @@ def aspect_ratios(filteredvertices):
 
     return aspect_ratios
 
-
+def remove_outliers(areas):
+    mu = np.median(areas)
+    std = np.std(areas)
+    filtered = [x for x in areas if (x < mu + (1.75*std) and x > mu - (1*std))]
+    return filtered
 

@@ -98,14 +98,19 @@ def after_detection(imgname, filteredvertices, scale, inverted):
     colorlist, arealist, avgcolormean, avgcolorstdev, avgarea = particle_metrics_from_vertices(img, gimg, rows,
         cols, filteredvertices)
     #Convert from pixel square to meter square.
-    avgarea = avgarea * (scale ** 2)
+    # avgarea = avgarea * (scale ** 2)
     #arealist = [a*(scale**2) for a in arealist]
+    filtered_areas = remove_outliers(arealist)
+    avgarea = np.median(filtered_areas) * scale ** 2
 
-    #particle_size_histogram(arealist,imgname)
+    arealist = [a*(scale**2) for a in arealist]
+    filtered_areas = [a*(scale**2) for a in filtered_areas]
 
-    aspect_ratios = aspect_ratios(filteredvertices)
+    particle_size_histogram(arealist, filtered_areas, imgname)
 
-    mean_aspect_ratio = round(sum(aspect_ratios)/float(len(aspect_ratios)),2)
+    aspect_ratios_list = aspect_ratios(filteredvertices)
+
+    mean_aspect_ratio = round(sum(aspect_ratios_list)/float(len(aspect_ratios_list)),2)
 
     #number of particles.
     number_of_particles = len(filteredvertices)
@@ -188,16 +193,16 @@ def run(path_to_images, path_to_secondary = None, path_to_already_done = None):
     return
 
 
-path_to_images = "/Users/karim/Desktop/evaluation_images/merged/2_karim_split/0_C3RA40414E_fig2_2.png"
+# path_to_images = "/Users/karim/Desktop/evaluation_images/merged/2_karim_split/0_C3RA40414E_fig2_2.png"
 
 path_to_secondary = None
 
 path_to_already_done = None
 
 
-# path_to_images = "/home/batuhan/Documents/PhD Physics/Projects/imagedataextractor130219_2/2_karim_split/*.png"
+path_to_images = "/home/batuhan/Documents/PhD Physics/Projects/imagedataextractor130219_2/merged/2_karim_split/*.png"
 
-# path_to_secondary = "/home/batuhan/Documents/PhD Physics/Projects/imagedataextractor130219_2/3_scalebar/false_negative/*.png"
+path_to_secondary = "/home/batuhan/Documents/PhD Physics/Projects/imagedataextractor130219_2/merged/4.1_det/*.png"
 
 run(path_to_images, path_to_secondary, path_to_already_done)
 
