@@ -5,10 +5,11 @@ import math
 from contour_detections import *
 from scipy.stats import mode
 
-def edge_correction(filteredvertices,rows,cols,inlaycoords, testing = False, gimg = None):
+def edge_correction(filteredvertices, particlediscreteness,rows,cols,inlaycoords, testing = False, gimg = None):
     '''Filters out particles that are deformed by image borders or inlays. (must intersect either at min 2 points)
 
     :param list filteredvertices: list of vertices of deteced particles.
+    :param list particlediscreteness: list of particle DI's.
     :param int rows: number of rows in image.
     :param int cols: number of columns in image.
     :param list inlaycoords: list of coordinates (as tuples) of inlays in image, including text info.
@@ -24,6 +25,9 @@ def edge_correction(filteredvertices,rows,cols,inlaycoords, testing = False, gim
 
     if testing ==True:
         test_img = cv2.cvtColor(gimg,cv2.COLOR_GRAY2RGB)
+
+    particle_index = 0
+    index_to_remove = []
 
     for vertices in filteredvertices:
         borderintersections=0
@@ -57,6 +61,16 @@ def edge_correction(filteredvertices,rows,cols,inlaycoords, testing = False, gim
             edgecorrectedvertices.append(vertices)
         else:
             removedvertices.append(vertices)
+            index_to_remove.append(particle_index)
+
+        particle_index += 1
+
+    index_to_remove = list(set(index_to_remove))
+
+    if particlediscreteness is not None:
+        for i in sorted(index_to_remove,reverse=True):
+            del particlediscreteness[i]
+
 
     if testing == True:
         print(str(len(removedvertices)) + " particles removed.")
@@ -74,7 +88,7 @@ def edge_correction(filteredvertices,rows,cols,inlaycoords, testing = False, gim
 
 
 
-    return edgecorrectedvertices
+    return edgecorrectedvertices, particlediscreteness
 
 
 def particle_metrics_from_vertices(img,gimg,rows,cols,filteredvertices, invert = False):
@@ -718,7 +732,7 @@ def discreteness_index_and_ellipse_fitting(edgecorrectedvertices,img,rows,cols,i
         show_image(ellimg)
 
 
-    return particlediscreteness, ellipsefittedvertices
+    return ellipsefittedvertices, particlediscreteness
 
 
 

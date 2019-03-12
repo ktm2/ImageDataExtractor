@@ -19,6 +19,7 @@ def particle_identification(img, inlaycoords, testing = False, blocksize = 151, 
     :param bool invert: Invert colors of image, useful for dark particles on light background.
 
     :return list filteredvertices: List of vertices of particles in image.
+    :return list particlediscreteness: List of discreteness index for each particle.
     '''
 
     #Check if img already grayscale, if not convert.
@@ -41,6 +42,8 @@ def particle_identification(img, inlaycoords, testing = False, blocksize = 151, 
     #Initial contour detection.
     filteredvertices = find_draw_contours_main(img,gimg,blocksize,rows,cols,blursize, testing = testing)
 
+    particlediscreteness = []
+
     if len(filteredvertices) > 0:
         #Calculate particle metrics.
         colorlist, arealist, avgcolormean, avgcolorstdev, avgarea = particle_metrics_from_vertices(img, gimg, rows,
@@ -54,15 +57,15 @@ def particle_identification(img, inlaycoords, testing = False, blocksize = 151, 
         filteredvertices = cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, blocksize, testing = testing, detailed_testing = False)
 
         #Eliminate particles that touch edges or inlays.
-        filteredvertices = edge_correction(filteredvertices, rows, cols, inlaycoords, testing = testing, gimg = gimg)
+        filteredvertices, _ = edge_correction(filteredvertices, particlediscreteness = None, rows = rows, cols = cols, inlaycoords = inlaycoords, testing = testing, gimg = gimg)
 
         #Ellipse fitting.
-        particlediscreteness, filteredvertices = discreteness_index_and_ellipse_fitting(filteredvertices, img, rows,
+        filteredvertices, particlediscreteness = discreteness_index_and_ellipse_fitting(filteredvertices, img, rows,
         	cols, imgstdev, testing = testing)
 
         #Eliminate particles that touch edges or inlays.
-        filteredvertices = edge_correction(filteredvertices, rows, cols, inlaycoords, testing = testing, gimg = gimg)
+        filteredvertices, particlediscreteness = edge_correction(filteredvertices, particlediscreteness, rows, cols, inlaycoords, testing = testing, gimg = gimg)
 
 
 
-    return filteredvertices
+    return filteredvertices, particlediscreteness

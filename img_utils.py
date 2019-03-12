@@ -6,7 +6,8 @@ import keras.backend as K
 def writeout_image(img, filteredvertices, imgname, inverted = False):
     '''Output an image displaying all the vertices detected.'''
 
-    drawing_img = img.copy()
+    drawing_img = crop_image(img.copy())
+
     for i in range(len(filteredvertices)):
         cv2.polylines(drawing_img,[filteredvertices[i]],True,(0,255,0),thickness=1)
         #Annotate particle #.
