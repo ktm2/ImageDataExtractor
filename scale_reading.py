@@ -129,38 +129,6 @@ def detect_scale_bar_and_inlays(gimg, imgmean, imgstdev, rows, cols, show = Fals
 
     return scalebar, scalevalue, conversion, inlaycoords
 
-    # Find inlays or text blocks in image.
-
-    # erosionkernel = np.ones((3,3),np.uint8)
-    # dilationkernel = np.ones((8,10),np.uint8)
-
-    # erodedimg = cv2.erode(thresholdedimg,erosionkernel,iterations=2)
-    # dilatedimg = cv2.dilate(erodedimg, dilationkernel, iterations=5)
-
-    # whiteinlays=[]
-    # #White inlays.
-    # filteredcontours,filteredvertices,boundingrectanglewidths,whiteinlays=find_draw_contours\
-    # (dilatedimg,blocksize,minarea=100,maxarea=rows*cols/5,displayimg=False,bounding_rect=True,annotate=testing)
-
-    # blackinlays=[]
-    # #Black inlays.
-    # if imgmean>70:
-    #     filteredcontours,filteredvertices,boundingrectanglewidths,blackinlays=find_draw_contours\
-    #     (threshold_for_text_reading(scalebarimg,imgmean,imgstdev,0),blocksize,minarea=100,maxarea=rows*cols/5,displayimg=False,bounding_rect=True,annotate=testing)
-
-    # #Assert that inlays must be in edges of image.
-    # inlaycoords=[inlay for inlay in whiteinlays if inlay[0]<0.1*cols or inlay[0]>0.9*cols or inlay[1]<0.1*rows or inlay[1]>0.9*rows]\
-    # +[inlay for inlay in blackinlays if inlay[0]<0.1*cols or inlay[0]>0.9*cols or inlay[1]<0.1*rows or inlay[1]>0.9*rows]
-
-    # if testing==True and len(inlaycoords)>0:
-
-    #     for i in inlaycoords:
-    #         cv2.rectangle(scalebarimg,(i[0],i[1]),(i[0]+i[2],i[1]+i[3]),(255,255,255),thickness=2)
-
-    #     show_image(scalebarimg)
-
-    # return pixelscale,inlaycoords,scalebarboundingrectangle,scalevalue,conversion
-
 
 def srcnn_predict(image, model, log=1.2):
     image = np.expand_dims(np.expand_dims(image, 3), 0)

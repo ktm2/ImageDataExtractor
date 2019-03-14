@@ -121,8 +121,10 @@ def after_detection(imgname, filteredvertices, scale, inverted):
     #arealist = [a*(scale**2) for a in arealist]
     filtered_areas = remove_outliers(arealist)
 
-    #This is returning nan sometimes.
-    avgarea = np.median(filtered_areas) * scale ** 2
+    if len(filtered_areas) > 1:
+        avgarea = np.median(filtered_areas) * scale ** 2
+    else:
+        avgarea = float(filtered_areas[0]) * scale ** 2
 
     arealist = [a*(scale**2) for a in arealist]
     filtered_areas = [a*(scale**2) for a in filtered_areas]
@@ -214,7 +216,7 @@ def run(path_to_images, path_to_secondary = None, path_to_already_done = None):
     return
 
 
-path_to_images = "/Users/karim/Desktop/evaluation_images/merged/2_karim_split/1_C4RA12803F_fig2_1.png"
+path_to_images = "/Users/karim/Desktop/evaluation_images/merged/2_karim_split/0_C2CE26660A_fig8_2.png"
 
 path_to_secondary = "/Users/karim/Desktop/evaluation_images/merged/4_det/*.png"
 

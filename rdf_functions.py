@@ -191,8 +191,11 @@ def aspect_ratios(filteredvertices):
     return aspect_ratios
 
 def remove_outliers(areas):
-    mu = np.median(areas)
-    std = np.std(areas)
-    filtered = [x for x in areas if (x < mu + (1.75*std) and x > mu - (1*std))]
+    if len(areas) > 1:
+        mu = np.median(areas)
+        std = np.std(areas)
+        filtered = [x for x in areas if (x < mu + (1.75*std) and x > mu - (1*std))]
+    else:
+        filtered = areas
     return filtered
 
