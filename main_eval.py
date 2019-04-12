@@ -164,10 +164,9 @@ def after_detection(imgname, filteredvertices, scale, inverted):
     #Calculate rdf.
     xRDF = []
     yRDF = []
-    #if len(filteredvertices) > 9:
-        #xRDF, yRDF = calculate_rdf(filteredvertices, rows, cols, scale, increment = 100, progress = True)
-        #Output rdf.
-        #output_rdf(xRDF, yRDF, imgname)
+    if len(filteredvertices) > 9:
+        xRDF, yRDF = calculate_rdf(filteredvertices, rows, cols, scale, increment = 4, progress = True)
+        output_rdf(xRDF, yRDF, imgname)
 
     return
 
@@ -216,9 +215,9 @@ def run(path_to_images, path_to_secondary = None, path_to_already_done = None):
     return
 
 
-path_to_images = "/Users/karim/Desktop/evaluation_images/merged/2_karim_split/0_C2CE26660A_fig8_2.png"
+path_to_images = "/Users/karim/Desktop/evaluation_images/merged/2_karim_split/0_C6CE01551D_fig1_2.png"
 
-path_to_secondary = "/Users/karim/Desktop/evaluation_images/merged/4_det/*.png"
+path_to_secondary = None
 
 path_to_already_done = None
 

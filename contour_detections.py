@@ -283,7 +283,6 @@ def find_draw_contours_main(img, gimg,blocksize, rows, cols, blursize = 0, testi
         unknownvar,contours,h = cv2.findContours(thresh1,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
 
 
-
     #Set variables for contour processing.
     shapeindex=1
     filteredcontours=[]
