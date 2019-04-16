@@ -6,6 +6,8 @@ import cv2
 import matplotlib.pyplot as plt
 import itertools
 import math
+from img_utils import *
+
 
 def calculate_rdf(filteredvertices,rows,cols,scale,increment=2,progress=True):
     '''Calculates RDF from list of vertices of particles.
@@ -19,6 +21,9 @@ def calculate_rdf(filteredvertices,rows,cols,scale,increment=2,progress=True):
 
     :return list xRDF: x values of RDF
     :return list yRDF: y values of RDF
+
+    TODO:
+    - Must be better way of doing this than pixel counting?
 
     '''
 
@@ -58,7 +63,6 @@ def calculate_rdf(filteredvertices,rows,cols,scale,increment=2,progress=True):
             print('RDF calculation on ' + str(particle_index) + '/' + str(numberofparticles))
             particle_index += 1
 
-        ###### numpy.array_equal?
         restofvertices=[particleB for particleB in filteredvertices
             if np.array_equal(particleA,particleB) == False]
 
@@ -68,14 +72,14 @@ def calculate_rdf(filteredvertices,rows,cols,scale,increment=2,progress=True):
         particleAy = int(particleAy)
         particleAradius = int(particleAradius)
 
+        cv2.polylines(particleAimg,[particleA],True,(0,0,255))
+
         for particleB in restofvertices:
             
             #paint blank particleBimg with a filled particleB.
             
             cv2.polylines(particleBimg,[particleB],True,(0,255,0)) #might be unnecessary
             cv2.fillPoly(particleBimg,[particleB],(0,255,0))
-
-            #cv2.drawContours(particleBimg,[b],0,(0,255,0),-1)
 
             (particleBx,particleBy),particleBradius = cv2.minEnclosingCircle(particleB)
             particleBx=int(particleBx)
@@ -84,39 +88,44 @@ def calculate_rdf(filteredvertices,rows,cols,scale,increment=2,progress=True):
             
             ABintersects=[]
 
+            min_distance_for_this_pair = (distance_formula((particleAx,particleAy),(particleBx,particleBy))
+             - int(particleBradius) * 1.5)
+
+            max_distance_for_this_pair = (distance_formula((particleAx,particleAy),(particleBx,particleBy))
+             + int(particleBradius) * 1.5)
+
             for i in xRDF:
 
                 doesABintersectAtRadius=0
 
-                #Draw a circle of radius i originating from center of particleA.
+                if  min_distance_for_this_pair < i < max_distance_for_this_pair:
 
-                cv2.circle(particleAimg,(particleAx,particleAy),i,(255,0,0))
+                    #Draw a circle of radius i originating from center of particleA.
 
-
-                #Combine the two images.
-
-                combinedimg=cv2.addWeighted(particleBimg,1,particleAimg,1,0)
-
-                krange=range((particleBx-particleBradius),(particleBx+particleBradius))
-                krangetrim=[k for k in krange if k < cols]
-
-                lrange=range((particleBy-particleBradius),(particleBy+particleBradius))
-                lrangetrim=[l for l in lrange if l < rows]
+                    cv2.circle(particleAimg,(particleAx,particleAy),i,(255,0,0))
 
 
-                #Search general region of particle B to see if the circle of radius i shows up in it.
-                #If so, there is an intersect between particles A & B at radius i. 
+                    #Combine the two images.
 
-                for k in krangetrim:
-                        for l in lrangetrim:
-                            ########
-                            if (combinedimg.item(l,k,0) == 255 and combinedimg.item(l,k,1) == 255):
-                                doesABintersectAtRadius = 1                                
-                                break
-            
+                    combinedimg=cv2.addWeighted(particleBimg,1,particleAimg,1,0)
 
+                    krange=range((particleBx-particleBradius),(particleBx+particleBradius))
+                    krangetrim=[k for k in krange if k < cols]
+
+                    lrange=range((particleBy-particleBradius),(particleBy+particleBradius))
+                    lrangetrim=[l for l in lrange if l < rows]
+
+                    #Search general region of particle B to see if the circle of radius i shows up in it.
+                    #If so, there is an intersect between particles A & B at radius i. 
+
+                    for k in krangetrim:
+                            for l in lrangetrim:
+                                if (combinedimg.item(l,k,0) == 255 and combinedimg.item(l,k,1) == 255):
+                                    doesABintersectAtRadius = 1                                
+                                    break
 
                 ABintersects.append(doesABintersectAtRadius)
+
                 particleAimg[:] = (0, 0, 0)             
 
             particleBimg[:] = (0, 0, 0)    

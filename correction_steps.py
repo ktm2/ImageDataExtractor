@@ -530,7 +530,7 @@ def discreteness_index_and_ellipse_fitting(edgecorrectedvertices,img,rows,cols,i
     similarity_ellipse_vs_particle=[]
     dev_particle_vs_ellipse=[]
 
-    particleindex=0
+    particleindex = 1
 
     #particle level.
     for i in edgecorrectedvertices:
@@ -676,8 +676,6 @@ def discreteness_index_and_ellipse_fitting(edgecorrectedvertices,img,rows,cols,i
 
             particleindex+=1
 
-            if testing == True:
-                show_image(ellimg)
 
 
 
