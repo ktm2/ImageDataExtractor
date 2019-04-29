@@ -19,7 +19,7 @@ def line_detection_and_split(gimg, show = False, eval_img = True):
     - checking along grid manually is inefficient, can do this recursively:
     - this can be adapted to unevenly split figures if the detected straight lines can be
     filtered more intelligently.
-    - getting rid of debugging related variables.
+    - getting rid of debugging related objects.
 
     '''
 

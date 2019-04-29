@@ -46,17 +46,12 @@ def split_figure(figname, eval_fig = False):
 
 
 imgnamelist=[]
-path = "/Users/karimmukaddem/Desktop/imagedataextractor/eval_sem_tio2_nano/1_matt_split/*.png"
+path = "/Users/karim/Desktop/applications_images/rutile/1_matt_split/*.png"
 
 imgnamelist.extend(glob.glob(path))
 
 
-for imgname in imgnamelist:
-
-    if str(str(imgname).split("/")[-1])[0] != "e":
-
-        print str(str(imgname).split("/")[-1])
-
-        split_figure(imgname, True)
+for figname in imgnamelist:
+    split_figure(figname, True)
 
 

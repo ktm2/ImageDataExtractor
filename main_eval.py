@@ -15,6 +15,7 @@ from particle_identification import *
 from rdf_functions import *
 
 import glob
+import datetime
 
 
 def main_detection(imgname):
@@ -116,16 +117,15 @@ def after_detection(imgname, filteredvertices, scale, inverted):
     #Calculate particle metrics.
     colorlist, arealist, avgcolormean, avgcolorstdev, avgarea = particle_metrics_from_vertices(img, gimg, rows,
         cols, filteredvertices)
-    #Convert from pixel square to meter square.
-    # avgarea = avgarea * (scale ** 2)
-    #arealist = [a*(scale**2) for a in arealist]
+
     filtered_areas = remove_outliers(arealist)
 
     if len(filtered_areas) > 1:
         avgarea = np.median(filtered_areas) * scale ** 2
     else:
         avgarea = float(filtered_areas[0]) * scale ** 2
-
+    
+    #Convert from pixel square to meter square.
     arealist = [a*(scale**2) for a in arealist]
     filtered_areas = [a*(scale**2) for a in filtered_areas]
 
@@ -141,18 +141,22 @@ def after_detection(imgname, filteredvertices, scale, inverted):
     #Log for file.
     outfile = open(imgname.split('/')[-1].split(".")[0] + ".txt", "w")
 
-    outfile.write(imgname.split('/')[-1] + "\n")
-    #Need to add info about DOI, figure, material etc.
-    outfile.write("Particle Number, Size in Pixels" + "\n")
-    particle_index = 1
-    for area in arealist:
-        outfile.write(str(particle_index) + ", " + str(area) + "\n")
-        particle_index+=1
-    outfile.write("\n" + str(number_of_particles) + " particles detected." + "\n")
+    outfile.write(imgname.split('/')[-1] + " processed using ImageDataExtractor on "+"\n")
+    outfile.write(datetime.datetime.now().strftime("%Y-%m-%d %H:%M") + "\n")
+    outfile.write("Article DOI: " + "\n")
+    outfile.write(imgname.split('/')[-1].split("_")[1] + "\n")
+    outfile.write("Figure number: " + "\n")
+    outfile.write(imgname.split('/')[-1].split("_")[2] + "\n" + "\n")
+    # outfile.write("Particle Number, Size in Pixels" + "\n")
+    # particle_index = 1
+    # for area in arealist:
+    #     outfile.write(str(particle_index) + ", " + str(area) + "\n")
+    #     particle_index+=1
+    outfile.write(str(number_of_particles) + " particles detected." + "\n")
+    outfile.write("Representative particle size: " + str(avgarea) + " sqm" + "\n" + "\n")
     outfile.write("Particle resemblances to regular shapes: " + "\n")
     outfile.write(str(resemblances) + "\n")
     outfile.write(conclusion + "\n")
-    outfile.write("Representative particle size: " + str(avgarea) + " sqm" + "\n")
     outfile.write("Average aspect ratio: " + str(mean_aspect_ratio) + "\n")
 
 
