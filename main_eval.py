@@ -25,6 +25,8 @@ def main_detection(imgname):
 
     :return list filteredvertices: list of vertices of particles in image.
     :return float scale: Scale of pixels in image (m/pixel).
+    :return float conversion: unit of scalevalue 10e-6 for um, 10e-9 for nm.
+
     '''
 
     img = cv2.imread(imgname)
@@ -33,7 +35,7 @@ def main_detection(imgname):
         print("img smaller than 50k")
         return None,None
 
-    scale, inlaycoords = scalebar_identification(img, testing = imgname)
+    scale, inlaycoords, conversion = scalebar_identification(img, testing = imgname)
 
     filteredvertices, particlediscreteness = particle_identification(img, inlaycoords, testing = False)
 
@@ -86,14 +88,16 @@ def main_detection(imgname):
 
     writeout_image(img, filteredvertices, imgname, inverted)
 
-    return filteredvertices, scale, inverted
+    return filteredvertices, scale, inverted, conversion
 
-def after_detection(imgname, filteredvertices, scale, inverted):
+def after_detection(imgname, filteredvertices, scale, inverted, conversion):
     '''After detection has happened calculate particle metrics and RDF.
 
     :param sting imgname: name of image file.
     :param list filteredvertices: list of vertices of particles (as numpy.ndarray) in image.
     :param float scale: Scale of pixels in image (m/pixel).
+    :param float conversion: unit of scalevalue 10e-6 for um, 10e-9 for nm.
+
 
     :return float avgarea: average size of particles (m2)
     :return float avgcolormean: average pixel intensity in particles.
@@ -170,7 +174,7 @@ def after_detection(imgname, filteredvertices, scale, inverted):
     yRDF = []
     if len(filteredvertices) > 9:
         xRDF, yRDF = calculate_rdf(filteredvertices, rows, cols, scale, increment = 4, progress = True)
-        output_rdf(xRDF, yRDF, imgname)
+        output_rdf(xRDF, yRDF, imgname, conversion)
 
     return
 
@@ -204,10 +208,10 @@ def run(path_to_images, path_to_secondary = None, path_to_already_done = None):
         if (imgname.split('/')[-1] in secondary) and (imgname.split('/')[-1] not in already_done) :
             print("Scale and particle detection begun on: " + str(imgname))
 
-            filteredvertices, scale, inverted = main_detection(imgname)
+            filteredvertices, scale, inverted, conversion = main_detection(imgname)
 
             if len(filteredvertices) > 0:
-                after_detection(imgname, filteredvertices, scale, inverted)
+                after_detection(imgname, filteredvertices, scale, inverted, conversion)
 
             else:
                 outfile = open(imgname.split('/')[-1].split(".")[0] + ".txt", "w")
@@ -221,7 +225,7 @@ def run(path_to_images, path_to_secondary = None, path_to_already_done = None):
 
 path_to_images = "/Users/karim/Desktop/evaluation_images/merged/2_karim_split/0_C6CE01551D_fig1_2.png"
 
-path_to_secondary = None
+path_to_secondary = "/Users/karim/Desktop/evaluation_images/merged/4.2_det/*.png"
 
 path_to_already_done = None
 

@@ -12,6 +12,8 @@ def scalebar_identification(img, testing = None):
     :return float scale: Distance associated with a pixel in units of (m/pixel)
     :return list inlaycoords: list of tuples, (x,y,w,h) top left corner, width and 
     height of inlays, including scalebar.
+    :return float conversion: unit of scalevalue 10e-6 for um, 10e-9 for nm.
+
 
     TODO:
     - Inlay determination.
@@ -55,4 +57,4 @@ def scalebar_identification(img, testing = None):
     if scalebar != None:
         scale = scalevalue * conversion / float(scalebar[2])
 
-    return scale, inlaycoords
+    return scale, inlaycoords, conversion

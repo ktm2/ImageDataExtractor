@@ -142,20 +142,22 @@ def calculate_rdf(filteredvertices,rows,cols,scale,increment=2,progress=True):
 
 
 
-def output_rdf(xRDF,yRDF,imgname):
+def output_rdf(xRDF,yRDF,imgname,conversion):
     '''Plots a given rdf.'''
 
-    distanceunit='meters'
+    om = int(math.floor(math.log10(conversion)))
+    distanceunit= 'meters E' + str(om)
 
-    plt.plot(xRDF,yRDF, label="_nolegend_",marker='o')
+    xRDF = [round(i * 10 ** (-1*om),2) for i in xRDF]
+
+    plt.plot(xRDF,yRDF, label="_nolegend_",marker='o', linestyle = "None")
     font={"fontname":"serif"}
     plt.ylim([0,max(yRDF)+(max(yRDF)/10.0)])
     plt.xlim([0,max(xRDF)])
-    plt.title("Average Number of Particles at Radial Distance",**font)
-    plt.xlabel(distanceunit,**font)
-    plt.ylabel("Particles",**font)
+    plt.title("minRDF",**font)
+    plt.xlabel("distance / " + distanceunit,**font)
+    plt.ylabel("Frequency",**font)
     plt.grid()
-    plt.legend(fontsize="small")
 
     plt.savefig("rdf_" + str(imgname).split("/")[-1], bbox_inches = 'tight')
     #plt.show()
