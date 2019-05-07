@@ -116,7 +116,7 @@ def after_detection(imgname, filteredvertices, scale, inverted, conversion):
     else:
         gimg = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 
-    resemblances, conclusion = match_to_shapes(filteredvertices)
+    resemblances, conclusion = match_to_shapes(filteredvertices, image_with_shapes = "shapes_to_match.png")
 
     #Calculate particle metrics.
     colorlist, arealist, avgcolormean, avgcolorstdev, avgarea = particle_metrics_from_vertices(img, gimg, rows,
@@ -128,7 +128,15 @@ def after_detection(imgname, filteredvertices, scale, inverted, conversion):
         avgarea = np.median(filtered_areas) * scale ** 2
     else:
         avgarea = float(filtered_areas[0]) * scale ** 2
-    
+
+    #Correct sig figs for avgarea
+    om = int(math.floor(math.log10(avgarea)))
+
+    avgarea = round(avgarea * 10 ** (-1 * om), 2) * 10 ** (om)
+
+
+
+
     #Convert from pixel square to meter square.
     arealist = [a*(scale**2) for a in arealist]
     filtered_areas = [a*(scale**2) for a in filtered_areas]

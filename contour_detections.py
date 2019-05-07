@@ -4,7 +4,7 @@ from img_utils import *
 from scipy.stats import mode
 
 
-def match_to_shapes(filteredvertices, image_with_shapes = "shapes_to_match.png"):
+def match_to_shapes(filteredvertices,image_with_shapes = "shapes_to_match.png", outputimg = None):
     '''Determine closeness of shapes to shapes in a given example image, using Hu-moments.
     Mostly orientation and scale invariant.
     :param numpy.ndarray filteredvertices: the detected particles from earlier in detection.
@@ -19,25 +19,23 @@ def match_to_shapes(filteredvertices, image_with_shapes = "shapes_to_match.png")
 
     #Have to be provided by user if a custom image is being used
     #suggest using testing and annotation mode in find_draw_contours to do this.
-    shape_labels = ["circle","ellipse","square","rectangle"]
+    shape_labels = ["circle", "ellipse", "diamond", "rectangle"]
 
     #List of length of number of particles
     #Each element is a list of length 4, with the corresponding matching coefficients
     #to the regular shapes in shape_labels. Closer to 0 means closer match.
     match = []
+    particle_index = 1
     for particle in filteredvertices:
         particle_matches = []
         for shape in shape_vertices:
             ret = cv2.matchShapes(np.array(particle),np.array(shape[0]),1,0.0)
             particle_matches.append(round(ret,2))
-        match.append(particle_matches)
 
+        match.append(particle_matches)
 
     modes = [mode(i)[0] for i in zip(*match)]
     
-    #Mean like approach.
-    #overall_matches = [round(sum(i) / float(len(filteredvertices)),2) for i in zip(*match)]
-
 
     if min(modes) < 0.1:
         conc = str("The 2D projections of the particles in this image most closely match a: " 
