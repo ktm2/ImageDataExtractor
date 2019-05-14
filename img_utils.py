@@ -5,7 +5,9 @@ import os
 
 
 def writeout_image(img, output_path, filteredvertices, imgname, inverted = False):
-    '''Output an image displaying all the vertices detected.'''
+    '''Output an image displaying all the vertices detected.
+    :param string outputpath: path to output directory.
+'''
 
     drawing_img = crop_image(img.copy())
 

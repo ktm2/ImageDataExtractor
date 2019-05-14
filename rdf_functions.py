@@ -143,7 +143,10 @@ def calculate_rdf(filteredvertices,rows,cols,scale, increment = 2, progress = Fa
 
 
 def output_rdf(xRDF,yRDF,imgname,conversion, outputpath=''):
-    '''Plots a given rdf.'''
+    '''Plots a given rdf.
+
+    :param string outputpath: path to output directory.
+'''
 
     om = int(math.floor(math.log10(conversion)))
     distanceunit= 'meters E' + str(om)
@@ -167,7 +170,9 @@ def output_rdf(xRDF,yRDF,imgname,conversion, outputpath=''):
 def particle_size_histogram(arealist, filtered, imgname, outputpath=''):
     '''Plots particle size histogram.
     :param list arealist: list of the areas of particles.
-    :param string imgname: name of the img (needed for writing output)'''
+    :param string imgname: name of the img (needed for writing output)
+    :param string outputpath: path to output directory.
+    '''
 
     font={"fontname":"serif"}
     _, bins, _ = plt.hist(arealist, bins=len(arealist) + 1, edgecolor='black', linewidth=1.2, rwidth=0.9, label='Original')

@@ -13,6 +13,9 @@
 from scalebar_identification import *
 from particle_identification import *
 from rdf_functions import *
+from image_identification import TEMImageExtractor
+
+import chemdataextractor as cde
 
 import glob
 import datetime
@@ -22,6 +25,7 @@ def main_detection(imgname, outputpath=''):
     '''Where the detection happens.
 
     :param sting imgname: name of image file.
+    :param string outputpath: path to output directory.
 
     :return list filteredvertices: list of vertices of particles in image.
     :return float scale: Scale of pixels in image (m/pixel).
@@ -97,6 +101,7 @@ def after_detection(imgname, filteredvertices, scale, inverted, conversion, outp
     :param list filteredvertices: list of vertices of particles (as numpy.ndarray) in image.
     :param float scale: Scale of pixels in image (m/pixel).
     :param float conversion: unit of scalevalue 10e-6 for um, 10e-9 for nm.
+    :param string outputpath: path to output directory.
 
 
     :return float avgarea: average size of particles (m2)
@@ -186,10 +191,11 @@ def after_detection(imgname, filteredvertices, scale, inverted, conversion, outp
 
     return
 
-def run(path_to_images, outputpath='', path_to_secondary = None, path_to_already_done = None):
-    '''Runs scalebar and particle identification.
+def extract_image(path_to_images, outputpath='', path_to_secondary = None, path_to_already_done = None):
+    '''Runs scalebar and particle identification on an image document.
 
     :param string path_to_images: path to images of interest.
+    :param string outputpath: path to output directory.
     :param string path_to_secondary: path to secondary directory, useful
     to skip certain images (if starting or restarting a batch) or process only
     a preapproved set. 
@@ -210,7 +216,6 @@ def run(path_to_images, outputpath='', path_to_secondary = None, path_to_already
     if path_to_already_done != None:
         #4 is to ignore "det_" prefix.
         already_done.extend([a.split('/')[-1][4:] for a in glob.glob(path_to_already_done)])
-
 
     for imgname in images:
         if (imgname.split('/')[-1] in secondary) and (imgname.split('/')[-1] not in already_done) :
@@ -234,6 +239,24 @@ def run(path_to_images, outputpath='', path_to_secondary = None, path_to_already
 
     return
 
+def extract_document(path_to_documents, outputpath='', path_to_secondary = None, path_to_already_done = None):
+    """ Automatically detects SEM and TEM images from HTML/XML documents for extraction
+
+    :param string path_to_documents : path to documents of interest
+    :param string outputpath: path to output directory.
+    :param string path_to_secondary: path to secondary directory, useful
+    to skip certain images (if starting or restarting a batch) or process only
+    a preapproved set.
+    """
+
+    extractor = TEMImageExtractor(path_to_documents, outputpath, typ='tem')
+    extractor.get_all_tem_imgs(parallel=False)
+
+    path_to_images = os.path.join(outputpath, 'images')
+    extract_image(path_to_images)
+
+
+
 #
 # path_to_images = "/Users/karim/Desktop/evaluation_images/merged/2_karim_split/0_C6CE01551D_fig1_2.png"
 #
@@ -248,11 +271,14 @@ def run(path_to_images, outputpath='', path_to_secondary = None, path_to_already
 
 # Ed's test paths
 path_to_images = "/home/edward/Pictures/ImageDataExtractor_images/input/*.png"
+path_to_documents = "/home/edward/Documents/ImageDataExtractor_documents/test_cde_ide/input"
+path_to_document_output = "/home/edward/Documents/ImageDataExtractor_documents/test_cde_ide/output"
 
 output_path = "/home/edward/Pictures/ImageDataExtractor_images/output/"
 
 
-run(path_to_images)
+#extract_image(path_to_images)
+extract_document(path_to_documents, path_to_document_output)
 
 
 
