@@ -14,6 +14,7 @@ from scalebar_identification import *
 from particle_identification import *
 from rdf_functions import *
 from image_identification import TEMImageExtractor
+from figure_splitting import split_by_photo, split_by_grid
 
 import chemdataextractor as cde
 
@@ -255,6 +256,24 @@ def extract_document(path_to_documents, outputpath='', path_to_secondary = None,
     path_to_images = os.path.join(outputpath, 'images')
     extract_image(path_to_images)
 
+def split_figures(input_dir, output_dir=''):
+    """ Automatically splits hybrid images through photo detection and grid splitting"""
+
+    # Define all used paths
+    input_dir_name = os.path.basename(input_dir)
+    raw_imgs_path = os.path.join(input_dir, 'raw_images')
+    raw_csv_path = os.path.join(input_dir, input_dir_name + '_raw.csv')
+    split_photo_imgs_path = os.path.join(input_dir, 'split_photo_images')
+    split_photo_csv_path = os.path.join(input_dir, input_dir_name + '_photo.csv')
+
+    # Split using photo detection method
+    split_by_photo(raw_imgs_path, raw_csv_path, split_photo_imgs_path, split_photo_csv_path, True)
+
+    # Split output using grid detection method
+    split_by_grid(image_input, csv_input, image_output, csv_output, True)
+
+
+
 
 
 #
@@ -278,7 +297,13 @@ output_path = "/home/edward/Pictures/ImageDataExtractor_images/output/"
 
 
 #extract_image(path_to_images)
-extract_document(path_to_documents, path_to_document_output)
+#extract_document(path_to_documents, path_to_document_output)
+
+input_dir = '/home/edward/Documents/ImageDataExtractor_documents/test_cde_ide/output'
+raw_csv_path = '/home/edward/Documents/ImageDataExtractor_documents/test_cde_ide/output/output_raw.csv'
+split_photo_imgs_path = '/home/edward/Documents/ImageDataExtractor_documents/test_cde_ide/output/split_photo_images'
+split_photo_csv_path = '/home/edward/Documents/ImageDataExtractor_documents/test_cde_ide/output/output_photo.csv'
+split_figures(input_dir)
 
 
 

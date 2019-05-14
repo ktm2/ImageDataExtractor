@@ -36,7 +36,7 @@ class TEMImageExtractor():
     def __init__(self, input_dir, output_dir='', typ='tem'):
         self.input_dir = input_dir
         self.output_dir = output_dir
-        self.img_csv_path = str(os.path.join(self.output_dir, os.path.basename(self.output_dir) + '.csv'))
+        self.img_csv_path = str(os.path.join(self.output_dir, os.path.basename(self.output_dir) + '_raw.csv'))
         self.docs = []
         self.paths = []
         self.imgs = []
@@ -51,8 +51,8 @@ class TEMImageExtractor():
         self.docs = [(doc, os.path.join(self.input_dir, doc)) for doc in docs]
 
         # Create image folders if it doesn't exist
-        if not os.path.exists(os.path.join(self.output_dir, 'images')):
-            os.makedirs(os.path.join(self.output_dir, 'images'))
+        if not os.path.exists(os.path.join(self.output_dir, 'raw_images')):
+            os.makedirs(os.path.join(self.output_dir, 'raw_images'))
 
     def get_img(self, doc):
         """Get images from doc using chemdataextractor"""
@@ -87,7 +87,7 @@ class TEMImageExtractor():
     def download_image(self, url, file, id):
         """ Download all TEM images"""
 
-        imgs_dir = os.path.join(self.output_dir, 'images')
+        imgs_dir = os.path.join(self.output_dir, 'raw_images')
 
         if len(os.listdir(imgs_dir)) <= 999999999:
             img_format = url[-3:]
@@ -151,7 +151,3 @@ class TEMImageExtractor():
         for file, id, url, caption in self.imgs:
             self.download_image(url, file, id)
 
-
-# if __name__ == '__main__':
-#     extractor = TEMImageExtractor('material_eyes')
-#     extractor.get_all_tem_imgs(parallel=False)
