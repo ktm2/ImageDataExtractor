@@ -18,7 +18,7 @@ import glob
 import datetime
 
 
-def main_detection(imgname):
+def main_detection(imgname, outputpath=''):
     '''Where the detection happens.
 
     :param sting imgname: name of image file.
@@ -86,11 +86,11 @@ def main_detection(imgname):
                     filteredvertices = filteredvertices_inverted
                     inverted = True
 
-    writeout_image(img, filteredvertices, imgname, inverted)
+    writeout_image(img, outputpath, filteredvertices, imgname, inverted)
 
     return filteredvertices, scale, inverted, conversion
 
-def after_detection(imgname, filteredvertices, scale, inverted, conversion):
+def after_detection(imgname, filteredvertices, scale, inverted, conversion, outputpath=''):
     '''After detection has happened calculate particle metrics and RDF.
 
     :param sting imgname: name of image file.
@@ -141,7 +141,7 @@ def after_detection(imgname, filteredvertices, scale, inverted, conversion):
     arealist = [a*(scale**2) for a in arealist]
     filtered_areas = [a*(scale**2) for a in filtered_areas]
 
-    particle_size_histogram(arealist, filtered_areas, imgname)
+    particle_size_histogram(arealist, filtered_areas, imgname, outputpath)
 
     aspect_ratios_list = aspect_ratios(filteredvertices)
 
@@ -151,7 +151,7 @@ def after_detection(imgname, filteredvertices, scale, inverted, conversion):
     number_of_particles = len(filteredvertices)
 
     #Log for file.
-    outfile = open(imgname.split('/')[-1].split(".")[0] + ".txt", "w")
+    outfile = open(os.path.join(outputpath, imgname.split('/')[-1].split(".")[0] + ".txt"), "w")
 
     outfile.write(imgname.split('/')[-1] + " processed using ImageDataExtractor on "+"\n")
     outfile.write(datetime.datetime.now().strftime("%Y-%m-%d %H:%M") + "\n")
@@ -182,11 +182,11 @@ def after_detection(imgname, filteredvertices, scale, inverted, conversion):
     yRDF = []
     if len(filteredvertices) > 9:
         xRDF, yRDF = calculate_rdf(filteredvertices, rows, cols, scale, increment = 4, progress = True)
-        output_rdf(xRDF, yRDF, imgname, conversion)
+        output_rdf(xRDF, yRDF, imgname, conversion, outputpath)
 
     return
 
-def run(path_to_images, path_to_secondary = None, path_to_already_done = None):
+def run(path_to_images, outputpath='', path_to_secondary = None, path_to_already_done = None):
     '''Runs scalebar and particle identification.
 
     :param string path_to_images: path to images of interest.
@@ -216,33 +216,43 @@ def run(path_to_images, path_to_secondary = None, path_to_already_done = None):
         if (imgname.split('/')[-1] in secondary) and (imgname.split('/')[-1] not in already_done) :
             print("Scale and particle detection begun on: " + str(imgname))
 
-            filteredvertices, scale, inverted, conversion = main_detection(imgname)
+            imgoutputdir = os.path.join(outputpath, imgname.split('/')[-1].split('.')[0])
+            if not os.path.exists(imgoutputdir):
+                os.makedirs(imgoutputdir)
+
+            filteredvertices, scale, inverted, conversion = main_detection(imgname, imgoutputdir)
 
             if len(filteredvertices) > 0:
-                after_detection(imgname, filteredvertices, scale, inverted, conversion)
+                after_detection(imgname, filteredvertices, scale, inverted, conversion, imgoutputdir)
 
             else:
                 outfile = open(imgname.split('/')[-1].split(".")[0] + ".txt", "w")
                 outfile.write(imgname.split('/')[-1] + "\n")
                 outfile.write("No particles found.")
                 outfile.close()
-            
+
 
     return
 
-
-path_to_images = "/Users/karim/Desktop/evaluation_images/merged/2_karim_split/0_C6CE01551D_fig1_2.png"
-
-path_to_secondary = "/Users/karim/Desktop/evaluation_images/merged/4.2_det/*.png"
-
-path_to_already_done = None
+#
+# path_to_images = "/Users/karim/Desktop/evaluation_images/merged/2_karim_split/0_C6CE01551D_fig1_2.png"
+#
+# path_to_secondary = "/Users/karim/Desktop/evaluation_images/merged/4.2_det/*.png"
+#
+# path_to_already_done = None
 
 
 # path_to_images = "/home/batuhan/Documents/PhD Physics/Projects/imagedataextractor130219_2/merged/2_karim_split/*.png"
 
 # path_to_secondary = "/home/batuhan/Documents/PhD Physics/Projects/imagedataextractor130219_2/merged/4.1_det/*.png"
 
-run(path_to_images, path_to_secondary, path_to_already_done)
+# Ed's test paths
+path_to_images = "/home/edward/Pictures/ImageDataExtractor_images/input/*.png"
+
+output_path = "/home/edward/Pictures/ImageDataExtractor_images/output/"
+
+
+run(path_to_images)
 
 
 

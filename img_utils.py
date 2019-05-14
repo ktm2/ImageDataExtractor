@@ -1,9 +1,10 @@
 import cv2
 import numpy as np
 import keras.backend as K
+import os
 
 
-def writeout_image(img, filteredvertices, imgname, inverted = False):
+def writeout_image(img, output_path, filteredvertices, imgname, inverted = False):
     '''Output an image displaying all the vertices detected.'''
 
     drawing_img = crop_image(img.copy())
@@ -21,9 +22,9 @@ def writeout_image(img, filteredvertices, imgname, inverted = False):
             cv2.putText(drawing_img,str(i+1),(xcom+3,ycom+3),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,0,255),thickness=1)           
 
     if inverted == True:
-        cv2.imwrite("inv_det_"+str(imgname).split("/")[-1],drawing_img)
+        cv2.imwrite(os.path.join(output_path, "inv_det_"+str(imgname).split("/")[-1]),drawing_img)
     else:
-        cv2.imwrite("det_"+str(imgname).split("/")[-1],drawing_img)
+        cv2.imwrite(os.path.join(output_path, "det_"+str(imgname).split("/")[-1]),drawing_img)
 
 
     return

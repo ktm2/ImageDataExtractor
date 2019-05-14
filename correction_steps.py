@@ -387,7 +387,7 @@ def cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, 
 
                             dilatedimg = maskedresult
 
-                            unknownvar,contours,h = cv2.findContours(cv2.cvtColor(dilatedimg,cv2.COLOR_BGR2GRAY),cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
+                            contours,h = cv2.findContours(cv2.cvtColor(dilatedimg,cv2.COLOR_BGR2GRAY),cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
 
 
 

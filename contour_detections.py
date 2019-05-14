@@ -126,9 +126,9 @@ def find_draw_contours(img, blocksize = 151, blursize = 0, minarea = None,
     #Apply blur filter (optional), find contours.
     if blursize!=0:
         thresh=cv2.medianBlur(thresh1,blursize)
-        unknownvar,contours,h = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
+        contours,h = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
     else:
-        unknownvar,contours,h = cv2.findContours(thresh1,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
+        contours,h = cv2.findContours(thresh1,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
 
 
 
@@ -276,9 +276,9 @@ def find_draw_contours_main(img, gimg,blocksize, rows, cols, blursize = 0, testi
     #Apply blur filter (optional), find contours.
     if blursize!=0:
         thresh=cv2.medianBlur(thresh1,blursize)
-        unknownvar,contours,h = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
+        contours,h = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
     else:
-        unknownvar,contours,h = cv2.findContours(thresh1,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
+        contours,h = cv2.findContours(thresh1,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
 
 
     #Set variables for contour processing.

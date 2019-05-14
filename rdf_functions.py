@@ -142,7 +142,7 @@ def calculate_rdf(filteredvertices,rows,cols,scale, increment = 2, progress = Fa
 
 
 
-def output_rdf(xRDF,yRDF,imgname,conversion):
+def output_rdf(xRDF,yRDF,imgname,conversion, outputpath=''):
     '''Plots a given rdf.'''
 
     om = int(math.floor(math.log10(conversion)))
@@ -159,12 +159,12 @@ def output_rdf(xRDF,yRDF,imgname,conversion):
     plt.ylabel("Frequency",**font)
     plt.grid()
 
-    plt.savefig("rdf_" + str(imgname).split("/")[-1], bbox_inches = 'tight')
+    plt.savefig(os.path.join(outputpath, "rdf_" + str(imgname).split("/")[-1]), bbox_inches = 'tight')
     #plt.show()
 
     return
 
-def particle_size_histogram(arealist, filtered, imgname):
+def particle_size_histogram(arealist, filtered, imgname, outputpath=''):
     '''Plots particle size histogram.
     :param list arealist: list of the areas of particles.
     :param string imgname: name of the img (needed for writing output)'''
@@ -179,7 +179,7 @@ def particle_size_histogram(arealist, filtered, imgname):
     ##is this right?
     plt.xlim([0,max(arealist)])
     plt.legend()
-    plt.savefig("hist_" + str(imgname).split("/")[-1], bbox_inches = 'tight')
+    plt.savefig(os.path.join(outputpath, "hist_" + str(imgname).split("/")[-1]), bbox_inches = 'tight')
     plt.close()
     #plt.show()
 
