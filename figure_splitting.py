@@ -90,8 +90,6 @@ def split_by_photo(input_imgs, csv_input_path, output_imgs='', csv_output_path='
     :param bool multithreaded: Runs in parallel across all processors if True
     :param bool split: Leave true to save each segmented image separately, False to label and display bboxes on one image
 
-    .. note::
-        Use multithreaded=False for debugging
 
     """
     print('Running plot area evaluation')
@@ -215,8 +213,20 @@ def run_worker_split_images(row, input_imgs, output_imgs):
     return output_rows
 
 
+def split_by_grid(input_imgs, output_imgs=''):
+    """ Splits all input figures by detecting regular grid structrues """
 
-def split_by_grid(figname, eval_fig = False):
+    print('Creating output directory if it doesnt exist...')
+    if not os.path.exists(output_imgs):
+        os.makedirs(output_imgs)
+
+    imgs = glob.glob(os.path.join(input_imgs, '*.png'))
+
+    for img in imgs:
+        split_fig_by_grid(img, output_imgs)
+
+
+def split_fig_by_grid(figname, output_dir, eval_fig = False):
     '''Splits figures mined from publications into their constituent images. Note: Must be used on the 
     products of FDE's figure splitting process.
 
@@ -241,12 +251,12 @@ def split_by_grid(figname, eval_fig = False):
     #Optional writing of images.
     if fig_split_final is not None and eval_fig == True:
 
-        cv2.imwrite("eval"+ "_" +str(figname).split("/")[-1],evaluation_fig)    
+        cv2.imwrite("eval"+ "_" +str(figname).split("/")[-1],evaluation_fig)
 
-        index = 0
-        for fig in fig_split_final:
-            cv2.imwrite(str(index) + "_" +str(figname).split("/")[-1],fig)
-            index += 1
+    index = 0
+    for fig in fig_split_final:
+        cv2.imwrite(os.path.join(output_dir, str(index) + "_" +str(figname).split("/")[-1]),fig)
+        index += 1
 
 
     return fig_split_final
@@ -256,13 +266,13 @@ def split_by_grid(figname, eval_fig = False):
 
 
 
-imgnamelist=[]
-path = "/Users/karim/Desktop/applications_images/rutile/1_matt_split/*.png"
-
-imgnamelist.extend(glob.glob(path))
-
-
-for figname in imgnamelist:
-    split_figure(figname, True)
+# imgnamelist=[]
+# path = "/Users/karim/Desktop/applications_images/rutile/1_matt_split/*.png"
+#
+# imgnamelist.extend(glob.glob(path))
+#
+#
+# for figname in imgnamelist:
+#     split_figure(figname, True)
 
 

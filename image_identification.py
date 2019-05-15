@@ -122,7 +122,7 @@ class TEMImageExtractor():
 
         # Check if TEM images info found
         if os.path.isfile(self.img_csv_path):
-            with io.open(self.img_csv_path, 'r', encoding='utf-8') as imgf:
+            with io.open(self.img_csv_path, 'rb') as imgf:
                 img_csvreader = csv.reader(imgf)
                 next(img_csvreader)
                 self.imgs = list(img_csvreader)

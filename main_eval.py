@@ -253,8 +253,17 @@ def extract_document(path_to_documents, outputpath='', path_to_secondary = None,
     extractor = TEMImageExtractor(path_to_documents, outputpath, typ='tem')
     extractor.get_all_tem_imgs(parallel=False)
 
-    path_to_images = os.path.join(outputpath, 'images')
-    extract_image(path_to_images)
+    # Set paths for raw and split images
+    #path_to_raw_images = os.path.join(outputpath, 'raw_images')
+    path_to_split_images = os.path.join(outputpath, 'split_grid_images/*.png')
+
+    # Split raw images using 2-step splitting pipeline
+    split_figures(outputpath)
+
+    # Extract all split images
+    extract_image(path_to_split_images)
+
+
 
 def split_figures(input_dir, output_dir=''):
     """ Automatically splits hybrid images through photo detection and grid splitting"""
@@ -265,12 +274,13 @@ def split_figures(input_dir, output_dir=''):
     raw_csv_path = os.path.join(input_dir, input_dir_name + '_raw.csv')
     split_photo_imgs_path = os.path.join(input_dir, 'split_photo_images')
     split_photo_csv_path = os.path.join(input_dir, input_dir_name + '_photo.csv')
+    split_grid_imgs_path = os.path.join(input_dir, 'split_grid_images')
 
     # Split using photo detection method
     split_by_photo(raw_imgs_path, raw_csv_path, split_photo_imgs_path, split_photo_csv_path, True)
 
     # Split output using grid detection method
-    split_by_grid(image_input, csv_input, image_output, csv_output, True)
+    split_by_grid(split_photo_imgs_path, split_grid_imgs_path)
 
 
 
@@ -297,13 +307,11 @@ output_path = "/home/edward/Pictures/ImageDataExtractor_images/output/"
 
 
 #extract_image(path_to_images)
-#extract_document(path_to_documents, path_to_document_output)
+extract_document(path_to_documents, path_to_document_output)
 
 input_dir = '/home/edward/Documents/ImageDataExtractor_documents/test_cde_ide/output'
-raw_csv_path = '/home/edward/Documents/ImageDataExtractor_documents/test_cde_ide/output/output_raw.csv'
-split_photo_imgs_path = '/home/edward/Documents/ImageDataExtractor_documents/test_cde_ide/output/split_photo_images'
-split_photo_csv_path = '/home/edward/Documents/ImageDataExtractor_documents/test_cde_ide/output/output_photo.csv'
-split_figures(input_dir)
+
+#split_figures(input_dir)
 
 
 
