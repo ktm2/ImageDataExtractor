@@ -192,7 +192,7 @@ def after_detection(imgname, filteredvertices, scale, inverted, conversion, outp
 
     return
 
-def extract_image(path_to_images, outputpath='', path_to_secondary = None, path_to_already_done = None):
+def extract_images(path_to_images, outputpath='', path_to_secondary = None, path_to_already_done = None):
     '''Runs scalebar and particle identification on an image document.
 
     :param string path_to_images: path to images of interest.
@@ -202,8 +202,8 @@ def extract_image(path_to_images, outputpath='', path_to_secondary = None, path_
     a preapproved set. 
 
     '''
-    images = []
-    images.extend(glob.glob(path_to_images))
+
+    images = [os.path.join(path_to_images, img) for img in os.listdir(path_to_images)]
 
     secondary = []
     if path_to_secondary != None:
@@ -240,7 +240,7 @@ def extract_image(path_to_images, outputpath='', path_to_secondary = None, path_
 
     return
 
-def extract_document(path_to_documents, outputpath='', path_to_secondary = None, path_to_already_done = None):
+def extract_documents(path_to_documents, outputpath='', path_to_secondary = None, path_to_already_done = None):
     """ Automatically detects SEM and TEM images from HTML/XML documents for extraction
 
     :param string path_to_documents : path to documents of interest
@@ -253,15 +253,12 @@ def extract_document(path_to_documents, outputpath='', path_to_secondary = None,
     extractor = TEMImageExtractor(path_to_documents, outputpath, typ='tem')
     extractor.get_all_tem_imgs(parallel=False)
 
-    # Set paths for raw and split images
-    #path_to_raw_images = os.path.join(outputpath, 'raw_images')
-    path_to_split_images = os.path.join(outputpath, 'split_grid_images/*.png')
-
     # Split raw images using 2-step splitting pipeline
     split_figures(outputpath)
 
     # Extract all split images
-    extract_image(path_to_split_images)
+    path_to_split_images = os.path.join(outputpath, 'split_grid_images')
+    extract_images(path_to_split_images)
 
 
 
@@ -307,7 +304,7 @@ output_path = "/home/edward/Pictures/ImageDataExtractor_images/output/"
 
 
 #extract_image(path_to_images)
-extract_document(path_to_documents, path_to_document_output)
+extract_documents(path_to_documents, path_to_document_output)
 
 input_dir = '/home/edward/Documents/ImageDataExtractor_documents/test_cde_ide/output'
 
