@@ -22,21 +22,13 @@ import logging
 logging.basicConfig()
 log = logging.getLogger(__name__)
 
-#Global path variables
-# dir = os.path.dirname(os.path.abspath(__file__))
-# html_input_dir = 'html_inputs'
-# csv_output_dir = 'csv_outputs'
-# html_path = 'HAADF%20STEM%20HAADF%20STEM%20Z%20contrast%20atomic%20number%20annular%20darkfield%20crystalline%20atomic%20structure%20columns%20atomic%20columns%20atomic%20resolution%20incoherent'
-# docs_dir = os.path.join(dir, html_input_dir, html_path)
-# imgs_dir = os.path.join(dir, 'images/HAADF%20STEM%20HAADF%20STEM%20Z%20contrast%20atomic%20number%20annular%20darkfield%20crystalline%20atomic%20structure%20columns%20atomic%20columns%20atomic%20resolution%20incoherent')
-# img_csv = os.path.join(dir, csv_output_dir, html_path + '_imgs.csv')
 
 class TEMImageExtractor():
 
-    def __init__(self, input_dir, output_dir='', typ='tem'):
-        self.input_dir = input_dir
-        self.output_dir = output_dir
-        self.img_csv_path = str(os.path.join(self.output_dir, os.path.basename(self.output_dir) + '_raw.csv'))
+    def __init__(self, input, output='', typ='tem'):
+        self.input = input
+        self.output = output
+        self.img_csv_path = str(os.path.join(self.output, os.path.basename(self.output) + '_raw.csv'))
         self.docs = []
         self.paths = []
         self.imgs = []
@@ -47,12 +39,12 @@ class TEMImageExtractor():
 
     def get_img_paths(self):
         """ Get paths to all images """
-        docs = os.listdir(self.input_dir)
-        self.docs = [(doc, os.path.join(self.input_dir, doc)) for doc in docs]
+        docs = os.listdir(self.input)
+        self.docs = [(doc, os.path.join(self.input, doc)) for doc in docs]
 
         # Create image folders if it doesn't exist
-        if not os.path.exists(os.path.join(self.output_dir, 'raw_images')):
-            os.makedirs(os.path.join(self.output_dir, 'raw_images'))
+        if not os.path.exists(os.path.join(self.output, 'raw_images')):
+            os.makedirs(os.path.join(self.output, 'raw_images'))
 
     def get_img(self, doc):
         """Get images from doc using chemdataextractor"""
@@ -87,7 +79,7 @@ class TEMImageExtractor():
     def download_image(self, url, file, id):
         """ Download all TEM images"""
 
-        imgs_dir = os.path.join(self.output_dir, 'raw_images')
+        imgs_dir = os.path.join(self.output, 'raw_images')
 
         if len(os.listdir(imgs_dir)) <= 999999999:
             img_format = url[-3:]
@@ -116,7 +108,7 @@ class TEMImageExtractor():
                 output_csvwriter.writerow(row)
 
     def get_all_tem_imgs(self, parallel=True):
-        """ Get all tem images """
+        """ Get all TEM images """
 
         self.get_img_paths()
 
@@ -151,3 +143,32 @@ class TEMImageExtractor():
         for file, id, url, caption in self.imgs:
             self.download_image(url, file, id)
 
+    def get_tem_imgs(self):
+        """ Get the TEM images for a single Document"""
+
+        if not os.path.isfile(self.input):
+            raise Exception('Input should be a single document for this method')
+
+        # Create image folders if it doesn't exist
+        if not os.path.exists(os.path.join(self.output, 'raw_images')):
+            os.makedirs(os.path.join(self.output, 'raw_images'))
+
+        # Check if TEM images info found
+        if os.path.isfile(self.img_csv_path):
+            with io.open(self.img_csv_path, 'rb') as imgf:
+                img_csvreader = csv.reader(imgf)
+                next(img_csvreader)
+                self.imgs = list(img_csvreader)
+        else:
+            try:
+                doc = (self.input.split('/')[-1], self.input)
+                self.imgs = self.get_img(doc)
+            except Exception as e:
+                print(e)
+
+        self.save_img_data_to_file()
+        print('%s image info saved to file' % self.img_type)
+
+        # Download TEM images
+        for file, id, url, caption in self.imgs:
+            self.download_image(url, file, id)

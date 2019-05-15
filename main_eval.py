@@ -192,6 +192,7 @@ def after_detection(imgname, filteredvertices, scale, inverted, conversion, outp
 
     return
 
+
 def extract_images(path_to_images, outputpath='', path_to_secondary = None, path_to_already_done = None):
     '''Runs scalebar and particle identification on an image document.
 
@@ -203,7 +204,12 @@ def extract_images(path_to_images, outputpath='', path_to_secondary = None, path
 
     '''
 
-    images = [os.path.join(path_to_images, img) for img in os.listdir(path_to_images)]
+    if os.path.isdir(path_to_images):
+        images = [os.path.join(path_to_images, img) for img in os.listdir(path_to_images)]
+    elif os.path.isfile(path_to_images):
+        images = [path_to_images]
+    else:
+        raise Exception('Unsupported input format')
 
     secondary = []
     if path_to_secondary != None:
@@ -237,10 +243,13 @@ def extract_images(path_to_images, outputpath='', path_to_secondary = None, path
                 outfile.write("No particles found.")
                 outfile.close()
 
-
     return
 
-def extract_documents(path_to_documents, outputpath='', path_to_secondary = None, path_to_already_done = None):
+
+extract_image = extract_images
+
+
+def extract_documents(path_to_documents, path_to_images, outputpath='', path_to_secondary = None, path_to_already_done = None):
     """ Automatically detects SEM and TEM images from HTML/XML documents for extraction
 
     :param string path_to_documents : path to documents of interest
@@ -250,16 +259,29 @@ def extract_documents(path_to_documents, outputpath='', path_to_secondary = None
     a preapproved set.
     """
 
-    extractor = TEMImageExtractor(path_to_documents, outputpath, typ='tem')
+    extractor = TEMImageExtractor(path_to_documents, path_to_images, typ='tem')
     extractor.get_all_tem_imgs(parallel=False)
 
     # Split raw images using 2-step splitting pipeline
-    split_figures(outputpath)
+    split_figures(path_to_images)
 
     # Extract all split images
-    path_to_split_images = os.path.join(outputpath, 'split_grid_images')
-    extract_images(path_to_split_images)
+    path_to_split_images = os.path.join(path_to_images, 'split_grid_images')
+    extract_images(path_to_split_images, outputpath)
 
+
+def extract_document(path_to_document, path_to_images='', outputpath=''):
+    """ Automatically detects SEM and TEM images for a simple HTML/XML document"""
+
+    extractor = TEMImageExtractor(path_to_document, path_to_images, typ='tem')
+    extractor.get_tem_imgs()
+
+    # Split raw images using 2-step splitting pipeline
+    split_figures(path_to_images)
+
+    # Extract all split images
+    path_to_split_images = os.path.join(path_to_images, 'split_grid_images')
+    extract_images(path_to_split_images, outputpath)
 
 
 def split_figures(input_dir, output_dir=''):
@@ -296,15 +318,17 @@ def split_figures(input_dir, output_dir=''):
 # path_to_secondary = "/home/batuhan/Documents/PhD Physics/Projects/imagedataextractor130219_2/merged/4.1_det/*.png"
 
 # Ed's test paths
-path_to_images = "/home/edward/Pictures/ImageDataExtractor_images/input/*.png"
+path_to_image = "/home/edward/Documents/ImageDataExtractor_documents/test_cde_ide/output/split_grid_images/0_C6CE01551D_fig1_2.png"
 path_to_documents = "/home/edward/Documents/ImageDataExtractor_documents/test_cde_ide/input"
-path_to_document_output = "/home/edward/Documents/ImageDataExtractor_documents/test_cde_ide/output"
+path_to_image_output = "/home/edward/Documents/ImageDataExtractor_documents/test_cde_ide/output"
+path_to_ide_output = "/home/edward/Documents/ImageDataExtractor_documents/test_cde_ide/ide_output"
 
-output_path = "/home/edward/Pictures/ImageDataExtractor_images/output/"
+#output_path = "/home/edward/Pictures/ImageDataExtractor_images/output/"
 
 
-#extract_image(path_to_images)
-extract_documents(path_to_documents, path_to_document_output)
+#extract_image(path_to_image)
+#extract_documents(path_to_documents, path_to_image_output, path_to_ide_output)
+extract_document(os.path.join(path_to_documents, 'C6CE01551D.html'), path_to_image_output, path_to_ide_output)
 
 input_dir = '/home/edward/Documents/ImageDataExtractor_documents/test_cde_ide/output'
 
