@@ -40,7 +40,7 @@ def main_detection(imgname, outputpath=''):
         print("img smaller than 50k")
         return None,None
 
-    scale, inlaycoords, conversion = scalebar_identification(img, testing = imgname)
+    scale, inlaycoords, conversion = scalebar_identification(img, outputpath, testing = imgname)
 
     filteredvertices, particlediscreteness = particle_identification(img, inlaycoords, testing = False)
 

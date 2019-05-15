@@ -4,7 +4,7 @@ from img_utils import *
 from scale_reading import *
 
 
-def scalebar_identification(img, testing = None):
+def scalebar_identification(img, outputpath='', testing = None):
     '''Runs scalebar detection on SEM images.
     :param numpy.ndarray img: input image..
     :param string testing: Name of evaulation image for output.
@@ -52,7 +52,7 @@ def scalebar_identification(img, testing = None):
             (255,0,0),thickness=1)
 
         cv2.putText(output_img, str(scalevalue)+"*"+str(conversion), (cols//2,rows//2),cv2.FONT_HERSHEY_PLAIN,1, (0,0,255),thickness=1)
-        cv2.imwrite("scalebar_"+str(testing).split("/")[-1],output_img)
+        cv2.imwrite(os.path.join(outputpath, "scalebar_"+str(testing).split("/")[-1]),output_img)
 
     if scalebar != None:
         scale = scalevalue * conversion / float(scalebar[2])
