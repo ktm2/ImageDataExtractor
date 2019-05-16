@@ -14,32 +14,44 @@ ImageDataExtractor is a toolkit for the automatic extraction of microscopy image
 
 *NB: It is advised that all installations of ImageDataExtractor are run inside a virtual environment. Click [here](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/) for more information.* 
 
-#### Install ImageDataExtractor
-To install ImageDataExtractor, clone the repository with:
 
-    git clone  https://github.com/ktm2/ImageDataExtractor.git
-    
-Then install the main dependencies by running:
-    
-    pip install -r requirements.txt
-    
 #### Install ChemDataExtractor-IDE
 
-Next the user should install the bespoke version of ChemDataExtractor, [ChemDataExtractor-IDE](https://github.com/edbeard/chemdataextractor-ide). 
+In order to use ImageDataExtractor first install the bespoke version of ChemDataExtractor, [ChemDataExtractor-IDE](https://github.com/edbeard/chemdataextractor-ide). 
 
 Clone the repository by running:
 
-    git clone https://github.com/edbeard/chemdataextractor-ide.git
+    $ git clone https://github.com/edbeard/chemdataextractor-ide.git
 
 and install with:
 
-    python setup.py install
+    $ python setup.py install
     
 Then download the required machine learning models with:
 
-    cde data download
+    $ cde data download
 
 *See https://github.com/edbeard/chemdataextractor-ide for more details* 
+
+#### Install ImageDataExtractor
+
+__NOTE : Upon release IDE will be installed using pip (by simply running `pip install imagedataextractor`). While in development, follow the instructions below instead.__
+
+Now to install ImageDataExtractor, clone the repository with:
+
+    $ git clone  https://github.com/ktm2/ImageDataExtractor.git
+    
+Then create a wheel file by running:
+
+    $ python setup.py bdist_wheel
+    
+*You may have to run `pip install wheel` if this fails.*
+    
+Then install using pip:
+
+    $ pip install dist/ImageDataExtractor-0.0.1-py3-none-any.whl  
+    
+  
  
 ## Running the code
 
