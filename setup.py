@@ -8,7 +8,7 @@ from setuptools import setup, find_packages
 if os.path.exists('README.md'):
     long_description = open('README.md').read()
 else:
-    long_description = '''A toolkit for extracting particle data from microscopy images '''
+    long_description = '''A toolkit for extracting particle data from microscopy images. '''
 
 setup(
     name='ImageDataExtractor',
@@ -18,7 +18,7 @@ setup(
     license='MIT',
     url='https://github.com/ktm2/ImageDataExtractor',
     packages=find_packages(),
-    description='A toolkit for extracting particle data from microscopy images',
+    description='A toolkit for extracting particle data from microscopy images.',
     long_description=long_description,
     keywords='image-mining mining chemistry cheminformatics microscopy SEM TEM html xml science scientific',
     zip_safe=False,

@@ -19,8 +19,8 @@ Ed Beard has copied the bits that he used in the splitting of figures, which wer
 from __future__ import print_function, unicode_literals
 from __future__ import absolute_import, division
 
-from .fig_splitting import *
-from .photo import get_photos
+from .grid_splitting import *
+from .photo_splitting import get_photos
 
 import cv2
 import glob
