@@ -9,7 +9,6 @@ from __future__ import print_function, unicode_literals
 from __future__ import absolute_import, division
 
 from chemdataextractor import Document
-import chemdataextractor
 import urllib
 import multiprocessing as mp
 
@@ -34,8 +33,6 @@ class TEMImageExtractor():
         self.imgs = []
         self.urls = []
         self.img_type = typ
-
-        print(chemdataextractor.__file__)
 
     def get_img_paths(self):
         """ Get paths to all images """
@@ -69,7 +66,7 @@ class TEMImageExtractor():
                 if [self.img_type] in rec.values():
                     detected = True
                     print('%s instance found!' % self.img_type)
-                    tem_images.append((doc[0], img.id, img.url.encode('utf-8'), caption.text.replace('\n', ' ').encode('utf-8')))
+                    tem_images.append((doc[0], img.id, img.url, caption.text.replace('\n', ' ')))
 
         if len(tem_images) != 0:
             return tem_images
@@ -83,12 +80,13 @@ class TEMImageExtractor():
 
         if len(os.listdir(imgs_dir)) <= 999999999:
             img_format = url[-3:]
+            print(url, img_format)
             filename = file[:-5] + '_' + id + '.' + img_format
             path = os.path.join(imgs_dir, filename)
 
             print("Downloading %s..." % filename)
             if not os.path.exists(path):
-                urllib.urlretrieve(url, path) # Saves downloaded image to file
+                urllib.request.urlretrieve(url, path) # Saves downloaded image to file
             else:
                 print("File exists! Going to next image")
         else:
@@ -97,7 +95,7 @@ class TEMImageExtractor():
     def save_img_data_to_file(self):
         """ Saves list of tem images"""
 
-        imgf = open(self.img_csv_path, 'wb')
+        imgf = open(self.img_csv_path, 'w')
         output_csvwriter = csv.writer(imgf)
         output_csvwriter.writerow(['article', 'fig id', 'url', 'caption'])
 
@@ -114,7 +112,7 @@ class TEMImageExtractor():
 
         # Check if TEM images info found
         if os.path.isfile(self.img_csv_path):
-            with io.open(self.img_csv_path, 'rb') as imgf:
+            with io.open(self.img_csv_path, 'r') as imgf:
                 img_csvreader = csv.reader(imgf)
                 next(img_csvreader)
                 self.imgs = list(img_csvreader)
@@ -155,7 +153,7 @@ class TEMImageExtractor():
 
         # Check if TEM images info found
         if os.path.isfile(self.img_csv_path):
-            with io.open(self.img_csv_path, 'rb') as imgf:
+            with io.open(self.img_csv_path, 'r') as imgf:
                 img_csvreader = csv.reader(imgf)
                 next(img_csvreader)
                 self.imgs = list(img_csvreader)

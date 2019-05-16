@@ -19,18 +19,16 @@ Ed Beard has copied the bits that he used in the splitting of figures, which wer
 from __future__ import print_function, unicode_literals
 from __future__ import absolute_import, division
 
-from fig_splitting import *
-from photo import get_photos
+from .fig_splitting import *
+from .photo import get_photos
 
 import cv2
 import glob
 import io
 import csv
-import multiprocessing as mp
-import six
 from skimage import io as skio
 from skimage.color import gray2rgb
-from skimage import img_as_float, img_as_ubyte, img_as_uint
+from skimage import img_as_float
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 
@@ -104,7 +102,7 @@ def split_by_photo(input_imgs, csv_input_path, output_imgs='', csv_output_path='
         os.remove(f)
 
     print('Reading sample input from: %s' % csv_input_path)
-    inf = io.open(csv_input_path, 'rb')
+    inf = io.open(csv_input_path, 'r')
     sample_csvreader = csv.reader(inf)
     print('Writing output to: %s' % csv_output_path)
     outf = open(csv_output_path, 'w')
@@ -261,18 +259,5 @@ def split_fig_by_grid(figname, output_dir, eval_fig = False):
 
     return fig_split_final
 
-
-
-
-
-
-# imgnamelist=[]
-# path = "/Users/karim/Desktop/applications_images/rutile/1_matt_split/*.png"
-#
-# imgnamelist.extend(glob.glob(path))
-#
-#
-# for figname in imgnamelist:
-#     split_figure(figname, True)
 
 

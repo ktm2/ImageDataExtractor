@@ -1,7 +1,4 @@
-from contour_detections import *
-from correction_steps import *
-from img_utils import *
-from scale_reading import *
+from .scale_reading import *
 
 
 def scalebar_identification(img, outputpath='', testing = None):

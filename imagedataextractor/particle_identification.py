@@ -1,9 +1,5 @@
-#from rdf_functions import *
-
-from contour_detections import *
-from correction_steps import *
-from img_utils import *
-from scale_reading import *
+from .correction_steps import *
+from .scale_reading import *
 
 
 def particle_identification(img, inlaycoords, testing = False, blocksize = 151, blursize = 3, invert = False):

@@ -11,9 +11,9 @@
 # Edge correction and hierarchical relations for fitted ellipses.
 # Inlay determination.
 
-from scalebar_identification import *
-from particle_identification import *
-from rdf_functions import *
+from .scalebar_identification import *
+from .particle_identification import *
+from .rdf_functions import *
 
 import glob
 
@@ -91,7 +91,7 @@ def run(path_to_images, path_to_secondary = None):
 
     for imgname in images:
         if imgname.split('/')[-1] not in secondary:
-            print "Scale and particle detection begun on: " + str(imgname)
+            print("Scale and particle detection begun on: " + str(imgname))
 
             filteredvertices, scale = main_detection(imgname)
 

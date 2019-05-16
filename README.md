@@ -43,3 +43,14 @@ Then download the required machine learning models with:
  
 ## Running the code
 
+__Full documentation on running the code can be found at www.imagedataextractor.com .__
+
+Open a python terminal and run 
+
+    >>> import imagedataextractor as ide
+    
+Then run:
+
+    >>> ide.extract_document(<path/to/document>)
+    
+to automatically identify and extract the images from a document. Full details on supported input and output formats can be found at www.imagedataextractor.com . 

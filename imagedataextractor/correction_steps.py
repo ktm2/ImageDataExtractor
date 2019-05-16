@@ -2,8 +2,10 @@ import cv2
 import numpy as np
 import itertools
 import math
-from contour_detections import *
 from scipy.stats import mode
+
+
+from .contour_detections import *
 
 def edge_correction(filteredvertices, particlediscreteness,rows,cols,inlaycoords, testing = False, gimg = None):
     '''Filters out particles that are deformed by image borders or inlays. (must intersect either at min 2 points)

@@ -21,7 +21,7 @@ import logging
 import numpy as np
 from skimage.measure import label, regionprops
 import six
-from marshmallow import Schema, fields, ValidationError
+from marshmallow import Schema, fields
 from skimage.color import rgb2gray
 
 log = logging.getLogger(__name__)

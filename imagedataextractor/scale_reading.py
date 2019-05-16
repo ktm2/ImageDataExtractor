@@ -1,18 +1,14 @@
 from PIL import Image
 from pytesseract import image_to_string, image_to_boxes
-
-
-
-
-
-import cv2
-import numpy as np
 from skimage import exposure
 from keras.models import load_model
 import scipy.stats as stats
-from contour_detections import *
 from operator import itemgetter
-from img_utils import psnr
+import os
+
+
+from .contour_detections import *
+from .img_utils import psnr
 
 
 def read_image(thresholdedimg, unit):
@@ -35,9 +31,9 @@ def read_image(thresholdedimg, unit):
         cfg = "pytess_config_nm"
 
     # Read image using English alphabet.
-    greekengtextfromimage = image_to_string(imagetoread, lang="eng", config=cfg)
+    greekengtextfromimage = image_to_string(imagetoread, lang="eng", config=os.path.join(os.path.dirname(os.path.abspath(__file__)), cfg))
 
-    text_boxes = image_to_boxes(imagetoread, lang="eng", config=cfg)
+    text_boxes = image_to_boxes(imagetoread, lang="eng", config=os.path.join(os.path.dirname(os.path.abspath(__file__)), cfg))
 
     return greekengtextfromimage, text_boxes
 
@@ -168,7 +164,9 @@ def find_text_and_bar(thresholdedimg, gimg, rows, cols, show=False, printer=Fals
     inlay = None
     interp_scale = 3
 
-    srcnn = load_model('srcnn/srcnn_model.h5', custom_objects={'psnr': psnr})
+    model_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'srcnn/srcnn_model.h5')
+
+    srcnn = load_model(model_path, custom_objects={'psnr': psnr})
 
     # Make regions including text/info into large blobs so they can be easily identified.
     blurred_thresholdedimg = cv2.medianBlur(thresholdedimg, 1)

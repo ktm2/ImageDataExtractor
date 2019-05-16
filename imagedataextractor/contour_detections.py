@@ -1,10 +1,10 @@
-import cv2
-import numpy as np
-from img_utils import *
+from .img_utils import *
+
 from scipy.stats import mode
+import os
 
 
-def match_to_shapes(filteredvertices,image_with_shapes = "shapes_to_match.png", outputimg = None):
+def match_to_shapes(filteredvertices,image_with_shapes = os.path.join(os.path.dirname(os.path.abspath(__file__)), "shapes_to_match.png"), outputimg = None):
     '''Determine closeness of shapes to shapes in a given example image, using Hu-moments.
     Mostly orientation and scale invariant.
     :param numpy.ndarray filteredvertices: the detected particles from earlier in detection.
@@ -103,7 +103,7 @@ def find_draw_contours(img, blocksize = 151, blursize = 0, minarea = None,
 
     '''
  
-    imgarea=len(img)*len(img[0])
+    imgarea=img.shape[0] *img.shape[1]
 
     #Apply filters to image.
     #img already grayscale.

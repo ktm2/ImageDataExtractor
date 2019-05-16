@@ -1,12 +1,8 @@
-import numpy as np
-import cv2 
-#import cv2.cv as cv
-# from PIL import Image
-# from pytesseract import image_to_string
+
 import matplotlib.pyplot as plt
-import itertools
 import math
-from img_utils import *
+
+from .img_utils import *
 
 
 def calculate_rdf(filteredvertices,rows,cols,scale, increment = 2, progress = False):

@@ -10,16 +10,14 @@
 # TODO:
 # Dark particles on light backgrounds?
 
-from scalebar_identification import *
-from particle_identification import *
-from rdf_functions import *
-from image_identification import TEMImageExtractor
-from figure_splitting import split_by_photo, split_by_grid
-
-import chemdataextractor as cde
-
 import glob
 import datetime
+
+from .scalebar_identification import *
+from .particle_identification import *
+from .rdf_functions import *
+from .image_identification import TEMImageExtractor
+from .figure_splitting import split_by_photo, split_by_grid
 
 
 def main_detection(imgname, outputpath=''):
@@ -36,7 +34,7 @@ def main_detection(imgname, outputpath=''):
 
     img = cv2.imread(imgname)
 
-    if len(img) * len(img[0]) < 50000:
+    if img.shape[0] * img.shape[1] < 50000:
         print("img smaller than 50k")
         return None,None
 
@@ -48,7 +46,7 @@ def main_detection(imgname, outputpath=''):
 
     #This is disabled until further development.
     #If less than 3 particles are found, redo analysis with inverted colors.
-    if False:
+    if inverted is False:
         rows = len(img)
         cols = len(img[0])
 
@@ -85,8 +83,8 @@ def main_detection(imgname, outputpath=''):
                 #If more overall area is attributed to particles in the inverted form, that version is passed to 
                 #the calculation steps, both images get written out.
 
-                print sum(arealist_inv), sum(arealist)
-                print mean_particlediscreteness_inv, mean_particlediscreteness
+                print(sum(arealist_inv), sum(arealist))
+                print(mean_particlediscreteness_inv, mean_particlediscreteness)
                 if sum(arealist_inv) > sum(arealist) and mean_particlediscreteness_inv > mean_particlediscreteness:
                     filteredvertices = filteredvertices_inverted
                     inverted = True
@@ -122,7 +120,7 @@ def after_detection(imgname, filteredvertices, scale, inverted, conversion, outp
     else:
         gimg = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 
-    resemblances, conclusion = match_to_shapes(filteredvertices, image_with_shapes = "shapes_to_match.png")
+    resemblances, conclusion = match_to_shapes(filteredvertices, image_with_shapes = os.path.join(os.path.dirname(os.path.abspath(__file__)), "shapes_to_match.png"))
 
     #Calculate particle metrics.
     colorlist, arealist, avgcolormean, avgcolorstdev, avgarea = particle_metrics_from_vertices(img, gimg, rows,
@@ -319,7 +317,7 @@ def split_figures(input_dir, output_dir=''):
 
 # Ed's test paths
 # path_to_image = "/home/edward/Documents/ImageDataExtractor_documents/test_cde_ide/output/split_grid_images/0_C6CE01551D_fig1_2.png"
-# path_to_documents = "/home/edward/Documents/ImageDataExtractor_documents/test_cde_ide/input"
+#path_to_documents = "/home/edward/Documents/ImageDataExtractor_documents/test_cde_ide/input"
 # path_to_image_output = "/home/edward/Documents/ImageDataExtractor_documents/test_cde_ide/output"
 # path_to_ide_output = "/home/edward/Documents/ImageDataExtractor_documents/test_cde_ide/ide_output"
 #
@@ -328,7 +326,7 @@ def split_figures(input_dir, output_dir=''):
 #
 # #extract_image(path_to_image)
 # #extract_documents(path_to_documents, path_to_image_output, path_to_ide_output)
-# extract_document(os.path.join(path_to_documents, 'C6CE01551D.html'), path_to_image_output, path_to_ide_output)
+#extract_document(os.path.join(path_to_documents, 'C6CE01551D.html'))#, path_to_image_output, path_to_ide_output)
 #
 # input_dir = '/home/edward/Documents/ImageDataExtractor_documents/test_cde_ide/output'
 #
