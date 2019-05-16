@@ -318,21 +318,21 @@ def split_figures(input_dir, output_dir=''):
 # path_to_secondary = "/home/batuhan/Documents/PhD Physics/Projects/imagedataextractor130219_2/merged/4.1_det/*.png"
 
 # Ed's test paths
-path_to_image = "/home/edward/Documents/ImageDataExtractor_documents/test_cde_ide/output/split_grid_images/0_C6CE01551D_fig1_2.png"
-path_to_documents = "/home/edward/Documents/ImageDataExtractor_documents/test_cde_ide/input"
-path_to_image_output = "/home/edward/Documents/ImageDataExtractor_documents/test_cde_ide/output"
-path_to_ide_output = "/home/edward/Documents/ImageDataExtractor_documents/test_cde_ide/ide_output"
-
-#output_path = "/home/edward/Pictures/ImageDataExtractor_images/output/"
-
-
-#extract_image(path_to_image)
-#extract_documents(path_to_documents, path_to_image_output, path_to_ide_output)
-extract_document(os.path.join(path_to_documents, 'C6CE01551D.html'), path_to_image_output, path_to_ide_output)
-
-input_dir = '/home/edward/Documents/ImageDataExtractor_documents/test_cde_ide/output'
-
-#split_figures(input_dir)
+# path_to_image = "/home/edward/Documents/ImageDataExtractor_documents/test_cde_ide/output/split_grid_images/0_C6CE01551D_fig1_2.png"
+# path_to_documents = "/home/edward/Documents/ImageDataExtractor_documents/test_cde_ide/input"
+# path_to_image_output = "/home/edward/Documents/ImageDataExtractor_documents/test_cde_ide/output"
+# path_to_ide_output = "/home/edward/Documents/ImageDataExtractor_documents/test_cde_ide/ide_output"
+#
+# #output_path = "/home/edward/Pictures/ImageDataExtractor_images/output/"
+#
+#
+# #extract_image(path_to_image)
+# #extract_documents(path_to_documents, path_to_image_output, path_to_ide_output)
+# extract_document(os.path.join(path_to_documents, 'C6CE01551D.html'), path_to_image_output, path_to_ide_output)
+#
+# input_dir = '/home/edward/Documents/ImageDataExtractor_documents/test_cde_ide/output'
+#
+# #split_figures(input_dir)
 
 
 
