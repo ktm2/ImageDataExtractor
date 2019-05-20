@@ -97,7 +97,7 @@ def split_by_photo(input_imgs, csv_input_path, output_imgs='', csv_output_path='
         os.makedirs(output_imgs)
 
     print('Deleting output from previous run')
-    files = glob.glob(os.path.join(output_imgs, '*.png'))
+    files = [os.path.join(output_imgs, f) for f in os.listdir(output_imgs) if os.path.isfile(os.path.join(output_imgs, f))]
     for f in files:
         os.remove(f)
 
@@ -131,7 +131,8 @@ def split_by_photo(input_imgs, csv_input_path, output_imgs='', csv_output_path='
 
 def run_worker(row, input_imgs, output_imgs):
     """Detect photos in a figure, save an overlay file, and return output CSV rows."""
-    filename = row[0][:-5] + '_' + row[1] + '.gif'
+    img_format = '.' + row[2].split('.')[-1]
+    filename = row[0].split('.')[0] + '_' + row[1] + img_format
 
     print('Processing: %s' % filename)
 
@@ -153,11 +154,17 @@ def run_worker(row, input_imgs, output_imgs):
 
     for i, photo in enumerate(photos):
         photo_id = i + 1
-        # Generate overlay for each detected plot area
-        ax.add_patch(patches.Rectangle((photo.left, photo.top), photo.width, photo.height, alpha=0.2, facecolor='r'))
-        ax.text(photo.left, photo.top + photo.height / 4, '[%s]' % photo_id, size=photo.height / 5, color='r')
-        # Generate output CSV row
-        output_rows.append([row[0], photo_id, photo.left, photo.right, photo.top, photo.bottom])
+
+        if photo.area < 50000:
+            print("Pixel number : %s . Would be rejected in full pipeline." % photo.area )
+            pass
+        else:
+
+            # Generate overlay for each detected plot area
+            ax.add_patch(patches.Rectangle((photo.left, photo.top), photo.width, photo.height, alpha=0.2, facecolor='r'))
+            ax.text(photo.left, photo.top + photo.height / 4, '[%s]' % photo_id, size=photo.height / 5, color='r')
+            # Generate output CSV row
+            output_rows.append([row[0], photo_id, photo.left, photo.right, photo.top, photo.bottom])
 
     dpi = fig.get_dpi()
     fig.set_size_inches(img.shape[1] / float(dpi), img.shape[0] / float(dpi))
@@ -167,9 +174,14 @@ def run_worker(row, input_imgs, output_imgs):
     return output_rows
 
 def run_worker_split_images(row, input_imgs, output_imgs):
-    """Detect photos in a figure, save all images to separate pngs"""
+    """Detect photos in a figure, save all images to separate files"""
 
-    filename = row[0][:-5] + '_' + row[1] + '.gif'
+    img_format = '.' + row[2].split('.')[-1]
+    filename = row[0].split('.')[0] + '_' + row[1] + img_format
+
+    # Convert GIF images to PNG for output(cannot process gif in OpenCV)
+    if img_format == '.gif':
+        img_format = '.png'
 
     print('Processing: %s' % filename)
 
@@ -192,21 +204,11 @@ def run_worker_split_images(row, input_imgs, output_imgs):
 
             out_img = img[photo.top:photo.bottom,photo.left:photo.right]
 
-            # Save each image separately
-            plt.rcParams['image.cmap'] = 'gray'
-            fig = plt.figure()
-            ax = plt.Axes(fig, [0., 0., 1., 1.])
-            ax.set_axis_off()
-            fig.add_axes(ax)
-            ax.imshow(out_img)
+            img_output_path = os.path.join(output_imgs, '{}_{}_{}'.format(row[0][:-5],row[1], photo_id) + img_format)
+            imsave(img_output_path, out_img)
 
             # Generate output CSV row
             output_rows.append([row[0], photo_id, photo.left, photo.right, photo.top, photo.bottom])
-
-            dpi = fig.get_dpi()
-            fig.set_size_inches(out_img.shape[1] / float(dpi), out_img.shape[0] / float(dpi))
-            plt.savefig(os.path.join(output_imgs, '{}_{}_{}.png'.format(row[0][:-5],row[1], photo_id)))
-            plt.close()
 
     return output_rows
 
@@ -218,7 +220,7 @@ def split_by_grid(input_imgs, output_imgs=''):
     if not os.path.exists(output_imgs):
         os.makedirs(output_imgs)
 
-    imgs = glob.glob(os.path.join(input_imgs, '*.png'))
+    imgs = [os.path.join(input_imgs, f) for f in os.listdir(input_imgs) if os.path.isfile(os.path.join(input_imgs, f))]
 
     for img in imgs:
         split_fig_by_grid(img, output_imgs)

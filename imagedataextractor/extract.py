@@ -247,7 +247,7 @@ def extract_images(path_to_images, outputpath='', path_to_secondary = None, path
 extract_image = extract_images
 
 
-def extract_documents(path_to_documents, path_to_images, outputpath='', path_to_secondary = None, path_to_already_done = None):
+def extract_documents(path_to_documents, path_to_images='', outputpath='', path_to_secondary = None, path_to_already_done = None):
     """ Automatically detects SEM and TEM images from HTML/XML documents for extraction
 
     :param string path_to_documents : path to documents of interest
