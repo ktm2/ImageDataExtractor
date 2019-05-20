@@ -2,12 +2,16 @@ import cv2
 import numpy as np
 import itertools
 import math
-from contour_detections import *
+from scipy.stats import mode
 
-def edge_correction(filteredvertices,rows,cols,inlaycoords, testing = False, gimg = None):
+
+from .contour_detections import *
+
+def edge_correction(filteredvertices, particlediscreteness,rows,cols,inlaycoords, testing = False, gimg = None):
     '''Filters out particles that are deformed by image borders or inlays. (must intersect either at min 2 points)
 
     :param list filteredvertices: list of vertices of deteced particles.
+    :param list particlediscreteness: list of particle DI's.
     :param int rows: number of rows in image.
     :param int cols: number of columns in image.
     :param list inlaycoords: list of coordinates (as tuples) of inlays in image, including text info.
@@ -23,6 +27,9 @@ def edge_correction(filteredvertices,rows,cols,inlaycoords, testing = False, gim
 
     if testing ==True:
         test_img = cv2.cvtColor(gimg,cv2.COLOR_GRAY2RGB)
+
+    particle_index = 0
+    index_to_remove = []
 
     for vertices in filteredvertices:
         borderintersections=0
@@ -56,6 +63,16 @@ def edge_correction(filteredvertices,rows,cols,inlaycoords, testing = False, gim
             edgecorrectedvertices.append(vertices)
         else:
             removedvertices.append(vertices)
+            index_to_remove.append(particle_index)
+
+        particle_index += 1
+
+    index_to_remove = list(set(index_to_remove))
+
+    if particlediscreteness is not None:
+        for i in sorted(index_to_remove,reverse=True):
+            del particlediscreteness[i]
+
 
     if testing == True:
         print(str(len(removedvertices)) + " particles removed.")
@@ -73,7 +90,7 @@ def edge_correction(filteredvertices,rows,cols,inlaycoords, testing = False, gim
 
 
 
-    return edgecorrectedvertices
+    return edgecorrectedvertices, particlediscreteness
 
 
 def particle_metrics_from_vertices(img,gimg,rows,cols,filteredvertices, invert = False):
@@ -143,9 +160,10 @@ def particle_metrics_from_vertices(img,gimg,rows,cols,filteredvertices, invert =
 
         colormean=sum(shapearea)/len(shapearea)
         colorstdev=np.std(shapearea)
+        color_mode = float(mode(shapearea)[0])
 
         #Append particle color mean and standard deviation.
-        colorlist.append((colormean,colorstdev))
+        colorlist.append((colormean,colorstdev,color_mode))
 
         colormeantotal+=colormean
         colorstdevtotal+=colorstdev
@@ -188,7 +206,8 @@ def false_positive_correction(filteredvertices,arealist,colorlist,avgcolormean,a
 
     for i in range(len(colorlist)):
         if ((colorlist[i][0]<avgcolormean*0.6 and colorlist[i][1]<avgcolorstdev*0.25) \
-         or colorlist[i][0]<2 or colorlist[i][0] > 240) == True:
+         or colorlist[i][0]<2 or colorlist[i][0] > 240 or colorlist[i][2] > 250) == True:
+
 
         #or colorlist[i][0]>1.6*avgcolormean
 
@@ -269,6 +288,9 @@ def cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, 
             hull = cv2.convexHull(vert,returnPoints = False)
             defects = cv2.convexityDefects(vert,hull)
 
+            indextoremove.append(i)
+
+
             if defects is not None:
 
                 for j in range(defects.shape[0]):
@@ -289,7 +311,6 @@ def cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, 
 
 
 
-                            indextoremove.append(i)
                             midpoint=((start[0]+end[0])/2,(start[1]+end[1])/2)
 
                             #Attempt to slice contour horizontally or vertically in order to find closest point to convexhull point on other side 
@@ -368,7 +389,7 @@ def cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, 
 
                             dilatedimg = maskedresult
 
-                            unknownvar,contours,h = cv2.findContours(cv2.cvtColor(dilatedimg,cv2.COLOR_BGR2GRAY),cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
+                            contours,h = cv2.findContours(cv2.cvtColor(dilatedimg,cv2.COLOR_BGR2GRAY),cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
 
 
 
@@ -472,10 +493,11 @@ def cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, 
     for i in brokenupvertices:
         clusterbreakupvertices.append(i[0])
 
+
     return clusterbreakupvertices
 
 
-def discreteness_index_and_ellipse_fitting(edgecorrectedvertices,img,rows,cols,imgstdev):
+def discreteness_index_and_ellipse_fitting(edgecorrectedvertices,img,rows,cols,imgstdev, testing = False):
     '''Calculate "discreteness index" for each particle, a measure of how dissimilar the inside of a detected border
     and the outside is. This is meant to be a measure of how succesful the detection was. High discreteness index 
     would mean the inside and outside are quite different which implies inside is particle while outside is background.
@@ -488,6 +510,8 @@ def discreteness_index_and_ellipse_fitting(edgecorrectedvertices,img,rows,cols,i
     :param int rows: number of rows in image.
     :param int cols: number of columns in image.
     :param float imgstdev: standard deviation of pixel intensities in image.
+    :param bool testing: display step by step.
+
 
     :return list particlediscreteness: list of DI's of each particle.
     :return list ellipsefittedvertices: Corrected list of vertices of particles.
@@ -508,7 +532,7 @@ def discreteness_index_and_ellipse_fitting(edgecorrectedvertices,img,rows,cols,i
     similarity_ellipse_vs_particle=[]
     dev_particle_vs_ellipse=[]
 
-    particleindex=0
+    particleindex = 1
 
     #particle level.
     for i in edgecorrectedvertices:
@@ -521,6 +545,8 @@ def discreteness_index_and_ellipse_fitting(edgecorrectedvertices,img,rows,cols,i
         xcom=int(xcom)
         ycom=int(ycom)
 
+        cv2.circle(ellimg,(xcom,ycom),1,(0,0,255),1)
+        cv2.putText(ellimg,str(particleindex),(xcom+3,ycom+3),cv2.FONT_HERSHEY_COMPLEX,0.4,(255,0,255),thickness=1)           
 
         bufferfromborder=3
         hull=cv2.convexHull(i)
@@ -628,8 +654,8 @@ def discreteness_index_and_ellipse_fitting(edgecorrectedvertices,img,rows,cols,i
                             shapearea.append(gimg[x][y])
 
 
-                colormean=sum(shapearea)/len(shapearea)
-                colorstdev=np.std(shapearea)
+                colormean = np.mean(shapearea)
+                colorstdev = np.std(shapearea)
 
                 color_means.append(colormean)
                 color_stdevs.append(colorstdev)
@@ -651,6 +677,7 @@ def discreteness_index_and_ellipse_fitting(edgecorrectedvertices,img,rows,cols,i
             cv2.polylines(ellimg,[ellipsepoly],True,(0,0,255),thickness=1)
 
             particleindex+=1
+
 
 
 
@@ -701,10 +728,11 @@ def discreteness_index_and_ellipse_fitting(edgecorrectedvertices,img,rows,cols,i
     for i in sorted(index_to_remove,reverse=True):
         del ellipsefittedvertices[i]
 
-    #show_image(ellimg)
+    if testing == True:
+        show_image(ellimg)
 
 
-    return particlediscreteness, ellipsefittedvertices
+    return ellipsefittedvertices, particlediscreteness
 
 
 

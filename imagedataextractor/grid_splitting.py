@@ -1,6 +1,4 @@
-import numpy as np
-import cv2
-from img_utils import *
+from .img_utils import *
 
 
 
@@ -19,7 +17,7 @@ def line_detection_and_split(gimg, show = False, eval_img = True):
     - checking along grid manually is inefficient, can do this recursively:
     - this can be adapted to unevenly split figures if the detected straight lines can be
     filtered more intelligently.
-    - getting rid of debugging related variables.
+    - getting rid of debugging related objects.
 
     '''
 
@@ -38,7 +36,7 @@ def line_detection_and_split(gimg, show = False, eval_img = True):
 
     if show == True:
         show_image(edges)
-        print cols,rows
+        print(cols,rows)
 
 
     # Hough Lines Detection, from stackoverflow.
@@ -53,7 +51,7 @@ def line_detection_and_split(gimg, show = False, eval_img = True):
     lines = cv2.HoughLinesP(edges, rho, theta, threshold, np.array([]),min_line_length, max_line_gap)
 
     if lines is None:
-        print "no straight lines found"
+        print("no straight lines found")
         return None, evaluation_img
 
 
@@ -129,12 +127,12 @@ def line_detection_and_split(gimg, show = False, eval_img = True):
 
 
     if show == True:
-        print "horizontally_in_half", horizontally_in_half
-        print "horizontally_in_thirds", horizontally_in_thirds
-        print "horizontally_in_four", horizontally_in_four
-        print "vertically_in_half", vertically_in_half
-        print "vertically_in_thirds", vertically_in_thirds
-        print "vertically_in_four", vertically_in_four
+        print("horizontally_in_half", horizontally_in_half)
+        print("horizontally_in_thirds", horizontally_in_thirds)
+        print("horizontally_in_four", horizontally_in_four)
+        print("vertically_in_half", vertically_in_half)
+        print("vertically_in_thirds", vertically_in_thirds)
+        print("vertically_in_four", vertically_in_four)
 
         show_image(drawingimg)
 

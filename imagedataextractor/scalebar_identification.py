@@ -1,10 +1,7 @@
-from contour_detections import *
-from correction_steps import *
-from img_utils import *
-from scale_reading import *
+from .scale_reading import *
 
 
-def scalebar_identification(img, testing = None):
+def scalebar_identification(img, outputpath='', testing = None):
     '''Runs scalebar detection on SEM images.
     :param numpy.ndarray img: input image..
     :param string testing: Name of evaulation image for output.
@@ -12,6 +9,8 @@ def scalebar_identification(img, testing = None):
     :return float scale: Distance associated with a pixel in units of (m/pixel)
     :return list inlaycoords: list of tuples, (x,y,w,h) top left corner, width and 
     height of inlays, including scalebar.
+    :return float conversion: unit of scalevalue 10e-6 for um, 10e-9 for nm.
+
 
     TODO:
     - Inlay determination.
@@ -50,9 +49,9 @@ def scalebar_identification(img, testing = None):
             (255,0,0),thickness=1)
 
         cv2.putText(output_img, str(scalevalue)+"*"+str(conversion), (cols//2,rows//2),cv2.FONT_HERSHEY_PLAIN,1, (0,0,255),thickness=1)
-        cv2.imwrite("scalebar_"+str(testing).split("/")[-1],output_img)
+        cv2.imwrite(os.path.join(outputpath, "scalebar_"+str(testing).split("/")[-1]),output_img)
 
     if scalebar != None:
         scale = scalevalue * conversion / float(scalebar[2])
 
-    return scale, inlaycoords
+    return scale, inlaycoords, conversion

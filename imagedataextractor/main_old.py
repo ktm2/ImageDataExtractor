@@ -8,11 +8,12 @@
 # increase efficiency.
 
 # TODO:
-# Dark particles on light backgrounds?
+# Edge correction and hierarchical relations for fitted ellipses.
+# Inlay determination.
 
-from scalebar_identification import *
-from particle_identification import *
-from rdf_functions import *
+from .scalebar_identification import *
+from .particle_identification import *
+from .rdf_functions import *
 
 import glob
 
@@ -28,40 +29,9 @@ def main_detection(imgname):
 
     img = cv2.imread(imgname)
 
-    if len(img) * len(img[0]) < 50000:
-        print("img smaller than 50k")
-        return None,None
-
     scale, inlaycoords = scalebar_identification(img, testing = imgname)
 
     filteredvertices = particle_identification(img, inlaycoords, testing = imgname)
-
-
-    #If less than 3 particles are found, redo analysis with inverted colors.
-    if len(filteredvertices) < 3:
-        filteredvertices_inverted = particle_identification(img, inlaycoords, testing = imgname, invert = True)
-
-        if len(filteredvertices_inverted) > 0:
-            if len(img.shape) == 2:
-                gimg = img
-            else:
-                gimg = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-
-            rows = len(img)
-            cols = len(img[0])
-
-            if len(filteredvertices) > 0: 
-                arealist = particle_metrics_from_vertices(img, gimg, rows, cols, filteredvertices)[1]
-            else:
-                arealist = []
-
-            arealist_inv = particle_metrics_from_vertices(img, gimg, rows, cols, filteredvertices_inverted)[1]
-
-            #If more overall area is attributed to particles in the inverted form, that version is passed to 
-            #the calculation steps, both images get written out.
-            if sum(arealist_inv) > sum(arealist):
-                filteredvertices = filteredvertices_inverted
-
 
     return filteredvertices, scale
 
@@ -120,53 +90,21 @@ def run(path_to_images, path_to_secondary = None):
         secondary.extend([a.split('/')[-1][9:] for a in glob.glob(path_to_secondary)])
 
     for imgname in images:
-        if imgname.split('/')[-1] in secondary:
+        if imgname.split('/')[-1] not in secondary:
             print("Scale and particle detection begun on: " + str(imgname))
 
             filteredvertices, scale = main_detection(imgname)
 
-            ####FOR EVAL
-            #avgarea, avgcolormean, [xRDF, yRDF] = after_detection(imgname, filteredvertices, scale)
+            avgarea, avgcolormean, [xRDF, yRDF] = after_detection(imgname, filteredvertices, scale)
+
             #Output rdf.
-            #plot_rdf(xRDF, yRDF, imgname)
-
-            mark_areas = False
-            
-            if mark_areas == True:
-                outfile = open(imgname.split('/')[-1] + ".txt", "w")
-
-                outfile.write("Particle Number, Size" + "\n")
-
-                img = cv2.imread(imgname)
-
-                particle_index = 1
-
-                for i in range(len(filteredvertices)):
-                    cv2.polylines(img,[filteredvertices[i]],True,(0,255,0),thickness=1)
-                    (xcom,ycom),contradius = cv2.minEnclosingCircle(filteredvertices[i])
-                    xcom=int(xcom)
-                    ycom=int(ycom)
-                    contradius=int(contradius)
-                    cv2.circle(img,(xcom,ycom),1,(0,0,255),1)
-                    cv2.putText(img,str(particle_index),(xcom+3,ycom+3),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,0,255),thickness=1)           
-                    area=cv2.contourArea(filteredvertices[i])
-                    outfile.write(str(particle_index) + ", " + str(area) + "\n")
-
-                    particle_index+=1
-
-                outfile.close()
-                cv2.imwrite("ann_"+str(imgname.split('/')[-1]),img)
-
-
-          
-
+            plot_rdf(xRDF, yRDF, imgname)    
 
     return
 
 
-path_to_images = "/Users/karim/Desktop/evaluation_images/1_sem_tio2_nano/2_karim_split/*.png"
-
-path_to_secondary = "/Users/karim/Desktop/evaluation_images/1_sem_tio2_nano/3_scalebar/true_positives/*.png"
+path_to_images = "./input_images/*.png"
+path_to_secondary = None
 
 run(path_to_images, path_to_secondary)
 

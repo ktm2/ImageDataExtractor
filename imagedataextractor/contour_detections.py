@@ -1,6 +1,52 @@
-import cv2
-import numpy as np
-from img_utils import *
+from .img_utils import *
+
+from scipy.stats import mode
+import os
+
+
+def match_to_shapes(filteredvertices,image_with_shapes = os.path.join(os.path.dirname(os.path.abspath(__file__)), "shapes_to_match.png"), outputimg = None):
+    '''Determine closeness of shapes to shapes in a given example image, using Hu-moments.
+    Mostly orientation and scale invariant.
+    :param numpy.ndarray filteredvertices: the detected particles from earlier in detection.
+    :param string image_with_shapes: name of the input image with target shapes.
+
+    :return list 
+    :return string
+    '''
+
+    shapes_to_match = cv2.imread(image_with_shapes)
+    shape_vertices = find_draw_contours(shapes_to_match)
+
+    #Have to be provided by user if a custom image is being used
+    #suggest using testing and annotation mode in find_draw_contours to do this.
+    shape_labels = ["circle", "ellipse", "diamond", "rectangle"]
+
+    #List of length of number of particles
+    #Each element is a list of length 4, with the corresponding matching coefficients
+    #to the regular shapes in shape_labels. Closer to 0 means closer match.
+    match = []
+    particle_index = 1
+    for particle in filteredvertices:
+        particle_matches = []
+        for shape in shape_vertices:
+            ret = cv2.matchShapes(np.array(particle),np.array(shape[0]),1,0.0)
+            particle_matches.append(round(ret,2))
+
+        match.append(particle_matches)
+
+    modes = [mode(i)[0] for i in zip(*match)]
+    
+
+    if min(modes) < 0.1:
+        conc = str("The 2D projections of the particles in this image most closely match a: " 
+        + shape_labels[modes.index(min(modes))])
+    else:
+        conc = str("The geometry 2D projections of the particles in this image cannot be classified.")
+
+
+    return zip(shape_labels,[str(i[0]) for i in modes]), conc
+
+
 
 def draw_contours(gimg,filteredvertices,imgname="img"):
     '''Draw detected particles on an image.
@@ -23,7 +69,6 @@ def draw_contours(gimg,filteredvertices,imgname="img"):
     show_image(backtorgb,waitkey=0,imgname=imgname)
 
     return None
-
 
 
 def find_draw_contours(img, blocksize = 151, blursize = 0, minarea = None, 
@@ -58,7 +103,7 @@ def find_draw_contours(img, blocksize = 151, blursize = 0, minarea = None,
 
     '''
  
-    imgarea=len(img)*len(img[0])
+    imgarea=img.shape[0] *img.shape[1]
 
     #Apply filters to image.
     #img already grayscale.
@@ -81,9 +126,9 @@ def find_draw_contours(img, blocksize = 151, blursize = 0, minarea = None,
     #Apply blur filter (optional), find contours.
     if blursize!=0:
         thresh=cv2.medianBlur(thresh1,blursize)
-        unknownvar,contours,h = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
+        contours,h = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
     else:
-        unknownvar,contours,h = cv2.findContours(thresh1,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
+        contours,h = cv2.findContours(thresh1,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
 
 
 
@@ -178,7 +223,7 @@ def find_draw_contours(img, blocksize = 151, blursize = 0, minarea = None,
                 contradius=int(contradius)
                 shapecoords.append((xcom,ycom,contradius))
                 cv2.circle(drawingimg,(xcom,ycom),1,(0,0,255),1)
-                cv2.putText(drawingimg,str(shapeindex),(xcom+3,ycom+3),cv2.FONT_HERSHEY_COMPLEX,0.4,(255,255,255),thickness=1)           
+                cv2.putText(drawingimg,str(shapeindex),(xcom+3,ycom+3),cv2.FONT_HERSHEY_COMPLEX,0.4,(255,0,255),thickness=1)           
                 shapeindex+=1
 
 
@@ -231,10 +276,9 @@ def find_draw_contours_main(img, gimg,blocksize, rows, cols, blursize = 0, testi
     #Apply blur filter (optional), find contours.
     if blursize!=0:
         thresh=cv2.medianBlur(thresh1,blursize)
-        unknownvar,contours,h = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
+        contours,h = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
     else:
-        unknownvar,contours,h = cv2.findContours(thresh1,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
-
+        contours,h = cv2.findContours(thresh1,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
 
 
     #Set variables for contour processing.
