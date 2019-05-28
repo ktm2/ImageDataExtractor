@@ -171,7 +171,9 @@ def after_detection(imgname, filteredvertices, scale, inverted, conversion, outp
     outfile.write(str(number_of_particles) + " particles detected." + "\n")
     outfile.write("Representative particle size: " + str(avgarea) + " sqm" + "\n" + "\n")
     outfile.write("Particle resemblances to regular shapes: " + "\n")
-    outfile.write(str(resemblances) + "\n")
+    for i in resemblances:
+        outfile.write(str(i) + " ")
+    outfile.write("\n")
     outfile.write(conclusion + "\n")
     outfile.write("Average aspect ratio: " + str(mean_aspect_ratio) + "\n")
 
