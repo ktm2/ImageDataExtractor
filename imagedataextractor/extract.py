@@ -12,6 +12,8 @@
 
 import glob
 import datetime
+import zipfile
+import tarfile
 
 from .scalebar_identification import *
 from .particle_identification import *
@@ -205,7 +207,42 @@ def extract_images(path_to_images, outputpath='', path_to_secondary = None, path
     if os.path.isdir(path_to_images):
         images = [os.path.join(path_to_images, img) for img in os.listdir(path_to_images)]
     elif os.path.isfile(path_to_images):
-        images = [path_to_images]
+
+        # Unzipping compressed inputs
+        if path_to_images.endswith('zip'):
+            # Logic to unzip the file locally
+            print('Opening zip file...')
+            zip_ref = zipfile.ZipFile(path_to_images)
+            extracted_path = os.path.join(os.path.dirname(path_to_images), 'extracted')
+            if not os.path.exists(extracted_path):
+                os.makedirs(extracted_path)
+            zip_ref.extractall(extracted_path)
+            zip_ref.close()
+            images = [os.path.join(extracted_path, img) for img in os.listdir(extracted_path)]
+
+        elif path_to_images.endswith('tar.gz'):
+            # Logic to unzip tarball locally
+            print('Opening tarball file...')
+            tar_ref = tarfile.open(path_to_images, 'r:gz')
+            extracted_path = os.path.join(os.path.dirname(path_to_images), 'extracted')
+            if not os.path.exists(extracted_path):
+                os.makedirs(extracted_path)
+            tar_ref.extractall(extracted_path)
+            tar_ref.close()
+            images = [os.path.join(extracted_path, img) for img in os.listdir(extracted_path)]
+
+        elif path_to_images.endswith('tar'):
+            # Logic to unzip tarball locally
+            print('Opening tarball file...')
+            tar_ref = tarfile.open(path_to_images, 'r:')
+            extracted_path = os.path.join(os.path.dirname(path_to_images), 'extracted')
+            if not os.path.exists(extracted_path):
+                os.makedirs(extracted_path)
+            tar_ref.extractall(extracted_path)
+            tar_ref.close()
+            images = [os.path.join(extracted_path, img) for img in os.listdir(extracted_path)]
+        else:
+            images = [path_to_images]
     else:
         raise Exception('Unsupported input format')
 

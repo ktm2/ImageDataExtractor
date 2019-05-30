@@ -17,6 +17,8 @@ import csv
 import io
 import sys
 import logging
+import zipfile
+import tarfile
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
@@ -36,7 +38,40 @@ class TEMImageExtractor():
 
     def get_img_paths(self):
         """ Get paths to all images """
+
         docs = os.listdir(self.input)
+
+        # Check for single file
+        if len(docs) == 1:
+            compressed = os.path.join(self.input, docs[0])
+
+            if compressed.endswith('zip'):
+                # Logic to unzip the file locally
+                print('Opening zip file...')
+                zip_ref = zipfile.ZipFile(compressed)
+                zip_ref.extractall(self.input)
+                zip_ref.close()
+
+            elif compressed.endswith('tar.gz'):
+                # Logic to unzip tarball locally
+                print('Opening tarball file...')
+                tar_ref = tarfile.open(compressed, 'r:gz')
+                tar_ref.extractall(self.input)
+                tar_ref.close()
+
+            elif compressed.endswith('tar'):
+                # Logic to unzip tarball locally
+                print('Opening tarball file...')
+                tar_ref = tarfile.open(compressed, 'r:')
+                tar_ref.extractall(self.input)
+                tar_ref.close()
+            else:
+                raise Exception('Only one file provided - please use extract_document() instead')
+
+            print('Removing compressed file...')
+            os.remove(compressed)
+            docs = os.listdir(self.input)
+
         self.docs = [(doc, os.path.join(self.input, doc)) for doc in docs]
 
         # Create image folders if it doesn't exist
