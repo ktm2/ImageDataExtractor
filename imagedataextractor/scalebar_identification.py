@@ -17,7 +17,7 @@ def scalebar_identification(img, outputpath='', testing = None):
     
     '''
 
-    scale, scalebar, scalevalue, conversion  = None, None, None, None
+    scale, scalebar, scalevalue, conversion  = 1, None, None, 1
 
     inlaycoords = []
 
@@ -48,7 +48,10 @@ def scalebar_identification(img, outputpath='', testing = None):
                 cv2.rectangle(output_img,(box[0],box[1]),(box[0]+box[2],box[1]+box[3]),
             (255,0,0),thickness=1)
 
-        cv2.putText(output_img, str(scalevalue)+"*"+str(conversion), (cols//2,rows//2),cv2.FONT_HERSHEY_PLAIN,1, (0,0,255),thickness=1)
+        if conversion == 1:
+            cv2.putText(output_img, str("Scale could not be determined."), (0,rows//2),cv2.FONT_HERSHEY_PLAIN,1, (0,0,255),thickness=1)
+        else:
+            cv2.putText(output_img, str(scalevalue)+"*"+str(conversion), (cols//2,rows//2),cv2.FONT_HERSHEY_PLAIN,1, (0,0,255),thickness=1)
         cv2.imwrite(os.path.join(outputpath, "scalebar_"+str(testing).split("/")[-1]),output_img)
 
     if scalebar != None:

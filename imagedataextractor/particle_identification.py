@@ -24,7 +24,6 @@ def particle_identification(img, inlaycoords, testing = False, blocksize = 151, 
     else:
         gimg = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 
-
     #Crop around edges of image.
     img = crop_image(img)
     gimg = crop_image(gimg)

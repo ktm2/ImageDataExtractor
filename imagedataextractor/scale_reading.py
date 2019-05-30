@@ -97,7 +97,7 @@ def detect_scale_bar_and_inlays(gimg, imgmean, imgstdev, rows, cols, show = Fals
 
     '''
 
-    scalebar, scalevalue, conversion = None, None, None
+    scalebar, scalevalue, conversion = None, None, 1
 
     # Create new copy of image to work with.
     scalebarimg = gimg.copy()
@@ -114,7 +114,7 @@ def detect_scale_bar_and_inlays(gimg, imgmean, imgstdev, rows, cols, show = Fals
     scalebar, scalevalue, conversion, inlaycoords = find_text_and_bar(thresholdedimg, gimg, rows, cols, show=show, printer=show)
 
     # If nothing is found repeat process looking for black text.
-    if scalebar == None and scalevalue == None and conversion == None:
+    if scalebar == None and scalevalue == None and conversion == 1:
         cv2.rectangle(scalebarimg, (0, 0), (frame_constant, rows), (255, 255, 255), -1)
         cv2.rectangle(scalebarimg, (0, rows - frame_constant), (cols, rows), (255, 255, 255), -1)
         cv2.rectangle(scalebarimg, (0, 0), (cols, frame_constant), (255, 255, 255), -1)
@@ -157,7 +157,7 @@ def find_text_and_bar(thresholdedimg, gimg, rows, cols, show=False, printer=Fals
     '''
 
     scalebar = None
-    conversion = None
+    conversion = 1
     scalevalue = None
     boxes = None
     inlaycoords = []
@@ -222,7 +222,7 @@ def find_text_and_bar(thresholdedimg, gimg, rows, cols, show=False, printer=Fals
                 print("is_box_in_box", is_box_in_box)
 
             # These get set to None each loop unless both can be identified simultaneously further down.
-            conversion = None
+            conversion = 1
             boxes = None
             scalevalue = None
 
