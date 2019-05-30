@@ -204,7 +204,7 @@ def run_worker_split_images(row, input_imgs, output_imgs):
 
             out_img = img[photo.top:photo.bottom,photo.left:photo.right]
 
-            img_output_path = os.path.join(output_imgs, '{}_{}_{}'.format(row[0][:-5],row[1], photo_id) + img_format)
+            img_output_path = os.path.join(output_imgs, '{}_{}_{}'.format(row[0].split('.')[0], row[1], photo_id) + img_format)
             imsave(img_output_path, out_img)
 
             # Generate output CSV row
