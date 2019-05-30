@@ -79,9 +79,9 @@ class TEMImageExtractor():
         imgs_dir = os.path.join(self.output, 'raw_images')
 
         if len(os.listdir(imgs_dir)) <= 999999999:
-            img_format = url[-3:]
+            img_format = url.split('.')[-1]
             print(url, img_format)
-            filename = file[:-5] + '_' + id + '.' + img_format
+            filename = file.split('.')[0] + '_' + id + '.' + img_format
             path = os.path.join(imgs_dir, filename)
 
             print("Downloading %s..." % filename)
