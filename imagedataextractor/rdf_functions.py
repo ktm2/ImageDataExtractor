@@ -163,11 +163,12 @@ def output_rdf(xRDF,yRDF,imgname,conversion, outputpath=''):
 
     return
 
-def particle_size_histogram(arealist, filtered, imgname, outputpath=''):
+def particle_size_histogram(arealist, filtered, imgname, outputpath='', conversion = 0):
     '''Plots particle size histogram.
     :param list arealist: list of the areas of particles.
     :param string imgname: name of the img (needed for writing output)
     :param string outputpath: path to output directory.
+    :param float conversion: order of magnitude of scale in image, if 1 scale is in pixels.
     '''
 
     font={"fontname":"serif"}
@@ -175,7 +176,10 @@ def particle_size_histogram(arealist, filtered, imgname, outputpath=''):
     plt.hist(filtered, bins=len(arealist) + 1, range=(bins.min(), bins.max()), edgecolor='black', linewidth=1.2, 
         rwidth=0.9, label='Filtered', alpha = 0.6)
     plt.title("Particle Size " + str(imgname).split("/")[-1] ,**font)
-    plt.xlabel('Meters**2',**font)
+    if conversion == 1:
+        plt.xlabel('Pixels**2',**font)
+    else:
+        plt.xlabel('Meters**2',**font)
     plt.ylabel("Frequency",**font)
     ##is this right?
     plt.xlim([0,max(arealist)])

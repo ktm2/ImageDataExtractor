@@ -41,7 +41,7 @@ def match_to_shapes(filteredvertices,image_with_shapes = os.path.join(os.path.di
         conc = str("The 2D projections of the particles in this image most closely match a: " 
         + shape_labels[modes.index(min(modes))])
     else:
-        conc = str("The geometry 2D projections of the particles in this image cannot be classified.")
+        conc = str("The geometries of the 2D projections of the particles in this image cannot be classified.")
 
 
     return zip(shape_labels,[str(i[0]) for i in modes]), conc
