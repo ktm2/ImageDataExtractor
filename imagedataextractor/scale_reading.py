@@ -26,9 +26,9 @@ def read_image(thresholdedimg, unit):
 
     # Only look for these characters.
     if unit == "um":
-        cfg = 'pytess_config_um'
+        cfg = 'pytess_config_um.txt'
     else:
-        cfg = "pytess_config_nm"
+        cfg = "pytess_config_nm.txt"
 
     # Read image using English alphabet.
     greekengtextfromimage = image_to_string(imagetoread, lang="eng", config=os.path.join(os.path.dirname(os.path.abspath(__file__)), cfg))
