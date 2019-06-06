@@ -2,3 +2,7 @@
 *.pyc
 *.txt
 .DS_Store
+.eggs/*
+.idea/*
+build/*
+dist/*

@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import keras.backend as K
 import os
+from  PIL import Image
 
 
 def writeout_image(img, output_path, filteredvertices, imgname, inverted = False):
@@ -160,4 +161,18 @@ def psnr(y_true, y_pred):
     rmse = K.sqrt(K.mean(diff ** 2.))
     log10 = K.log(255.0/rmse) / K.log(10.0)
     return 20.0 * log10
+
+
+def convert_gif_to_png(imgname, secondary):
+    """Converting GIFs to PNG"""
+
+    new_imgname = imgname.rsplit('.', 1)[0] + '.png'
+    temp_gif = Image.open(imgname)
+    temp_gif.save(new_imgname)
+
+    os.remove(imgname)
+
+    secondary = [v.rsplit('.')[0] + '.png' for v in secondary]
+
+    return new_imgname, secondary
 

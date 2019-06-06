@@ -14,12 +14,14 @@ import glob
 import datetime
 import zipfile
 import tarfile
+from PIL import Image
 
 from .scalebar_identification import *
 from .particle_identification import *
 from .rdf_functions import *
 from .image_identification import TEMImageExtractor
 from .figure_splitting import split_by_photo, split_by_grid
+from .img_utils import convert_gif_to_png
 
 
 def main_detection(imgname, outputpath=''):
@@ -38,7 +40,7 @@ def main_detection(imgname, outputpath=''):
 
 
     if img.shape[0] * img.shape[1] < 50000:
-        return None,None,None,None
+        raise Exception('Image too small for accurate extraction')
 
     scale, inlaycoords, conversion = scalebar_identification(img, outputpath, testing = imgname)
 
@@ -160,12 +162,21 @@ def after_detection(imgname, filteredvertices, scale, inverted, conversion, outp
     #Log for file.
     outfile = open(os.path.join(outputpath, imgname.split('/')[-1].split(".")[0] + ".txt"), "w")
 
-    outfile.write(imgname.split('/')[-1] + " processed using ImageDataExtractor on "+"\n")
-    outfile.write(datetime.datetime.now().strftime("%Y-%m-%d %H:%M") + "\n")
-    outfile.write("Article DOI: " + "\n")
-    outfile.write(imgname.split('/')[-1].split("_")[1] + "\n")
-    outfile.write("Figure number: " + "\n")
-    outfile.write(imgname.split('/')[-1].split("_")[2] + "\n" + "\n")
+    filename = imgname.split('/')[-1]
+
+    # Checking if file is in the DOI format
+    if len(filename.split('_')) == 2:
+
+        outfile.write(filename + " processed using ImageDataExtractor on "+"\n")
+        outfile.write(datetime.datetime.now().strftime("%Y-%m-%d %H:%M") + "\n")
+        outfile.write("Article DOI: " + "\n")
+        outfile.write(filename.split("_")[1] + "\n")
+        outfile.write("Figure number: " + "\n")
+        outfile.write(filename.split("_")[2] + "\n" + "\n")
+
+    else:
+        outfile.write(filename + " processed using ImageDataExtractor on "+"\n")
+        outfile.write(datetime.datetime.now().strftime("%Y-%m-%d %H:%M") + "\n")
     # outfile.write("Particle Number, Size in Pixels" + "\n")
     # particle_index = 1
     # for area in arealist:
@@ -271,6 +282,12 @@ def extract_images(path_to_images, outputpath='', path_to_secondary = None, path
         already_done.extend([a.split('/')[-1][4:] for a in glob.glob(path_to_already_done)])
 
     for imgname in images:
+
+        # Converting GIFs to PNG
+        if imgname.split('.')[-1] == 'gif':
+            imgname, secondary = convert_gif_to_png(imgname, secondary)
+
+
         if (imgname.split('/')[-1] in secondary) and (imgname.split('/')[-1] not in already_done) :
             print("Scale and particle detection begun on: " + str(imgname))
 
@@ -281,17 +298,25 @@ def extract_images(path_to_images, outputpath='', path_to_secondary = None, path
             filteredvertices, scale, inverted, conversion = main_detection(imgname, imgoutputdir)
 
             if filteredvertices == None:
-                
+
                 outfile = open(os.path.join(imgoutputdir, imgname.split('/')[-1].split(".")[0] + ".txt"), "w")
-                outfile.write(imgname.split('/')[-1] + " processed using ImageDataExtractor on "+"\n")
-                outfile.write(datetime.datetime.now().strftime("%Y-%m-%d %H:%M") + "\n")
-                outfile.write("Article DOI: " + "\n")
-                outfile.write(imgname.split('/')[-1].split("_")[1] + "\n")
-                outfile.write("Figure number: " + "\n")
-                outfile.write(imgname.split('/')[-1].split("_")[2] + "\n" + "\n")
+                filename = imgname.split('/')[-1]
+
+                # Checking if file is in the DOI format
+                if len(filename.split('_')) == 2:
+                
+                    outfile.write(filename + " processed using ImageDataExtractor on "+"\n")
+                    outfile.write(datetime.datetime.now().strftime("%Y-%m-%d %H:%M") + "\n")
+                    outfile.write("Article DOI: " + "\n")
+                    outfile.write(filename.split("_")[1] + "\n")
+                    outfile.write("Figure number: " + "\n")
+                    outfile.write(filename.split("_")[2] + "\n" + "\n")
+                else:
+                    outfile.write(filename + " processed using ImageDataExtractor on " + "\n")
+                    outfile.write(datetime.datetime.now().strftime("%Y-%m-%d %H:%M") + "\n")
+
                 outfile.write("Image does not meet resolution requirements.")
                 outfile.close()
-
 
             elif len(filteredvertices) > 0:
 
@@ -299,15 +324,18 @@ def extract_images(path_to_images, outputpath='', path_to_secondary = None, path
 
             else:
 
-                outfile = open(os.path.join(imgoutputdir, imgname.split('/')[-1].split(".")[0] + ".txt"), "w")
-                outfile.write(imgname.split('/')[-1] + " processed using ImageDataExtractor on "+"\n")
-                outfile.write(datetime.datetime.now().strftime("%Y-%m-%d %H:%M") + "\n")
-                outfile.write("Article DOI: " + "\n")
-                outfile.write(imgname.split('/')[-1].split("_")[1] + "\n")
-                outfile.write("Figure number: " + "\n")
-                outfile.write(imgname.split('/')[-1].split("_")[2] + "\n" + "\n")
-                outfile.write("No particles found.")
-                outfile.close()
+                # Checking if file is in the DOI format
+                if len(filename.split('_')) == 2:
+
+                    outfile.write(filename + " processed using ImageDataExtractor on " + "\n")
+                    outfile.write(datetime.datetime.now().strftime("%Y-%m-%d %H:%M") + "\n")
+                    outfile.write("Article DOI: " + "\n")
+                    outfile.write(filename.split("_")[1] + "\n")
+                    outfile.write("Figure number: " + "\n")
+                    outfile.write(filename.split("_")[2] + "\n" + "\n")
+                else:
+                    outfile.write(filename + " processed using ImageDataExtractor on " + "\n")
+                    outfile.write(datetime.datetime.now().strftime("%Y-%m-%d %H:%M") + "\n")
 
     return
 
