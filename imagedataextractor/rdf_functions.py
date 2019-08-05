@@ -161,6 +161,14 @@ def output_rdf(xRDF,yRDF,imgname,conversion, outputpath=''):
     plt.savefig(os.path.join(outputpath, "rdf_" + str(imgname).split("/")[-1]), bbox_inches = 'tight')
     #plt.show()
 
+    outfile = open(os.path.join(outputpath, "data_rdf_" + imgname.split('/')[-1].split(".")[0] + ".txt"), "w")
+
+    for i,j in zip(xRDF,yRDF):
+        outfile.write(str(i) + " " + str(j) + "\n")
+
+    outfile.close()
+
+
     return
 
 def particle_size_histogram(arealist, filtered, imgname, outputpath='', conversion = 0):
