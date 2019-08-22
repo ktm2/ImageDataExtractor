@@ -209,7 +209,7 @@ def after_detection(imgname, filteredvertices, scale, inverted, conversion, outp
     xRDF = []
     yRDF = []
     if len(filteredvertices) > 9:
-        xRDF, yRDF = calculate_rdf(filteredvertices, rows, cols, scale, increment = 4, progress = True)
+        xRDF, yRDF = calculate_rdf(filteredvertices, rows, cols, scale, increment = 30, progress = True)
         output_rdf(xRDF, yRDF, imgname, conversion, outputpath)
 
     return

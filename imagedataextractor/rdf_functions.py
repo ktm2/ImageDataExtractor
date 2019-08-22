@@ -5,7 +5,7 @@ import math
 from .img_utils import *
 
 
-def calculate_rdf(filteredvertices,rows,cols,scale, increment = 2, progress = False):
+def calculate_rdf(filteredvertices,rows,cols,scale, increment = 4, progress = False):
     '''Calculates RDF from list of vertices of particles.
 
     :param list filteredvertices: list of vertices of particles.
