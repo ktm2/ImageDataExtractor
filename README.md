@@ -37,6 +37,8 @@ Then download the required machine learning models with:
 
 __NOTE : Upon release IDE will be installed using pip (by simply running `pip install imagedataextractor`). While in development, follow the instructions below instead.__
 
+__NOTE : The current version of IDE uses Tesseract 3. The source code can be downloaded [here](https://github.com/tesseract-ocr/tesseract/tree/3.05) and instructions on how to compile can be found [here](https://github.com/tesseract-ocr/tesseract/wiki/Compiling).__
+
 Now to install ImageDataExtractor, clone the repository with:
 
     $ git clone  https://github.com/ktm2/ImageDataExtractor.git
