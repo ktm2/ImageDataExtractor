@@ -195,7 +195,7 @@ def false_positive_correction(filteredvertices,arealist,colorlist,avgcolormean,a
 
     TODO:
 
-    - Absolute floor for colorstdev necessary?? check for img det_0_C4CE00151F_fig1_1
+    - Absolute floor for colorstdev necessary?
 
     '''
 
@@ -253,7 +253,7 @@ def cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, 
     TODO:
     - Ellipse sizes should not depend on avg_area, maybe on overall img size?
 
-    should pixels_to_extend_by depend on the length of the connection line?    
+    - Should pixels_to_extend_by depend on the length of the connection line?    
     '''
 
     breakuptesting = testing

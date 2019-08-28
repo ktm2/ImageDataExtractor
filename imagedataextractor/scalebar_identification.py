@@ -11,9 +11,8 @@ def scalebar_identification(img, outputpath='', testing = None):
     height of inlays, including scalebar.
     :return float conversion: unit of scalevalue 10e-6 for um, 10e-9 for nm.
 
-
     TODO:
-    - Inlay determination.
+    - Misc. inlay determination.
     
     '''
 

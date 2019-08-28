@@ -18,9 +18,6 @@ def calculate_rdf(filteredvertices,rows,cols,scale, increment = 2, progress = Fa
     :return list xRDF: x values of RDF
     :return list yRDF: y values of RDF
 
-    TODO:
-    - Must be better way of doing this than pixel counting?
-
     '''
 
 
