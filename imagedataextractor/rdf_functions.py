@@ -142,6 +142,7 @@ def output_rdf(xRDF,yRDF,imgname,conversion, outputpath=''):
 '''
     
     if conversion == 1:
+        om = 0
         distanceunit = 'pixels'
     else:
         om = int(math.floor(math.log10(conversion)))
