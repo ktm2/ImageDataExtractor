@@ -5,7 +5,7 @@ import math
 from .img_utils import *
 
 
-def calculate_rdf(filteredvertices,rows,cols,scale, increment = 2, progress = False):
+def calculate_rdf(filteredvertices,rows,cols,scale, increment = 4, progress = False):
     '''Calculates RDF from list of vertices of particles.
 
     :param list filteredvertices: list of vertices of particles.
@@ -140,9 +140,12 @@ def output_rdf(xRDF,yRDF,imgname,conversion, outputpath=''):
 
     :param string outputpath: path to output directory.
 '''
-
-    om = int(math.floor(math.log10(conversion)))
-    distanceunit= 'meters E' + str(om)
+    
+    if conversion == 1:
+        distanceunit = 'pixels'
+    else:
+        om = int(math.floor(math.log10(conversion)))
+        distanceunit= 'meters E' + str(om)
 
     xRDF = [round(i * 10 ** (-1*om),2) for i in xRDF]
 
@@ -156,6 +159,7 @@ def output_rdf(xRDF,yRDF,imgname,conversion, outputpath=''):
     plt.grid()
 
     plt.savefig(os.path.join(outputpath, "rdf_" + str(imgname).split("/")[-1]), bbox_inches = 'tight')
+    plt.close()
     #plt.show()
 
     outfile = open(os.path.join(outputpath, "data_rdf_" + imgname.split('/')[-1].split(".")[0] + ".txt"), "w")
