@@ -143,9 +143,12 @@ def output_rdf(xRDF,yRDF,imgname,conversion, outputpath=''):
 
     :param string outputpath: path to output directory.
 '''
-
-    om = int(math.floor(math.log10(conversion)))
-    distanceunit= 'meters E' + str(om)
+    
+    if conversion == 1:
+        distanceunit = 'pixels'
+    else:
+        om = int(math.floor(math.log10(conversion)))
+        distanceunit= 'meters E' + str(om)
 
     xRDF = [round(i * 10 ** (-1*om),2) for i in xRDF]
 
