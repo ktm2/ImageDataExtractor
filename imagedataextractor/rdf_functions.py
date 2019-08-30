@@ -181,9 +181,9 @@ def particle_size_histogram(arealist, filtered, imgname, outputpath='', conversi
     '''
 
     font={"fontname":"serif"}
-    _, bins, _ = plt.hist(arealist, bins=len(arealist) + 1, edgecolor='black', linewidth=1.2, rwidth=0.9, label='Original')
+    _, bins, _ = plt.hist(arealist, bins=len(arealist) + 1, edgecolor='black', linewidth=1.2, rwidth=0.9, label='Original', color = "royalblue")
     plt.hist(filtered, bins=len(arealist) + 1, range=(bins.min(), bins.max()), edgecolor='black', linewidth=1.2, 
-        rwidth=0.9, label='Filtered', alpha = 0.6)
+        rwidth=0.9, label='Filtered', alpha = 0.6, color = "darkorange")
     plt.title("Particle Size " + str(imgname).split("/")[-1] ,**font)
     if conversion == 1:
         plt.xlabel('Pixels**2',**font)
