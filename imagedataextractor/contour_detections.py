@@ -99,7 +99,6 @@ def find_draw_contours(img, blocksize = 151, blursize = 0, minarea = None,
     TODO:
     - This function and find_draw_contours are very similar but both bulky, 
     both should be broken apart and rebuilt more efficiently.
-    - If statement on returns is not ok?
 
     '''
  

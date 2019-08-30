@@ -1,4 +1,3 @@
-#Inputs 2D image of particles, outputs radial distribution function of particles.
 #Karim Mukaddem, Molecular Engineering Group, Department of Physics, University of Cambridge.
 
 #NOTES:
@@ -396,37 +395,6 @@ def split_figures(input_dir, output_dir=''):
     split_by_grid(split_photo_imgs_path, split_grid_imgs_path)
 
 
-
-
-
-#
-# path_to_images = "/Users/karim/Desktop/evaluation_images/merged/2_karim_split/0_C6CE01551D_fig1_2.png"
-#
-# path_to_secondary = "/Users/karim/Desktop/evaluation_images/merged/4.2_det/*.png"
-#
-# path_to_already_done = None
-
-
-# path_to_images = "/home/batuhan/Documents/PhD Physics/Projects/imagedataextractor130219_2/merged/2_karim_split/*.png"
-
-# path_to_secondary = "/home/batuhan/Documents/PhD Physics/Projects/imagedataextractor130219_2/merged/4.1_det/*.png"
-
-# Ed's test paths
-# path_to_image = "/home/edward/Documents/ImageDataExtractor_documents/test_cde_ide/output/split_grid_images/0_C6CE01551D_fig1_2.png"
-#path_to_documents = "/home/edward/Documents/ImageDataExtractor_documents/test_cde_ide/input"
-# path_to_image_output = "/home/edward/Documents/ImageDataExtractor_documents/test_cde_ide/output"
-# path_to_ide_output = "/home/edward/Documents/ImageDataExtractor_documents/test_cde_ide/ide_output"
-#
-# #output_path = "/home/edward/Pictures/ImageDataExtractor_images/output/"
-#
-#
-# #extract_image(path_to_image)
-# #extract_documents(path_to_documents, path_to_image_output, path_to_ide_output)
-#extract_document(os.path.join(path_to_documents, 'C6CE01551D.html'))#, path_to_image_output, path_to_ide_output)
-#
-# input_dir = '/home/edward/Documents/ImageDataExtractor_documents/test_cde_ide/output'
-#
-# #split_figures(input_dir)
 
 
 
