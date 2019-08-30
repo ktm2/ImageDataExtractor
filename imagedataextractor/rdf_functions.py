@@ -159,6 +159,7 @@ def output_rdf(xRDF,yRDF,imgname,conversion, outputpath=''):
     plt.grid()
 
     plt.savefig(os.path.join(outputpath, "rdf_" + str(imgname).split("/")[-1]), bbox_inches = 'tight')
+    plt.close()
     #plt.show()
 
     outfile = open(os.path.join(outputpath, "data_rdf_" + imgname.split('/')[-1].split(".")[0] + ".txt"), "w")
