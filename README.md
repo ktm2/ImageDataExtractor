@@ -30,8 +30,6 @@ Then download the necessary data files to run ChemDataExtractor-IDE by running:
 
 ### Installing from source
 
-Installing from source requires the user to manually install ImageDataExtractor and [ChemDataExtractor-IDE](https://github.com/edbeard/chemdataextractor-ide).
-
 #### Install ChemDataExtractor-IDE
 
 In order to use ImageDataExtractor first install the bespoke version of ChemDataExtractor, [ChemDataExtractor-IDE](https://github.com/edbeard/chemdataextractor-ide). 
@@ -69,7 +67,7 @@ Then install using pip:
  
 ## Running the code
 
-__Full documentation on running the code can be found at [www.imagedataextractor.org](www.imagedataextractor.org) .__
+__Full documentation on running the code can be found at [www.imagedataextractor.org](https://www.imagedataextractor.org) .__
 
 Open a python terminal and run 
 
@@ -79,4 +77,4 @@ Then run:
 
     >>> ide.extract_document(<path/to/document>)
     
-to automatically identify and extract the images from a document. Full details on supported input and output formats can be found at www.imagedataextractor.com . 
+to automatically identify and extract the images from a document. Full details on supported input and output formats can be found at our [website]((https://www.imagedataextractor.org) . 
