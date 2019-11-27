@@ -12,7 +12,7 @@ else:
 
 setup(
     name='ImageDataExtractor',
-    version='1.0',
+    version='1.0.0',
     author='Karim Mukaddem',
     author_email='ktm25@cam.ac.uk',
     license='MIT',

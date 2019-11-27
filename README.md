@@ -12,8 +12,25 @@ ImageDataExtractor is a toolkit for the automatic extraction of microscopy image
 
 ## Installation
 
-*NB: It is advised that all installations of ImageDataExtractor are run inside a virtual environment. Click [here](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/) for more information.* 
+It is best to install ImageDataExtractor using `pip`, but it is also possible to directly install from source. See below for installation instructions.
 
+__NOTE: The current version of IDE uses Tesseract 3. The source code can be downloaded [here](https://github.com/tesseract-ocr/tesseract/tree/3.05) and instructions on how to compile can be found [here](https://github.com/tesseract-ocr/tesseract/wiki/Compiling).__
+
+*NOTE: It is advised that all installations of ImageDataExtractor are run inside a virtual environment. Click [here](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/) for more information.*
+
+### Installing with `pip`
+
+To install with `pip`, simply run:
+
+    pip install ImageDataExtractor
+    
+Then download the necessary data files to run ChemDataExtractor-IDE by running:
+
+    cde data download
+
+### Installing from source
+
+Installing from source requires the user to manually install ImageDataExtractor and [ChemDataExtractor-IDE](https://github.com/edbeard/chemdataextractor-ide).
 
 #### Install ChemDataExtractor-IDE
 
@@ -35,10 +52,6 @@ Then download the required machine learning models with:
 
 #### Install ImageDataExtractor
 
-__NOTE : Upon release IDE will be installed using pip (by simply running `pip install imagedataextractor`). While in development, follow the instructions below instead.__
-
-__NOTE : The current version of IDE uses Tesseract 3. The source code can be downloaded [here](https://github.com/tesseract-ocr/tesseract/tree/3.05) and instructions on how to compile can be found [here](https://github.com/tesseract-ocr/tesseract/wiki/Compiling).__
-
 Now to install ImageDataExtractor, clone the repository with:
 
     $ git clone  https://github.com/ktm2/ImageDataExtractor.git
@@ -52,12 +65,11 @@ Then create a wheel file by running:
 Then install using pip:
 
     $ pip install dist/ImageDataExtractor-0.0.1-py3-none-any.whl  
-    
   
  
 ## Running the code
 
-__Full documentation on running the code can be found at www.imagedataextractor.com .__
+__Full documentation on running the code can be found at [www.imagedataextractor.org](www.imagedataextractor.org) .__
 
 Open a python terminal and run 
 
