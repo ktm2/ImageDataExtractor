@@ -47,28 +47,28 @@ class TEMImageExtractor():
 
             if compressed.endswith('zip'):
                 # Logic to unzip the file locally
-                print('Opening zip file...')
+                log.info('Opening zip file...')
                 zip_ref = zipfile.ZipFile(compressed)
                 zip_ref.extractall(self.input)
                 zip_ref.close()
 
             elif compressed.endswith('tar.gz'):
                 # Logic to unzip tarball locally
-                print('Opening tarball file...')
+                log.info('Opening tarball file...')
                 tar_ref = tarfile.open(compressed, 'r:gz')
                 tar_ref.extractall(self.input)
                 tar_ref.close()
 
             elif compressed.endswith('tar'):
                 # Logic to unzip tarball locally
-                print('Opening tarball file...')
+                log.info('Opening tarball file...')
                 tar_ref = tarfile.open(compressed, 'r:')
                 tar_ref.extractall(self.input)
                 tar_ref.close()
             else:
                 raise Exception('Only one file provided - please use extract_document() instead')
 
-            print('Removing compressed file...')
+            log.info('Removing compressed file...')
             os.remove(compressed)
             docs = os.listdir(self.input)
 
@@ -84,7 +84,7 @@ class TEMImageExtractor():
         # Load document image data from file
         tem_images = []
         cde_doc = Document.from_file(open(doc[1], "rb"))
-        print('This article is : %s' % doc[0])
+        log.info('This article is : %s' % doc[0])
         imgs = cde_doc.figures
         del cde_doc
 
@@ -100,7 +100,7 @@ class TEMImageExtractor():
                 rec = record.serialize()
                 if [self.img_type] in rec.values():
                     detected = True
-                    print('%s instance found!' % self.img_type)
+                    log.info('%s instance found!' % self.img_type)
                     tem_images.append((doc[0], img.id, img.url, caption.text.replace('\n', ' ')))
 
         if len(tem_images) != 0:
@@ -115,15 +115,15 @@ class TEMImageExtractor():
 
         if len(os.listdir(imgs_dir)) <= 999999999:
             img_format = url.split('.')[-1]
-            print(url, img_format)
+            log.info(url, img_format)
             filename = file.split('.')[0] + '_' + id + '.' + img_format
             path = os.path.join(imgs_dir, filename)
 
-            print("Downloading %s..." % filename)
+            log.info("Downloading %s..." % filename)
             if not os.path.exists(path):
                 urllib.request.urlretrieve(url, path) # Saves downloaded image to file
             else:
-                print("File exists! Going to next image")
+                log.info("File exists! Going to next image")
         else:
             sys.exit()
 
@@ -165,12 +165,12 @@ class TEMImageExtractor():
                         if imgs is not None:
                             tem_images.append(imgs)
                     except Exception as e:
-                        print(e)
+                        log.error(e)
 
             self.imgs = [img for doc in tem_images if doc is not None for img in doc]
 
             self.save_img_data_to_file()
-            print('%s image info saved to file' % self.img_type)
+            log.info('%s image info saved to file' % self.img_type)
 
         # Download TEM images
         for file, id, url, caption in self.imgs:
@@ -197,10 +197,10 @@ class TEMImageExtractor():
                 doc = (self.input.split('/')[-1], self.input)
                 self.imgs = self.get_img(doc)
             except Exception as e:
-                print(e)
+                log.error(e)
 
         self.save_img_data_to_file()
-        print('%s image info saved to file' % self.img_type)
+        log.info('%s image info saved to file' % self.img_type)
 
         # Download TEM images
         for file, id, url, caption in self.imgs:

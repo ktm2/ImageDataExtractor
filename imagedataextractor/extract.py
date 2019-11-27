@@ -13,7 +13,7 @@ import glob
 import datetime
 import zipfile
 import tarfile
-from PIL import Image
+import logging
 
 from .scalebar_identification import *
 from .particle_identification import *
@@ -21,6 +21,8 @@ from .rdf_functions import *
 from .image_identification import TEMImageExtractor
 from .figure_splitting import split_by_photo, split_by_grid
 from .img_utils import convert_gif_to_png
+
+log = logging.getLogger(__name__)
 
 
 def main_detection(imgname, outputpath=''):
@@ -232,7 +234,7 @@ def extract_images(path_to_images, outputpath='', path_to_secondary = None, path
         # Unzipping compressed inputs
         if path_to_images.endswith('zip'):
             # Logic to unzip the file locally
-            print('Opening zip file...')
+            log.info('Opening zip file...')
             zip_ref = zipfile.ZipFile(path_to_images)
             extracted_path = os.path.join(os.path.dirname(path_to_images), 'extracted')
             if not os.path.exists(extracted_path):
@@ -243,7 +245,7 @@ def extract_images(path_to_images, outputpath='', path_to_secondary = None, path
 
         elif path_to_images.endswith('tar.gz'):
             # Logic to unzip tarball locally
-            print('Opening tarball file...')
+            log.info('Opening tarball file...')
             tar_ref = tarfile.open(path_to_images, 'r:gz')
             extracted_path = os.path.join(os.path.dirname(path_to_images), 'extracted')
             if not os.path.exists(extracted_path):
@@ -254,7 +256,7 @@ def extract_images(path_to_images, outputpath='', path_to_secondary = None, path
 
         elif path_to_images.endswith('tar'):
             # Logic to unzip tarball locally
-            print('Opening tarball file...')
+            log.info('Opening tarball file...')
             tar_ref = tarfile.open(path_to_images, 'r:')
             extracted_path = os.path.join(os.path.dirname(path_to_images), 'extracted')
             if not os.path.exists(extracted_path):

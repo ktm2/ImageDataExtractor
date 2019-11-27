@@ -1,6 +1,9 @@
 
 import matplotlib.pyplot as plt
 import math
+import logging
+
+log = logging.getLogger(__name__)
 
 from .img_utils import *
 
@@ -22,7 +25,7 @@ def calculate_rdf(filteredvertices,rows,cols,scale, increment = 4, progress = Fa
 
 
     if progress == True:
-        print("RDF calculation: ")
+        print("Calculating minimum RDF...")
 
 
     #Create blank canvases to draw particle pairs on.
@@ -53,7 +56,7 @@ def calculate_rdf(filteredvertices,rows,cols,scale, increment = 4, progress = Fa
     for particleA in filteredvertices:
 
         if progress == True:
-            print('RDF calculation on ' + str(particle_index) + '/' + str(numberofparticles))
+            log.info('RDF calculation on ' + str(particle_index) + '/' + str(numberofparticles))
             particle_index += 1
 
         restofvertices=[particleB for particleB in filteredvertices

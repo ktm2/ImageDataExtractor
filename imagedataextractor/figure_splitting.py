@@ -90,26 +90,26 @@ def split_by_photo(input_imgs, csv_input_path, output_imgs='', csv_output_path='
 
 
     """
-    print('Running plot area evaluation')
+    log.info('Running plot area evaluation')
 
-    print('Creating output directory if it doesnt exist...')
+    log.info('Creating output directory if it doesnt exist...')
     if not os.path.exists(output_imgs):
         os.makedirs(output_imgs)
 
-    print('Deleting output from previous run')
+    log.info('Deleting output from previous run')
     files = [os.path.join(output_imgs, f) for f in os.listdir(output_imgs) if os.path.isfile(os.path.join(output_imgs, f))]
     for f in files:
         os.remove(f)
 
-    print('Reading sample input from: %s' % csv_input_path)
+    log.info('Reading sample input from: %s' % csv_input_path)
     inf = io.open(csv_input_path, 'r')
     sample_csvreader = csv.reader(inf)
-    print('Writing output to: %s' % csv_output_path)
+    log.info('Writing output to: %s' % csv_output_path)
     outf = open(csv_output_path, 'w')
     output_csvwriter = csv.writer(outf)
 
     # Load every image in the evaluation sample
-    print('Loading images from: %s' % input_imgs)
+    log.info('Loading images from: %s' % input_imgs)
     next(sample_csvreader)  # Skip header
 
     # Run the extraction using a multiprocessing pool for parallel execution (if needed)
@@ -134,7 +134,7 @@ def run_worker(row, input_imgs, output_imgs):
     img_format = '.' + row[2].split('.')[-1]
     filename = row[0].split('.')[0] + '_' + row[1] + img_format
 
-    print('Processing: %s' % filename)
+    log.info('Processing: %s' % filename)
 
     # Load the image
     impath = os.path.join(input_imgs, filename)
@@ -156,7 +156,7 @@ def run_worker(row, input_imgs, output_imgs):
         photo_id = i + 1
 
         if photo.area < 50000:
-            print("Pixel number : %s . Would be rejected in full pipeline." % photo.area )
+            log.warning("Pixel number : %s . Would be rejected in full pipeline." % photo.area )
             pass
         else:
 
@@ -183,7 +183,7 @@ def run_worker_split_images(row, input_imgs, output_imgs):
     if img_format == '.gif':
         img_format = '.png'
 
-    print('Processing: %s' % filename)
+    log.info('Processing: %s' % filename)
 
     # Load the image
     impath = os.path.join(input_imgs, filename)
@@ -196,11 +196,11 @@ def run_worker_split_images(row, input_imgs, output_imgs):
     for i, photo in enumerate(photos):
         photo_id = i + 1
         if photo.area < 50000:
-            print("Pixel number : %s . Rejecting." % photo.area )
+            log.warning("Pixel number : %s . Rejecting." % photo.area )
             pass
         else:
 
-            print("Pixel number : %s" % photo.area)
+            log.info("Pixel number : %s" % photo.area)
 
             out_img = img[photo.top:photo.bottom,photo.left:photo.right]
 
@@ -216,7 +216,7 @@ def run_worker_split_images(row, input_imgs, output_imgs):
 def split_by_grid(input_imgs, output_imgs=''):
     """ Splits all input figures by detecting regular grid structrues """
 
-    print('Creating output directory if it doesnt exist...')
+    log.info('Creating output directory if it doesnt exist...')
     if not os.path.exists(output_imgs):
         os.makedirs(output_imgs)
 

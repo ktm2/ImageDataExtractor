@@ -12,7 +12,7 @@ else:
 
 setup(
     name='ImageDataExtractor',
-    version='0.0.1',
+    version='1.0',
     author='Karim Mukaddem',
     author_email='ktm25@cam.ac.uk',
     license='MIT',
@@ -28,7 +28,7 @@ setup(
     },
         setup_requires=['numpy'],
     install_requires=[
-        'opencv-python', 'pillow', 'pytesseract', 'matplotlib==2.2.4', 'keras', 'tensorflow', 'scikit-image<0.15', 'marshmallow', 'numpy', 'cython'
+        'opencv-python', 'pillow', 'pytesseract', 'matplotlib==2.2.4', 'keras', 'tensorflow', 'scikit-image<0.15', 'marshmallow', 'numpy', 'cython', 'ChemDataExtractor-IDE'
     ],
     classifiers=[
         'Intended Audience :: Developers',
@@ -36,7 +36,7 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
         'Topic :: Internet :: WWW/HTTP :: Indexing/Search',
         'Topic :: Scientific/Engineering',
         'Topic :: Scientific/Engineering :: Bio-Informatics',
