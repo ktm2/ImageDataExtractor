@@ -77,4 +77,4 @@ Then run:
 
     >>> ide.extract_document(<path/to/document>)
     
-to automatically identify and extract the images from a document. Full details on supported input and output formats can be found at our [website]((https://www.imagedataextractor.org) . 
+to automatically identify and extract the images from a document. Full details on supported input and output formats can be found at our [website](https://www.imagedataextractor.org) . 
