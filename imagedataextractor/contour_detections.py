@@ -96,9 +96,6 @@ def find_draw_contours(img, blocksize = 151, blursize = 0, minarea = None,
     :return list boundingrectanglewidths:
     :return list boundingrectanglecoords:
 
-    TODO:
-    - This function and find_draw_contours are very similar but both bulky, 
-    both should be broken apart and rebuilt more efficiently.
 
     '''
  
@@ -175,8 +172,6 @@ def find_draw_contours(img, blocksize = 151, blursize = 0, minarea = None,
                 #x,y are top left coordinates of bounding rectangle.
                 boundingx,boundingy,width,height=cv2.boundingRect(vertices)
 
-                #print area,0.5*width*height
-
                 if restrict_rectangles==True and restrict_rectangles_color == False:
 
 
@@ -189,10 +184,6 @@ def find_draw_contours(img, blocksize = 151, blursize = 0, minarea = None,
                     rect_std = np.std(gimg[boundingy:boundingy+height,boundingx:boundingx+width].flatten())
                     rect_mean = np.mean(gimg[boundingy:boundingy+height,boundingx:boundingx+width].flatten())
 
-                    #show_image(gimg[boundingy:boundingy+height,boundingx:boundingx+width],0,str(int(rect_std))+ " " + str(int(rect_mean)))
-
-                    # print area,width,height,rect_std,rect_mean
-                    # print restrict_rectangles_color
 
                     if restrict_rectangles_color == "white":
                         if area>0.4*width*height and rect_std < 50 and rect_mean > 150: #boundingy!=0 and boundingx!=0 and a:
@@ -258,9 +249,6 @@ def find_draw_contours_main(img, gimg,blocksize, rows, cols, blursize = 0, testi
 
     :return list filteredvertices:
 
-    TODO:
-    - This function and find_draw_contours are very similar but both bulky, 
-    both should be broken apart and rebuilt more efficiently.
 
     '''
 
