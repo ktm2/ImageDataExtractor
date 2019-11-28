@@ -1,3 +1,6 @@
+#Author: Karim Mukaddem and Batuhan Yildirim
+
+
 from PIL import Image
 from pytesseract import image_to_string, image_to_boxes
 from skimage import exposure
@@ -91,10 +94,6 @@ def detect_scale_bar_and_inlays(gimg, imgmean, imgstdev, rows, cols, show = Fals
     :return float conversion: unit of scalevalue 10e-6 for um, 10e-9 for nm.
     :return list inlaycoords: list of tuples in same format of obstructive inlays in image.
 
-    TODO:
-    - Remaining Inlay (a,b,c in corners etc.) coords currently hashed out, will this be in?
-    - Confidence level in OCR to determine um vs nm (will require Tesseract 4)
-
     '''
 
     scalebar, scalevalue, conversion = None, None, 1
@@ -147,12 +146,6 @@ def find_text_and_bar(thresholdedimg, gimg, rows, cols, show=False, printer=Fals
     :return float scalevalue: number associated with scale bar.
     :return float conversion: unit of scalevalue 10e-6 for um, 10e-9 for nm.
     :return list inlaycoords: list of tuples in same format of obstructive inlays in image.
-
-    TODO:
-    - Can this function be merged with parent function detect_scale_bar_and_inlays? Seems like
-    everything is going on here.
-    - This function can be made more efficient if we don't try to read every region of interest. A filtering
-    step perhaps looking at the region_stdev can help filter out those that don't include text?
 
     '''
 
@@ -462,21 +455,13 @@ def find_text_and_bar(thresholdedimg, gimg, rows, cols, show=False, printer=Fals
 
             fsb = gimg_for_fsb[i[1] + interp_scale*surrounding_region_x1:i[1] + interp_scale*surrounding_region_x1 + i[3], i[0] + interp_scale*surrounding_region_y1:i[0] +interp_scale* surrounding_region_y1 + i[2]].flatten()
 
-            # show_image(regionsurroundingscalebar[i[1]:i[1]+ i[3], i[0]:i[0] + i[2]])
-            # fsb = regionsurroundingscalebar[i[1]:i[1]+ i[3], i[0]:i[0] + i[2]].flatten()
-
             fsb_stdev = np.std(fsb)
             fsb_mean = sum(fsb) / len(fsb)
             fsb_mode, _ = stats.mode(fsb)
             fsb_mode = fsb_mode[0]
 
-            # print(fsb_mean, fsb_mode)
-            # print (fsb_stdev)
-
-            # show_image(gimg_for_fsb[i[1] + interp_scale*surrounding_region_x1:i[1] + interp_scale*surrounding_region_x1 + i[3], i[0] + interp_scale*surrounding_region_y1:i[0] +interp_scale* surrounding_region_y1 + i[2]])
 
             # uniform color that's either black or white.
-            # if fsb_stdev < 50 and (fsb_mean > 200 or fsb_mean < 30 or fsb_mode > 245 or fsb_mode < 10):
             if fsb_mean > 200 or fsb_mean < 30 or fsb_mode > 245 or fsb_mode < 10:
                 potential_scale_bar_rectangles.append(i)
 
@@ -532,11 +517,6 @@ def find_text_and_bar(thresholdedimg, gimg, rows, cols, show=False, printer=Fals
             box_ys.append(box[0][1])
             box_ys.append(box[1][1])
 
-        #     cv2.rectangle(gimg,(box[0][0],box[0][1]),(box[1][0],box[1][1]),
-        # (255,255,255),thickness=1)
-
-        # cv2.rectangle(gimg,(scalebar[0],scalebar[1]),(scalebar[0]+scalebar[2],scalebar[1]+scalebar[3]),
-        # (255,255,255),thickness=1)
 
         box_xs.append(scalebar[0])
         box_xs.append(scalebar[0] + scalebar[2])
@@ -546,6 +526,5 @@ def find_text_and_bar(thresholdedimg, gimg, rows, cols, show=False, printer=Fals
 
         inlaycoords.append((min(box_xs), min(box_ys), max(box_xs) - min(box_xs), max(box_ys) - min(box_ys)))
 
-    # Inlaycoords only has scalebar region now, other detected ones will be appended from here.
 
     return scalebar, scalevalue, conversion, inlaycoords

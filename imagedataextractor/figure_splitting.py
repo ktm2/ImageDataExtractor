@@ -7,13 +7,6 @@ Detect photos in figures.
 
 @authors: Matt Swain and Ed Beard
 
-IMPORTANT NOTE!!!!
-
-TODO : This code is from Matt's currently unpublished FigureDataExtractor code. We must ask his permission before
-publishing it with this code.
-
-Ed Beard has copied the bits that he used in the splitting of figures, which were originally imported from FigureDataExtractor
-
 """
 
 from __future__ import print_function, unicode_literals

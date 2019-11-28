@@ -1,3 +1,6 @@
+#Author: Karim Mukaddem and Batuhan Yildirim
+
+
 import cv2
 import numpy as np
 import keras.backend as K

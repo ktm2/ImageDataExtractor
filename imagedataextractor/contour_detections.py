@@ -1,3 +1,5 @@
+#Author: Karim Mukaddem
+
 from .img_utils import *
 
 from scipy.stats import mode
@@ -175,7 +177,7 @@ def find_draw_contours(img, blocksize = 151, blursize = 0, minarea = None,
                 if restrict_rectangles==True and restrict_rectangles_color == False:
 
 
-                    if area>0.4*width*height: #boundingy!=0 and boundingx!=0 and a:
+                    if area>0.4*width*height:
                         boundingrectanglewidths.append(width)
                         boundingrectanglecoords.append((boundingx,boundingy,width,height))
 
@@ -186,12 +188,12 @@ def find_draw_contours(img, blocksize = 151, blursize = 0, minarea = None,
 
 
                     if restrict_rectangles_color == "white":
-                        if area>0.4*width*height and rect_std < 50 and rect_mean > 150: #boundingy!=0 and boundingx!=0 and a:
+                        if area>0.4*width*height and rect_std < 50 and rect_mean > 150: 
                             boundingrectanglewidths.append(width)
                             boundingrectanglecoords.append((boundingx,boundingy,width,height))  
 
                     elif restrict_rectangles_color == "black":
-                        if area>0.4*width*height and rect_std < 50 and rect_mean < 30: #boundingy!=0 and boundingx!=0 and a:
+                        if area>0.4*width*height and rect_std < 50 and rect_mean < 30: 
                             boundingrectanglewidths.append(width)
                             boundingrectanglecoords.append((boundingx,boundingy,width,height))                                           
 

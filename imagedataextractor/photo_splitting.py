@@ -7,8 +7,6 @@ Detect photos in figures.
 
 @author : Matt Swain
 
-TODO : This code is from Matt's currently unpublished FigureDataExtractor code. We must ask his permission before
-publishing it with this code
 
 """
 

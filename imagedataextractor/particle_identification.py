@@ -1,3 +1,5 @@
+#Author: Karim Mukaddem
+
 from .correction_steps import *
 from .scale_reading import *
 

@@ -1,3 +1,4 @@
+#Author: Karim Mukaddem
 
 import matplotlib.pyplot as plt
 import math
@@ -194,7 +195,6 @@ def particle_size_histogram(arealist, filtered, imgname, outputpath='', conversi
     else:
         plt.xlabel('Meters**2',**font)
     plt.ylabel("Frequency",**font)
-    ##is this right?
     plt.xlim([0,max(arealist)])
     plt.legend()
     plt.savefig(os.path.join(outputpath, "hist_" + str(imgname).split("/")[-1]), bbox_inches = 'tight')

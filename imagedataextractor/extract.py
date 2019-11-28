@@ -1,13 +1,5 @@
-#Karim Mukaddem, Molecular Engineering Group, Department of Physics, University of Cambridge.
+#Author: Karim Mukaddem and Ed Beard
 
-#NOTES:
-# Some inconsistenies exist in [0],[1]/ x,y indexing of pixels, due to differences in how functions
-# in different libraries behave.
-# Changing all pixel acessing from a np based approach to cv2's built in (img.item.set) will greatly
-# increase efficiency.
-
-# TODO:
-# Dark particles on light backgrounds?
 
 import glob
 import datetime
@@ -49,50 +41,7 @@ def main_detection(imgname, outputpath=''):
 
     inverted = False
 
-    #This is disabled until further development.
-    #If less than 3 particles are found, redo analysis with inverted colors.
-    # if inverted is False:
-    #     rows = len(img)
-    #     cols = len(img[0])
 
-    #     if len(img.shape) == 2:
-    #         gimg = img
-    #     else:
-    #         gimg = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-
-
-    #     if len(filteredvertices) > 0:
-    #         arealist = particle_metrics_from_vertices(img, gimg, rows, cols, filteredvertices)[1]
-    #         detection_ratio = sum(arealist)/float(rows*cols)
-    #         mean_particlediscreteness = sum(particlediscreteness)/float(len(particlediscreteness))
-    #     else:
-    #         detection_ratio = 0
-    #         mean_particlediscreteness = 0
-    #         arealist = []
-
-    #     if len(filteredvertices) < 3 or detection_ratio < 0.1 or mean_particlediscreteness < 30:
-    #         filteredvertices_inverted, particlediscreteness_inv = particle_identification(img, inlaycoords, testing = True, invert = True)
-
-    #         if len(filteredvertices_inverted) > 0:
-    #             if len(img.shape) == 2:
-    #                 gimg = img
-    #             else:
-    #                 gimg = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-
-    #             rows = len(img)
-    #             cols = len(img[0])
-
-    #             arealist_inv = particle_metrics_from_vertices(img, gimg, rows, cols, filteredvertices_inverted)[1]
-    #             mean_particlediscreteness_inv = -1*sum(particlediscreteness_inv)/float(len(particlediscreteness_inv))
-
-    #             #If more overall area is attributed to particles in the inverted form, that version is passed to 
-    #             #the calculation steps, both images get written out.
-
-    #             print(sum(arealist_inv), sum(arealist))
-    #             print(mean_particlediscreteness_inv, mean_particlediscreteness)
-    #             if sum(arealist_inv) > sum(arealist) and mean_particlediscreteness_inv > mean_particlediscreteness:
-    #                 filteredvertices = filteredvertices_inverted
-    #                 inverted = True
 
     writeout_image(img, outputpath, filteredvertices, imgname, inverted)
 

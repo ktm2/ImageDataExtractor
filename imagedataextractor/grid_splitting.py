@@ -1,3 +1,5 @@
+#Author: Karim Mukaddem
+
 from .img_utils import *
 
 
@@ -13,11 +15,6 @@ def line_detection_and_split(gimg, show = False, eval_img = True):
     :return list img_split_vertically: list of images in figure
     :return numpy.ndarray evaluation_img: evaluation image, none if eval_img = False
 
-    TODO:
-    - checking along grid manually is inefficient, can do this recursively:
-    - this can be adapted to unevenly split figures if the detected straight lines can be
-    filtered more intelligently.
-    - getting rid of debugging related objects.
 
     '''
 
@@ -38,13 +35,12 @@ def line_detection_and_split(gimg, show = False, eval_img = True):
         show_image(edges)
         print(cols,rows)
 
+    min_line_length = int(0.5*min(rows,cols))  
+    max_line_gap = int(0.5*min(rows,cols))
+    rho = 1  
+    theta = np.pi/180  
+    threshold = 50  
 
-    # Hough Lines Detection, from stackoverflow.
-    rho = 1  # distance resolution in pixels of the Hough grid
-    theta = np.pi / 180  # angular resolution in radians of the Hough grid
-    threshold = 50  # minimum number of votes (intersections in Hough grid cell)
-    min_line_length = int(0.5*min(rows,cols))  # minimum number of pixels making up a line
-    max_line_gap = int(0.5*min(rows,cols))  # maximum gap in pixels between connectable line segments
 
     # Run Hough on edge detected image
     # Output "lines" is an array containing endpoints of detected line segments.
@@ -55,12 +51,11 @@ def line_detection_and_split(gimg, show = False, eval_img = True):
         return None, evaluation_img
 
 
-
     horizontal_lines = []
     vertical_lines = []
 
     # X describes column number, Y describes row number.
-    # take only horizonta;/vertical lines.
+    # take only horizontal/vertical lines.
     for line in lines:
         for x1,y1,x2,y2 in line:
 

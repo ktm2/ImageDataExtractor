@@ -1,3 +1,6 @@
+#Author: Karim Mukaddem
+
+
 import cv2
 import numpy as np
 import itertools
@@ -193,10 +196,6 @@ def false_positive_correction(filteredvertices,arealist,colorlist,avgcolormean,a
     :return list filteredvertices: corrected list of vertices of particles.
     :return list arealist: updated list of particle sizes.
 
-    TODO:
-
-    - Absolute floor for colorstdev necessary?
-
     '''
 
     #Create new list of false-positive-filtered vertices.
@@ -250,10 +249,6 @@ def cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, 
 
     :return list clusterbreakupvertices: corrected list of vertices of detected particles.
 
-    TODO:
-    - Ellipse sizes should not depend on avg_area, maybe on overall img size?
-
-    - Should pixels_to_extend_by depend on the length of the connection line?    
     '''
 
     breakuptesting = testing
@@ -307,7 +302,6 @@ def cluster_breakup_correction(filteredvertices, rows, cols, arealist, avgarea, 
 
                     if (d/256.0) > (arealist[i]**0.5)/15.0:
 
-                            # print "arearoot/10 ", (arealist[i]**0.5)/10
 
 
 
@@ -516,9 +510,6 @@ def discreteness_index_and_ellipse_fitting(edgecorrectedvertices,img,rows,cols,i
     :return list particlediscreteness: list of DI's of each particle.
     :return list ellipsefittedvertices: Corrected list of vertices of particles.
 
-    TODO:
-    - Format of list of vertices of fitted ellipses and original contours are not the same.
-    This has lead to some ugly fixes, at the end of the function and in edge_correction.
     
     '''
 
