@@ -37,14 +37,12 @@ def line_detection_and_split(gimg, show = False, eval_img = True):
 
     min_line_length = int(0.5*min(rows,cols))  
     max_line_gap = int(0.5*min(rows,cols))
-    rho = 1  
     theta = np.pi/180  
-    threshold = 50  
 
 
     # Run Hough on edge detected image
     # Output "lines" is an array containing endpoints of detected line segments.
-    lines = cv2.HoughLinesP(edges, rho, theta, threshold, np.array([]),min_line_length, max_line_gap)
+    lines = cv2.HoughLinesP(edges, 1, theta, 50, np.array([]),min_line_length, max_line_gap)
 
     if lines is None:
         print("no straight lines found")
