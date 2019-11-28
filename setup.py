@@ -17,6 +17,7 @@ setup(
     author_email='ktm25@cam.ac.uk',
     license='MIT',
     url='https://github.com/ktm2/ImageDataExtractor',
+    download_url='https://github.com/ktm2/ImageDataExtractor/archive/1.0.0.tar.gz',
     packages=find_packages(),
     description='A toolkit for extracting particle data from microscopy images.',
     long_description=long_description,
@@ -41,6 +42,6 @@ setup(
         'Topic :: Scientific/Engineering',
         'Topic :: Scientific/Engineering :: Bio-Informatics',
         'Topic :: Scientific/Engineering :: Chemistry',
-        'Topic :: Image Processing',
+        'Topic :: Scientific/Engineering :: Image Recognition',
     ],
 )
