@@ -221,7 +221,7 @@ def split_by_grid(input_imgs, output_imgs=''):
 
 def split_fig_by_grid(figname, output_dir, eval_fig = False):
     '''Splits figures mined from publications into their constituent images. Note: Must be used on the 
-    products of FDE's figure splitting process.
+    products of photo splitting.
 
     :param string figname: Name of the input figure.
     :param bool eval_fig: Optionally output an annotated version of the input for evaluation.

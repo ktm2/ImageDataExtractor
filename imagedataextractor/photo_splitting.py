@@ -24,6 +24,7 @@ from skimage.color import rgb2gray
 
 log = logging.getLogger(__name__)
 
+
 def python_2_unicode_compatible(klass):
     """Fix ``__str__``, ``__unicode__`` and ``__repr__`` methods under Python 2.
 
@@ -170,7 +171,7 @@ class Photo(Rect):
         super(Photo, self).__init__(left, right, top, bottom)
 
     def serialize(self):
-        """Serialize this panel with :class:`~figuredataextractor.schema.PhotoSchema`."""
+        """Serialize this panel"""
         return PhotoSchema().dump(self).data
 
 
@@ -182,7 +183,7 @@ def get_photos(img, min_edge=0.05, min_fill=0.8, binary_threshold=0.98):
     :param float min_fill: Threshold for how much of a region must be non-white to be considered a photo.
     :param float binary_threshold: Threshold to use when binarizing image.
     :return: Extracted photos.
-    :rtype: list[figuredataextractor.model.Photo]
+    :rtype: list[Photo]
     """
     log.debug('Detecting photos in image')
     photos = []
@@ -231,7 +232,6 @@ def binarize(img, threshold=0.9):
     if img.ndim == 3 and img.shape[-1] in [3, 4]:
         img = rgb2gray(img)
 
-    # TODO: Investigate Niblack and Sauvola threshold methods
     # Binarize with threshold (default of 0.8 empirically determined)
     binary = img > threshold
     return binary
