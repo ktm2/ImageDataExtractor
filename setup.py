@@ -12,7 +12,7 @@ else:
 
 setup(
     name='ImageDataExtractor',
-    version='1.0.0',
+    version='1.0.1',
     author='Karim Mukaddem',
     author_email='ktm25@cam.ac.uk',
     license='MIT',
@@ -24,10 +24,7 @@ setup(
     keywords='image-mining mining chemistry cheminformatics microscopy SEM TEM html xml science scientific',
     zip_safe=False,
     include_package_data=True,
-    package_data={
-        '': ['*.txt', '*.png', '*rtf', 'srcnn/*.h5'],
-    },
-        setup_requires=['numpy'],
+    setup_requires=['numpy'],
     install_requires=[
         'opencv-python', 'pillow', 'pytesseract', 'matplotlib==2.2.4', 'keras', 'tensorflow', 'scikit-image<0.15', 'marshmallow', 'numpy', 'cython', 'ChemDataExtractor-IDE'
     ],
