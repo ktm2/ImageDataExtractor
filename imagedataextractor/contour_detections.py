@@ -117,7 +117,8 @@ def find_draw_contours(img, blocksize = 151, blursize = 0, minarea = None,
 
 
     if nofilter == False:
-        thresh1 = cv2.adaptiveThreshold(gimg,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,blockSize=blocksize,C=0)
+        #thresh1 = cv2.adaptiveThreshold(gimg,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,blockSize=blocksize,C=0)
+        _, thresh1 = cv2.threshold(gimg, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
     else:
         thresh1 = gimg
 
@@ -259,8 +260,8 @@ def find_draw_contours_main(img, gimg,blocksize, rows, cols, blursize = 0, testi
 
 
 
-    thresh1 = cv2.adaptiveThreshold(gimg,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,blockSize=blocksize,C=0)
-
+    #thresh1 = cv2.adaptiveThreshold(gimg,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,blockSize=blocksize,C=0)
+    _, thresh1 = cv2.threshold(gimg, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
 
     #Apply blur filter (optional), find contours.
     if blursize!=0:
