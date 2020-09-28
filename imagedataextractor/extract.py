@@ -232,6 +232,10 @@ def extract_images(path_to_images, outputpath='', path_to_secondary = None, path
         already_done.extend([a.split('/')[-1][4:] for a in glob.glob(path_to_already_done)])
 
     for imgname in images:
+        
+        filename = imgname.split('/')[-1]
+        imgoutputdir = os.path.join(outputpath, imgname.split('/')[-1].split('.')[0])
+        outfile = open(os.path.join(imgoutputdir, imgname.split('/')[-1].split(".")[0] + ".txt"), "w")
 
         # Converting GIFs to PNG
         if imgname.split('.')[-1] == 'gif':
@@ -241,16 +245,12 @@ def extract_images(path_to_images, outputpath='', path_to_secondary = None, path
         if (imgname.split('/')[-1] in secondary) and (imgname.split('/')[-1] not in already_done) :
             print("Scale and particle detection begun on: " + str(imgname))
 
-            imgoutputdir = os.path.join(outputpath, imgname.split('/')[-1].split('.')[0])
             if not os.path.exists(imgoutputdir):
                 os.makedirs(imgoutputdir)
 
             filteredvertices, scale, inverted, conversion = main_detection(imgname, imgoutputdir)
 
             if filteredvertices == None:
-
-                outfile = open(os.path.join(imgoutputdir, imgname.split('/')[-1].split(".")[0] + ".txt"), "w")
-                filename = imgname.split('/')[-1]
 
                 # Checking if file is in the DOI format
                 if len(filename.split('_')) == 2:
