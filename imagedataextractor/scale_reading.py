@@ -126,7 +126,7 @@ def detect_scale_bar_and_inlays(gimg, imgmean, imgstdev, rows, cols, show = Fals
 
 
 def srcnn_predict(image, model, log=1.2):
-    image = np.expand_dims(np.expand_dims(image, 3), 0)
+    image = np.expand_dims(np.expand_dims(image, 0), 3)
     sr_image = model.predict(image)[0, :, :, 0].astype(np.uint8)
     sr_image = exposure.adjust_log(sr_image, 1.2)
     return sr_image
